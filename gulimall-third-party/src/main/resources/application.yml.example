@@ -1,0 +1,18 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+    alicloud:
+      sms:
+        host: ${ALI_SMS_HOST:https://fesms.market.alicloudapi.com}
+        path: /sms/
+        skin: ${ALI_SMS_SKIN:1}
+        sign: ${ALI_SMS_SIGN:your_sign}
+        appcode: ${ALI_SMS_APPCODE:your_appcode}
+
+  application:
+    name: gulimall-third-party
+
+server:
+  port: 30000

@@ -1,0 +1,84 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### VS Code ###
+.vscode/
+
+### Sensitive Files ###
+# Database files
+*.dump
+
+# Allow SQL files in sql/ directory (extracted from db.rar)
+*.sql
+!sql/*.sql
+
+# Allow db.rar to be committed (it's small, 45KB)
+*.rar
+!db.rar
+
+# Configuration files with sensitive information
+**/application.yml
+**/bootstrap.yml
+**/application.properties
+**/bootstrap.properties
+!**/application.yml.example
+!**/bootstrap.yml.example
+!**/application.properties.example
+!**/bootstrap.properties.example
+
+# Compiled files
+*.class
+*.jar
+!mvnw
+!mvnw.cmd
+
+# Logs
+*.log
+logs/
+
+# Frontend
+node_modules/
+dist/
+build/
+.DS_Store
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Development tools (not required for project runtime)
+renren-generator/
+gulimall-test-sso-client/
+gulimall-test-sso-server/

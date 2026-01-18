@@ -1,0 +1,65 @@
+server:
+  port: 10000
+  servlet:
+    session:
+      timeout: 30m
+
+spring:
+  application:
+    name: gulimall-product
+  datasource:
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:your_password}
+    url: jdbc:mysql://${DB_HOST:localhost}:3306/gulimall_pms?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR:localhost:8848}
+
+    sentinel:
+      transport:
+        # Configure sentinel dashboard address
+        dashboard: ${SENTINEL_DASHBOARD:localhost:8080}
+
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+
+# Enable feign support for sentinel
+feign:
+  sentinel:
+    enabled: true
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+
+    # Disable thymeleaf cache
+  thymeleaf:
+    cache: false
+
+  session:
+    store-type: redis
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+
+  # Set auto-increment primary key for entity classes
+  global-config:
+    db-config:
+      id-type: auto
+      # Logical delete
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+logging:
+  level:
+    com.xunqi.gulimall: error
+
+# Expose all endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
