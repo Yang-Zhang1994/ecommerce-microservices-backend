@@ -194,9 +194,8 @@ cp application.yml.example application.yml
 
 ### Backend Management System
 
-![Backend Login](https://images.gitee.com/uploads/images/2020/0714/193422_cd40fc31_4914148.png)
-
-![Product Management](https://images.gitee.com/uploads/images/2020/0714/193422_d1a789d5_4914148.png)
+![Backend Login](docs/images/login.png)
+![Product Base Attributes Management](docs/images/base-attributes.png)
 
 
 ## 📝 Development Standards
