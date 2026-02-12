@@ -1,0 +1,56 @@
+# 开发环境：关闭 Consul，使用静态 URI 转发到本机各服务（无需 Consul）
+spring:
+  cloud:
+    consul:
+      discovery:
+        enabled: false
+    gateway:
+      routes:
+        - id: captcha-route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/captcha.jpg
+          filters:
+            - RewritePath=/captcha.jpg, /api/captcha.jpg
+        - id: gulimall-coupon-route
+          uri: http://localhost:12000
+          predicates:
+            - Path=/api/coupon/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        - id: gulimall-member-route
+          uri: http://localhost:8000
+          predicates:
+            - Path=/api/member/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        - id: gulimall-order-route
+          uri: http://localhost:9000
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        - id: gulimall-ware-route
+          uri: http://localhost:11000
+          predicates:
+            - Path=/api/ware/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        - id: product_route
+          uri: http://localhost:10000
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        - id: third_party_route
+          uri: http://localhost:30000
+          predicates:
+            - Path=/api/third-party/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        - id: admin_route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /api/$\{segment}

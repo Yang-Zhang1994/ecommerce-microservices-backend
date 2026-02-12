@@ -1,0 +1,16 @@
+# 测试时禁用 AWS 配置导入与自动配置，避免 SDK 要求 region/凭证导致测试失败
+spring:
+  application:
+    name: gulimall-third-party
+  config:
+    import: []
+  autoconfigure:
+    exclude:
+      - io.awspring.cloud.autoconfigure.config.secretsmanager.SecretsManagerAutoConfiguration
+      - io.awspring.cloud.autoconfigure.config.parameterstore.ParameterStoreAutoConfiguration
+
+# 测试时 S3 相关 Bean 需 aws.s3.bucket，可在此或 profile 中配置
+aws:
+  s3:
+    bucket: test-bucket
+  region: us-east-2

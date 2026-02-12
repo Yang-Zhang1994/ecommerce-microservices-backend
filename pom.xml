@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.2</version>
+        <version>3.2.5</version>
         <relativePath/>
     </parent>
 
@@ -20,7 +20,9 @@
 
     <properties>
         <java.version>17</java.version>
-        <spring-cloud.version>2023.0.3</spring-cloud.version>
+        <spring-cloud.version>2023.0.2</spring-cloud.version>
+        <spring-cloud-consul.version>4.0.3</spring-cloud-consul.version>
+        <spring-cloud-aws.version>3.2.0</spring-cloud-aws.version>
     </properties>
 
     <dependencyManagement>
@@ -29,6 +31,19 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-consul-discovery</artifactId>
+                <version>${spring-cloud-consul.version}</version>
+            </dependency>
+            <!-- Spring Cloud AWS BOM (Secrets Manager, Parameter Store, etc.) -->
+            <dependency>
+                <groupId>io.awspring.cloud</groupId>
+                <artifactId>spring-cloud-aws-dependencies</artifactId>
+                <version>${spring-cloud-aws.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -41,6 +56,12 @@
         <module>gulimall-order</module>
         <module>gulimall-product</module>
         <module>gulimall-ware</module>
+        <module>renren-fast</module>
+        <module>renren-generator</module>
+        <module>gulimall-common</module>
+        <module>gulimall-gateway</module>
+        <module>gulimall-third-party</module>
+        <module>gulimall-search</module>
     </modules>
 </project>
 

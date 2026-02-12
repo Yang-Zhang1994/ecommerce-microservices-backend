@@ -1,0 +1,24 @@
+# 测试时禁用 AWS 配置导入与自动配置，避免 SDK 要求 region/凭证导致测试失败
+spring:
+  application:
+    name: gulimall-product
+  config:
+    import: []
+  autoconfigure:
+    exclude:
+      - io.awspring.cloud.autoconfigure.config.secretsmanager.SecretsManagerAutoConfiguration
+      - io.awspring.cloud.autoconfigure.config.parameterstore.ParameterStoreAutoConfiguration
+  profiles:
+    active: dev
+  # 测试用数据源（与 main 一致，避免未连 AWS 时缺配置）
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/gulimall_pms
+    username: postgres
+    password: ***REMOVED***
+  jpa:
+    hibernate:
+      ddl-auto: none
+  sql:
+    init:
+      mode: never

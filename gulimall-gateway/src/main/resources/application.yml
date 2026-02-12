@@ -1,0 +1,119 @@
+server:
+  port: 88
+
+# 本地开发默认使用 dev profile（关闭 Consul，静态 URI 转发）；生产环境通过 SPRING_PROFILES_ACTIVE 覆盖
+spring:
+  profiles:
+    active: dev
+  main:
+    web-application-type: reactive
+  application:
+    name: gulimall-gateway
+  # 从 AWS 导入配置（可选：本地无 AWS 时仍可启动）
+  config:
+    import:
+      # 敏感配置（如 API 密钥、签名密钥）→ Secrets Manager
+      - optional:aws-secretsmanager:gulimall/gateway/config
+      # 非敏感配置 → Parameter Store，加载 /gulimall/gateway/ 下的参数
+      - optional:aws-parameterstore:/gulimall/gateway/
+  cloud:
+    # AWS 区域（Secrets Manager / Parameter Store 用；也可用环境变量 AWS_REGION）
+    aws:
+      region:
+        static: us-east-2
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        hostname: host.docker.internal
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+      routes:
+        # 优惠券服务路由
+        - id: gulimall-coupon-route
+          uri: lb://gulimall-coupon
+          predicates:
+            - Path=/api/coupon/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        
+        # 会员服务路由
+        - id: gulimall-member-route
+          uri: lb://gulimall-member
+          predicates:
+            - Path=/api/member/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        
+        # 订单服务路由
+        - id: gulimall-order-route
+          uri: lb://gulimall-order
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        
+        # 商品服务路由
+#        - id: gulimall-product-route
+#          uri: lb://gulimall-product
+#          predicates:
+#            - Path=/api/product/**
+#          filters:
+#            - RewritePath=/api/product/(?<segment>.*), /$\{segment}
+        
+        # 仓储服务路由
+        - id: gulimall-ware-route
+          uri: lb://gulimall-ware
+          predicates:
+            - Path=/api/ware/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+        
+#        # 测试路由 - 百度
+#        - id: test_route
+#          uri: https://www.baidu.com
+#          predicates:
+#            - Query=url, baidu
+#
+#        # 测试路由 - QQ
+#        - id: qq_route
+#          uri: https://www.qq.com
+#          predicates:
+#            - Query=url, qq
+
+        # 验证码路由 - 必须放在 /api/** 之前
+        - id: captcha-route
+          uri: lb://renren-fast
+          predicates:
+            - Path=/captcha.jpg
+          filters:
+            - RewritePath=/captcha.jpg, /renren-fast/captcha.jpg
+
+        # Product service route
+        - id: product_route
+          uri: lb://gulimall-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+        # Third-party service route
+        - id: third_party_route
+          uri: lb://gulimall-third-party
+          predicates:
+            - Path=/api/third-party/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+        # ... 其他路由 ...
+        - id: admin_route
+          uri: lb://renren-fast
+          predicates:
+            - Path=/api/**
+          filters:
+              - RewritePath=/api/(?<segment>.*), /renren-fast/$\{segment}
+
+
+

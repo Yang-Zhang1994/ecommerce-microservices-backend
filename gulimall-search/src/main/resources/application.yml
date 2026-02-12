@@ -1,0 +1,26 @@
+server:
+  port: 12000
+
+spring:
+  application:
+    name: gulimall-search
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        hostname: host.docker.internal
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+
+# Elasticsearch 配置
+elasticsearch:
+  host: 192.168.56.10  # 虚拟机中的 Elasticsearch 地址
+  port: 9200
+  scheme: http
+
+logging:
+  level:
+    com.atguigu.gulimall.search: debug
+

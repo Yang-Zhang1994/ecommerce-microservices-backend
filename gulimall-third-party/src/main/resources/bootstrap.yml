@@ -1,0 +1,4 @@
+# Bootstrap no longer used (was Nacos config). OSS config is in application.yml under alibaba.cloud
+spring:
+  application:
+    name: gulimall-third-party

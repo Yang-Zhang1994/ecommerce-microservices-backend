@@ -1,0 +1,51 @@
+server:
+  port: 8000
+
+# CouponApi uses Consul service discovery (gulimall-coupon)
+
+spring:
+  application:
+    name: gulimall-member
+  # 从 AWS 导入配置（可选：本地无 AWS 时仍可启动）
+  config:
+    import:
+      - optional:aws-secretsmanager:gulimall/member/datasource
+      - optional:aws-parameterstore:/gulimall/member/
+  profiles:
+    active: dev
+  cloud:
+    # AWS 区域（Secrets Manager / Parameter Store 用；也可用环境变量 AWS_REGION）
+    aws:
+      region:
+        static: us-east-2
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        hostname: host.docker.internal
+        # Register with IP so load balancer returns reachable IP (avoids UnresolvedAddressException for host.docker.internal on host)
+        prefer-ip-address: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/ecommerce_ums
+    username: postgres
+    password: ***REMOVED***
+  sql:
+    init:
+      mode: never
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+
+logging:
+  level:
+    com.atguigu.gulimall.member: debug

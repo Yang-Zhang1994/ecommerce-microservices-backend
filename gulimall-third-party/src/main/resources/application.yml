@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: gulimall-third-party
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        hostname: host.docker.internal
+
+# AWS S3 for presigned URL upload. Bucket: ecommerce-uploads-2 (us-east-2)
+# 凭证由环境变量 AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY 提供（或本机 ~/.aws/credentials）
+aws:
+  region: us-east-2
+  s3:
+    bucket: ecommerce-uploads-2
+    presign-expire-minutes: 30
+    public-read: false  # 桶禁止 ACL 时保持 false；允许 ACL 且需公网读时可改为 true，否则用桶策略实现公网读
+
+server:
+  port: 30000
+
+
+

@@ -1,0 +1,40 @@
+server:
+  port: 11000
+
+spring:
+  application:
+    name: gulimall-ware
+  profiles:
+    active: dev  # use application-dev.yml (e.g. RDS) when running locally
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        hostname: host.docker.internal
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/ecommerce_wms
+    username: postgres
+    password: ***REMOVED***
+  sql:
+    init:
+      mode: never
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    com.atguigu.gulimall.ware: debug # 设置当前项目的日志级别为 DEBUG，便于调试 SQL 语句
+    org.springframework.cloud: info # 减少一些不必要的日志输出
+
+

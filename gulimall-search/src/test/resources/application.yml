@@ -1,0 +1,16 @@
+# 测试时禁用 AWS 配置导入与自动配置，避免 SDK 要求 region/凭证导致测试失败
+spring:
+  application:
+    name: gulimall-search
+  config:
+    import: []
+  autoconfigure:
+    exclude:
+      - io.awspring.cloud.autoconfigure.config.secretsmanager.SecretsManagerAutoConfiguration
+      - io.awspring.cloud.autoconfigure.config.parameterstore.ParameterStoreAutoConfiguration
+
+# 测试用 Elasticsearch 占位（与 main 一致，实际需本机或虚拟机 ES）
+elasticsearch:
+  host: 192.168.56.10
+  port: 9200
+  scheme: http
