@@ -43,6 +43,10 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <jvmArguments>-Xms512m -Xmx512m</jvmArguments>
+                </configuration>
             </plugin>
         </plugins>
     </build>

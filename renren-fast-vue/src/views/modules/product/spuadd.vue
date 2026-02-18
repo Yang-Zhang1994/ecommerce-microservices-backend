@@ -673,10 +673,14 @@ export default {
           method: "get",
           params: this.$http.adornParams({})
         }).then(({ data }) => {
-          //先对表单的baseAttrs进行初始化
-          data.data.forEach(item => {
+          // Normalize: backend may return attrs as null for groups with no attrs
+          const groups = (data.data || []).map(item => ({
+            ...item,
+            attrs: item.attrs || []
+          }));
+          groups.forEach(item => {
             let attrArray = [];
-            item.attrs.forEach(attr => {
+            (item.attrs || []).forEach(attr => {
               attrArray.push({
                 attrId: attr.attrId,
                 attrValues: "",
@@ -686,16 +690,16 @@ export default {
             this.dataResp.baseAttrs.push(attrArray);
           });
           this.dataResp.steped[0] = 0;
-          this.dataResp.attrGroups = data.data;
+          this.dataResp.attrGroups = groups;
         });
       }
     },
 
     submitSkus() {
       console.log("~~~~~", JSON.stringify(this.spu));
-      this.$confirm("将要提交商品数据，需要一小段时间，是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
+      this.$confirm("Product data will be submitted; this may take a moment. Continue?", "Tip", {
+        confirmButtonText: "Confirm",
+        cancelButtonText: "Cancel",
         type: "warning"
       })
         .then(() => {
@@ -707,7 +711,7 @@ export default {
             if (data.code == 0) {
               this.$message({
                 type: "success",
-                message: "新增商品成功!"
+                message: "Product added successfully!"
               });
               this.step = 4;
             } else {

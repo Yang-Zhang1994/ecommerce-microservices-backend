@@ -199,7 +199,8 @@ export default {
   },
   components: { CategoryCascader },
   methods: {
-    init(id) {
+    // id: 属性 ID（编辑时有值）；currentCatId: 左侧树选中的三级分类 ID（添加时传入，用于预填分类）
+    init(id, currentCatId) {
       this.dataForm.attrId = id || 0;
       this.dataForm.attrType = this.type;
       this.visible = true;
@@ -223,12 +224,22 @@ export default {
               this.dataForm.enable = data.attr.enable;
               this.dataForm.catelogId = data.attr.catelogId;
               this.dataForm.showDesc = data.attr.showDesc;
-              //attrGroupId
-              //catelogPath
               this.catelogPath = data.attr.catelogPath;
               this.$nextTick(() => {
                 this.dataForm.attrGroupId = data.attr.attrGroupId;
               });
+            }
+          });
+        } else if (currentCatId) {
+          // 添加时：用左侧选中的分类预填，保证新属性与列表同分类
+          this.$http({
+            url: this.$http.adornUrl(`/product/category/info/${currentCatId}`),
+            method: "get",
+            params: this.$http.adornParams()
+          }).then(({ data }) => {
+            if (data && data.code === 0 && data.data && data.data.catelogPath) {
+              this.catelogPath = data.data.catelogPath;
+              this.dataForm.catelogId = currentCatId;
             }
           });
         }
@@ -249,7 +260,9 @@ export default {
               searchType: this.dataForm.searchType,
               valueType: this.dataForm.valueType,
               icon: this.dataForm.icon,
-              valueSelect: this.dataForm.valueSelect.join(";"),
+              valueSelect: Array.isArray(this.dataForm.valueSelect)
+                ? this.dataForm.valueSelect.join(";")
+                : (this.dataForm.valueSelect || ""),
               attrType: this.dataForm.attrType,
               enable: this.dataForm.enable,
               catelogId: this.dataForm.catelogId,
@@ -258,15 +271,9 @@ export default {
             })
           }).then(({ data }) => {
             if (data && data.code === 0) {
-              this.$message({
-                message: "Operation successful",
-                type: "success",
-                duration: 1500,
-                onClose: () => {
-                  this.visible = false;
-                  this.$emit("refreshDataList");
-                }
-              });
+              this.$emit("refreshDataList");
+              this.visible = false;
+              this.$message.success("Operation successful");
             } else {
               this.$message.error(data.msg);
             }

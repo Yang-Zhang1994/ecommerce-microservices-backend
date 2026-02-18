@@ -19,6 +19,7 @@ spring:
       discovery:
         enabled: true
         hostname: host.docker.internal
+        prefer-ip-address: true
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/gulimall_pms

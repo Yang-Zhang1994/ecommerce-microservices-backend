@@ -18,13 +18,13 @@
         <el-input v-model="dataForm.skuNum" placeholder="采购数量"></el-input>
       </el-form-item>
       <el-form-item label="仓库" prop="wareId">
-        <el-select v-model="dataForm.wareId" placeholder="请选择仓库" clearable>
+        <el-select v-model="dataForm.wareId" placeholder="Select warehouse" clearable>
           <el-option :label="w.name" :value="w.id" v-for="w in wareList" :key="w.id"></el-option>
         </el-select>
       </el-form-item>
       <!-- [0新建，1已分配，2正在采购，3已完成，4采购失败] -->
       <!-- <el-form-item label="状态" prop="status">
-        <el-select v-model="dataForm.status" placeholder="请选择状态" clearable>
+        <el-select v-model="dataForm.status" placeholder="Select status" clearable>
           <el-option label="新建" :value="0"></el-option>
           <el-option label="已分配" :value="1"></el-option>
           <el-option label="正在采购" :value="2"></el-option>

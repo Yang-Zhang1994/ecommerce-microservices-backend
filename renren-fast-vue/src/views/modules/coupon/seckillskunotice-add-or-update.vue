@@ -27,7 +27,7 @@
         <el-input v-model="dataForm.sendTime" placeholder="发送时间"></el-input>
       </el-form-item>
       <el-form-item label="通知方式" prop="noticeType">
-        <el-select v-model="dataForm.noticeType" placeholder="请选择">
+        <el-select v-model="dataForm.noticeType" placeholder="Select">
           <el-option  label="短信" :value="0"></el-option>
           <el-option  label="邮件" :value="1"></el-option>
         </el-select>

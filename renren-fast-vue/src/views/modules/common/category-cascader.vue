@@ -11,7 +11,7 @@
     <el-cascader
       filterable
       clearable 
-      placeholder="试试搜索：手机"
+      placeholder="Try searching: Mobile phone"
       v-model="paths"
       :options="categorys"
       :props="setting"

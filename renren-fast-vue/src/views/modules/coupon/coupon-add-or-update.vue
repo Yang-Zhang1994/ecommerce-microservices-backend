@@ -12,7 +12,7 @@
       label-width="120px"
     >
       <el-form-item label="优惠卷类型" prop="couponType">
-        <el-select v-model="dataForm.couponType" placeholder="请选择">
+        <el-select v-model="dataForm.couponType" placeholder="Select">
           <el-option label="全场赠券" :value="0"></el-option>
           <el-option label="会员赠券" :value="1"></el-option>
           <el-option label="购物赠券" :value="2"></el-option>
@@ -47,7 +47,7 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="使用类型" prop="useType">
-        <el-select v-model="dataForm.useType" placeholder="请选择">
+        <el-select v-model="dataForm.useType" placeholder="Select">
           <el-option :value="0" label="全场通用"></el-option>
           <el-option :value="1" label="指定分类"></el-option>
           <el-option :value="2" label="指定商品"></el-option>
@@ -72,7 +72,7 @@
         <el-input v-model="dataForm.code" placeholder="优惠码"></el-input>
       </el-form-item>
       <el-form-item label="领取所需等级" prop="memberLevel">
-        <el-select v-model="dataForm.memberLevel" placeholder="请选择">
+        <el-select v-model="dataForm.memberLevel" placeholder="Select">
           <el-option :value="0" label="不限制"></el-option>
           <el-option
             v-for="item in memberLevels"

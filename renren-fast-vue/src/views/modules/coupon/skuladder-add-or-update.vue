@@ -24,7 +24,7 @@
         <el-input v-model="dataForm.price" placeholder="折后价"></el-input>
       </el-form-item>
       <el-form-item label="是否叠加其他优惠" prop="addOther">
-        <el-select v-model="dataForm.addOther" placeholder="请选择">
+        <el-select v-model="dataForm.addOther" placeholder="Select">
           <el-option label="不可叠加" :value="0"></el-option>
           <el-option label="不可叠加" :value="1"></el-option>
         </el-select>

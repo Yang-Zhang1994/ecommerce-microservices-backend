@@ -27,6 +27,7 @@ spring:
       discovery:
         enabled: true
         hostname: host.docker.internal
+        prefer-ip-address: true
     gateway:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
@@ -113,7 +114,8 @@ spring:
           predicates:
             - Path=/api/**
           filters:
-              - RewritePath=/api/(?<segment>.*), /renren-fast/$\{segment}
+            # renren-fast context-path is /api, so keep /api/xxx as path
+            - RewritePath=/api/(?<segment>.*), /api/$\{segment}
 
 
 

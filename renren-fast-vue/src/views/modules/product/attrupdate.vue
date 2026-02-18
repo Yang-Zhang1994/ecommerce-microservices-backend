@@ -27,7 +27,7 @@
                     filterable
                     allow-create
                     default-first-option
-                    placeholder="请选择或输入值"
+                    placeholder="Select or enter value"
                   >
                     <el-option
                       v-for="(val,vidx) in attr.valueSelect.split(';')"
@@ -40,13 +40,13 @@
                     v-model="dataResp.baseAttrs[gidx][aidx].showDesc"
                     :true-label="1"
                     :false-label="0"
-                  >快速展示</el-checkbox>
+                  >Quick Display</el-checkbox>
                 </el-form-item>
               </el-form>
             </el-tab-pane>
           </el-tabs>
           <div style="margin:auto">
-            <el-button type="success" style="float:right" @click="submitSpuAttrs">确认修改</el-button>
+            <el-button type="success" style="float:right" @click="submitSpuAttrs">Confirm Changes</el-button>
           </div>
         </el-card>
       </el-col>
@@ -102,10 +102,11 @@ export default {
         method: "get",
         params: this.$http.adornParams({})
       }).then(({ data }) => {
-        //先对表单的baseAttrs进行初始化
-        data.data.forEach(item => {
+        // Normalize: backend may return attrs as null for groups with no attrs
+        const groups = (data.data || []).map(item => ({ ...item, attrs: item.attrs || [] }));
+        groups.forEach(item => {
           let attrArray = [];
-          item.attrs.forEach(attr => {
+          (item.attrs || []).forEach(attr => {
             let v = "";
             if (_this.spuAttrsMap["" + attr.attrId]) {
               v = _this.spuAttrsMap["" + attr.attrId].attrValue.split(";");
@@ -124,7 +125,7 @@ export default {
           });
           this.dataResp.baseAttrs.push(attrArray);
         });
-        this.dataResp.attrGroups = data.data;
+        this.dataResp.attrGroups = groups;
       });
     },
     submitSpuAttrs() {
@@ -151,9 +152,9 @@ export default {
         });
       });
 
-      this.$confirm("修改商品规格信息, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
+      this.$confirm("Update product specifications. Continue?", "Confirm", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
         type: "warning"
       })
         .then(() => {
@@ -164,14 +165,14 @@ export default {
           }).then(({ data }) => {
             this.$message({
               type: "success",
-              message: "属性修改成功!"
+              message: "Specifications updated successfully!"
             });
           });
         })
         .catch((e) => {
           this.$message({
             type: "info",
-            message: "已取消修改"+e
+            message: "Update cancelled"
           });
         });
     }

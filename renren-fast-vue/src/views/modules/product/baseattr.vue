@@ -201,11 +201,11 @@ export default {
     selectionChangeHandle(val) {
       this.dataListSelections = val;
     },
-    // add / edit
+    // add / edit：添加时传入当前选中的分类 ID，保证新属性与列表同分类
     addOrUpdateHandle(id) {
       this.addOrUpdateVisible = true;
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(id);
+        this.$refs.addOrUpdate.init(id, id ? undefined : this.catId);
       });
     },
     // delete

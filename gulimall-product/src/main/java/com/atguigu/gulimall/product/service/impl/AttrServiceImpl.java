@@ -121,10 +121,14 @@ public class AttrServiceImpl implements AttrService {
         List<AttrRespVo> respVoList = records.stream().map((attrEntity) -> {
             AttrRespVo attrRespVo = new AttrRespVo();
             BeanUtils.copyProperties(attrEntity, attrRespVo);
-            categoryRepository.findById(attrEntity.getCatelogId()).ifPresent(c -> attrRespVo.setCatelogName(c.getName()));
+            if (attrEntity.getCatelogId() != null) {
+                categoryRepository.findById(attrEntity.getCatelogId()).ifPresent(c -> attrRespVo.setCatelogName(c.getName()));
+            }
             if ("base".equalsIgnoreCase(type)) {
                 attrAttrgroupRelationRepository.findByAttrId(attrEntity.getAttrId())
-                        .flatMap(rel -> attrGroupRepository.findById(rel.getAttrGroupId()))
+                        .flatMap(rel -> rel.getAttrGroupId() != null
+                                ? attrGroupRepository.findById(rel.getAttrGroupId())
+                                : java.util.Optional.empty())
                         .ifPresent(g -> attrRespVo.setGroupName(g.getAttrGroupName()));
             }
             return attrRespVo;

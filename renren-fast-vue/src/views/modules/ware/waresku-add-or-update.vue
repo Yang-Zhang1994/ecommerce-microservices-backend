@@ -15,7 +15,7 @@
         <el-input v-model="dataForm.skuId" placeholder="sku_id"></el-input>
       </el-form-item>
       <el-form-item label="仓库" prop="wareId">
-        <el-select v-model="dataForm.wareId" placeholder="请选择仓库" clearable>
+        <el-select v-model="dataForm.wareId" placeholder="Select warehouse" clearable>
           <el-option :label="w.name" :value="w.id" v-for="w in wareList" :key="w.id"></el-option>
         </el-select>
       </el-form-item>
