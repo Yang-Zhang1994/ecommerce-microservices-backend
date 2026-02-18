@@ -24,6 +24,7 @@ E-commerce backend and admin system built as a **microservices** suite: Spring B
 | Backend | Java 17, Spring Boot 3.2, Spring Cloud 2023 |
 | Service discovery | Consul |
 | Gateway | Spring Cloud Gateway |
+| Inter-service calls | **HTTP Interface** (Spring 6 `@HttpExchange`), **RestClient** (load-balanced via Consul) |
 | Data | PostgreSQL (**AWS RDS** per-service) |
 | Config | **AWS Secrets Manager**, **AWS Systems Manager Parameter Store** |
 | Object storage | **AWS S3** (presigned URL upload via gulimall-third-party) |
