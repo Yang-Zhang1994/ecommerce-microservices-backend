@@ -1,9 +1,9 @@
-# Use same PostgreSQL as renren-fast (e.g. AWS RDS) when running with profile=dev
+# Override with env: SPRING_DATASOURCE_URL (e.g. RDS), SPRING_DATASOURCE_USERNAME, SPRING_DATASOURCE_PASSWORD
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://***REMOVED***:5432/ecommerce_wms
-    username: postgres
-    password: ***REMOVED***
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ecommerce_wms}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
   jpa:
     show-sql: true

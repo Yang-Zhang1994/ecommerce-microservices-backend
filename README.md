@@ -98,7 +98,12 @@ Start after Consul: Gateway (88) → renren-fast (8080) → gulimall-product (10
 
 ## Configuration
 
-Each module has `application.yml` (and often `application-dev.yml`). Set DB URLs, usernames, and passwords for your environment. For **AWS**: use environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`) or IAM roles; do not commit secrets. When using RDS, Parameter Store, or Secrets Manager, ensure the app has the required IAM permissions.
+Each module has `application.yml` (and often `application-dev.yml`). **Database credentials are not in the repo**; set environment variables for your environment:
+- `SPRING_DATASOURCE_URL` (e.g. `jdbc:postgresql://localhost:5432/your_db`)
+- `SPRING_DATASOURCE_USERNAME`
+- `SPRING_DATASOURCE_PASSWORD`
+
+Defaults in config are localhost URL and empty password. For **AWS**: use `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, or IAM roles; do not commit secrets.
 
 ---
 
