@@ -1,52 +1,52 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-    <el-form-item label="order_id" prop="orderId">
-      <el-input v-model="dataForm.orderId" placeholder="order_id"></el-input>
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="180px">
+    <el-form-item label="Order ID" prop="orderId">
+      <el-input v-model="dataForm.orderId" placeholder="Order ID"></el-input>
     </el-form-item>
-    <el-form-item label="order_sn" prop="orderSn">
-      <el-input v-model="dataForm.orderSn" placeholder="order_sn"></el-input>
+    <el-form-item label="Order SN" prop="orderSn">
+      <el-input v-model="dataForm.orderSn" placeholder="Order SN"></el-input>
     </el-form-item>
-    <el-form-item label="收货人" prop="consignee">
-      <el-input v-model="dataForm.consignee" placeholder="收货人"></el-input>
+    <el-form-item label="Consignee" prop="consignee">
+      <el-input v-model="dataForm.consignee" placeholder="Consignee"></el-input>
     </el-form-item>
-    <el-form-item label="收货人电话" prop="consigneeTel">
-      <el-input v-model="dataForm.consigneeTel" placeholder="收货人电话"></el-input>
+    <el-form-item label="Consignee Phone" prop="consigneeTel">
+      <el-input v-model="dataForm.consigneeTel" placeholder="Consignee Phone"></el-input>
     </el-form-item>
-    <el-form-item label="配送地址" prop="deliveryAddress">
-      <el-input v-model="dataForm.deliveryAddress" placeholder="配送地址"></el-input>
+    <el-form-item label="Delivery Address" prop="deliveryAddress">
+      <el-input v-model="dataForm.deliveryAddress" placeholder="Delivery Address"></el-input>
     </el-form-item>
-    <el-form-item label="订单备注" prop="orderComment">
-      <el-input v-model="dataForm.orderComment" placeholder="订单备注"></el-input>
+    <el-form-item label="Order Comment" prop="orderComment">
+      <el-input v-model="dataForm.orderComment" placeholder="Order Comment"></el-input>
     </el-form-item>
-    <el-form-item label="付款方式【 1:在线付款 2:货到付款】" prop="paymentWay">
-      <el-input v-model="dataForm.paymentWay" placeholder="付款方式【 1:在线付款 2:货到付款】"></el-input>
+    <el-form-item label="Payment Method [1:Online 2:COD]" prop="paymentWay">
+      <el-input v-model="dataForm.paymentWay" placeholder="Payment Method [1:Online Payment 2:Cash on Delivery]"></el-input>
     </el-form-item>
-    <el-form-item label="任务状态" prop="taskStatus">
-      <el-input v-model="dataForm.taskStatus" placeholder="任务状态"></el-input>
+    <el-form-item label="Task Status" prop="taskStatus">
+      <el-input v-model="dataForm.taskStatus" placeholder="Task Status"></el-input>
     </el-form-item>
-    <el-form-item label="订单描述" prop="orderBody">
-      <el-input v-model="dataForm.orderBody" placeholder="订单描述"></el-input>
+    <el-form-item label="Order Description" prop="orderBody">
+      <el-input v-model="dataForm.orderBody" placeholder="Order Description"></el-input>
     </el-form-item>
-    <el-form-item label="物流单号" prop="trackingNo">
-      <el-input v-model="dataForm.trackingNo" placeholder="物流单号"></el-input>
+    <el-form-item label="Tracking Number" prop="trackingNo">
+      <el-input v-model="dataForm.trackingNo" placeholder="Tracking Number"></el-input>
     </el-form-item>
-    <el-form-item label="create_time" prop="createTime">
-      <el-input v-model="dataForm.createTime" placeholder="create_time"></el-input>
+    <el-form-item label="Create Time" prop="createTime">
+      <el-input v-model="dataForm.createTime" placeholder="Create Time"></el-input>
     </el-form-item>
-    <el-form-item label="仓库id" prop="wareId">
-      <el-input v-model="dataForm.wareId" placeholder="仓库id"></el-input>
+    <el-form-item label="Warehouse ID" prop="wareId">
+      <el-input v-model="dataForm.wareId" placeholder="Warehouse ID"></el-input>
     </el-form-item>
-    <el-form-item label="工作单备注" prop="taskComment">
-      <el-input v-model="dataForm.taskComment" placeholder="工作单备注"></el-input>
+    <el-form-item label="Task Comment" prop="taskComment">
+      <el-input v-model="dataForm.taskComment" placeholder="Task Comment"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -74,43 +74,43 @@
         },
         dataRule: {
           orderId: [
-            { required: true, message: 'order_id不能为空', trigger: 'blur' }
+            { required: true, message: 'Order ID is required', trigger: 'blur' }
           ],
           orderSn: [
-            { required: true, message: 'order_sn不能为空', trigger: 'blur' }
+            { required: true, message: 'Order SN is required', trigger: 'blur' }
           ],
           consignee: [
-            { required: true, message: '收货人不能为空', trigger: 'blur' }
+            { required: true, message: 'Consignee is required', trigger: 'blur' }
           ],
           consigneeTel: [
-            { required: true, message: '收货人电话不能为空', trigger: 'blur' }
+            { required: true, message: 'Consignee phone is required', trigger: 'blur' }
           ],
           deliveryAddress: [
-            { required: true, message: '配送地址不能为空', trigger: 'blur' }
+            { required: true, message: 'Delivery address is required', trigger: 'blur' }
           ],
           orderComment: [
-            { required: true, message: '订单备注不能为空', trigger: 'blur' }
+            { required: true, message: 'Order comment is required', trigger: 'blur' }
           ],
           paymentWay: [
-            { required: true, message: '付款方式【 1:在线付款 2:货到付款】不能为空', trigger: 'blur' }
+            { required: true, message: 'Payment method is required', trigger: 'blur' }
           ],
           taskStatus: [
-            { required: true, message: '任务状态不能为空', trigger: 'blur' }
+            { required: true, message: 'Task status is required', trigger: 'blur' }
           ],
           orderBody: [
-            { required: true, message: '订单描述不能为空', trigger: 'blur' }
+            { required: true, message: 'Order description is required', trigger: 'blur' }
           ],
           trackingNo: [
-            { required: true, message: '物流单号不能为空', trigger: 'blur' }
+            { required: true, message: 'Tracking number is required', trigger: 'blur' }
           ],
           createTime: [
-            { required: true, message: 'create_time不能为空', trigger: 'blur' }
+            { required: true, message: 'Create time is required', trigger: 'blur' }
           ],
           wareId: [
-            { required: true, message: '仓库id不能为空', trigger: 'blur' }
+            { required: true, message: 'Warehouse ID is required', trigger: 'blur' }
           ],
           taskComment: [
-            { required: true, message: '工作单备注不能为空', trigger: 'blur' }
+            { required: true, message: 'Task comment is required', trigger: 'blur' }
           ]
         }
       }
@@ -172,7 +172,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

@@ -70,11 +70,13 @@ router.beforeEach((to, from, next) => {
       params: http.adornParams()
     }).then(({ data }) => {
       if (data && data.code === 0) {
-        // Translate menu names before storing and using
+        // Translate menu names first
         const translatedMenuList = translateMenuList(data.menuList)
-        fnAddDynamicMenuRoutes(translatedMenuList)
+        // Then filter out unfinished menus (Order System, Content Management, etc.)
+        const filteredMenuList = filterUnfinishedMenus(translatedMenuList)
+        fnAddDynamicMenuRoutes(filteredMenuList)
         router.options.isAddDynamicMenuRoutes = true
-        sessionStorage.setItem('menuList', JSON.stringify(translatedMenuList || '[]'))
+        sessionStorage.setItem('menuList', JSON.stringify(filteredMenuList || '[]'))
         sessionStorage.setItem('permissions', JSON.stringify(data.permissions || '[]'))
         next({ ...to, replace: true })
       } else {
@@ -94,23 +96,61 @@ router.beforeEach((to, from, next) => {
  * @param {*} menuList Menu list from backend
  */
 function filterUnfinishedMenus(menuList) {
-  // Menu IDs to hide: 3=角色管理, 4=菜单管理, 5=SQL监控, 6=定时任务, 27=参数管理, 29=系统日志, 30=文件上传
+  // System Management: only Admin List(2)
   const hiddenMenuIds = [3, 4, 5, 6, 27, 29, 30]
-  
+  // Marketing: hide these coupon routes (keep only spubounds and skufullreduction)
+  const hiddenCouponUrls = [
+    'coupon/coupon',
+    'coupon/history',
+    'coupon/couponhistory',
+    'coupon/subject',
+    'coupon/homesubject',
+    'coupon/seckill',
+    'coupon/seckillpromotion',
+    'coupon/seckillsession',
+    'coupon/seckillskurelation',
+    'coupon/seckillskunotice',
+    'coupon/memberprice',
+    'coupon/skuladder',
+    'coupon/couponspurelation',
+    'coupon/couponspucategoryrelation',
+    'coupon/homeadv',
+    'coupon/homesubjectspu'
+  ]
+  // Warehouse: hide Stock Task (库存工作单) - not yet implemented
+  const hiddenWareUrls = ['ware/task', 'ware/wareordertask']
+  // Order System: hide entire module - not yet implemented
+  const hiddenOrderUrls = ['order/']
+  // Content Management: hide entire module - not yet implemented
+  const hiddenContentUrls = ['content/']
+  // User System: keep only Member Level, hide the rest
+  const hiddenMemberUrls = [
+    'member/member',           // Member List
+    'member/growth',           // Growth
+    'member/growthchangehistory',
+    'member/integrationchangehistory', // Points Change
+    'member/statistics',       // Statistics
+    'member/memberstatisticsinfo'
+  ]
+  const allHiddenUrls = [...hiddenCouponUrls, ...hiddenWareUrls, ...hiddenOrderUrls, ...hiddenContentUrls, ...hiddenMemberUrls]
+
+  function shouldHideByUrl(url) {
+    if (!url || typeof url !== 'string') return false
+    const u = url.replace(/^\//, '').toLowerCase()
+    return allHiddenUrls.some(h => u.startsWith(h))
+  }
+
   function filterMenu(menu) {
-    // If this menu should be hidden, return null
-    if (hiddenMenuIds.includes(menu.menuId)) {
-      return null
-    }
-    
-    // If menu has children, filter them recursively
+    if (hiddenMenuIds.includes(menu.menuId)) return null
+    if (menu.url && shouldHideByUrl(menu.url)) return null
     if (menu.list && menu.list.length > 0) {
       menu.list = menu.list.map(filterMenu).filter(item => item !== null)
+      // Remove parent with no visible children (e.g. Order System after hiding all sub-items)
+      if (menu.list.length === 0) return null
     }
-    
     return menu
   }
-  
+
   return menuList.map(filterMenu).filter(item => item !== null)
 }
 

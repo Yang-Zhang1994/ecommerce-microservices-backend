@@ -1,22 +1,22 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-    <el-form-item label="仓库名" prop="name">
-      <el-input v-model="dataForm.name" placeholder="仓库名"></el-input>
+    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="140px">
+    <el-form-item label="Warehouse Name" prop="name">
+      <el-input v-model="dataForm.name" placeholder="Warehouse Name"></el-input>
     </el-form-item>
-    <el-form-item label="仓库地址" prop="address">
-      <el-input v-model="dataForm.address" placeholder="仓库地址"></el-input>
+    <el-form-item label="Warehouse Address" prop="address">
+      <el-input v-model="dataForm.address" placeholder="Warehouse Address"></el-input>
     </el-form-item>
-    <el-form-item label="区域编码" prop="areacode">
-      <el-input v-model="dataForm.areacode" placeholder="区域编码"></el-input>
+    <el-form-item label="Area Code" prop="areacode">
+      <el-input v-model="dataForm.areacode" placeholder="Area Code"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -34,13 +34,13 @@
         },
         dataRule: {
           name: [
-            { required: true, message: '仓库名不能为空', trigger: 'blur' }
+            { required: true, message: 'Warehouse name is required', trigger: 'blur' }
           ],
           address: [
-            { required: true, message: '仓库地址不能为空', trigger: 'blur' }
+            { required: true, message: 'Warehouse address is required', trigger: 'blur' }
           ],
           areacode: [
-            { required: true, message: '区域编码不能为空', trigger: 'blur' }
+            { required: true, message: 'Area code is required', trigger: 'blur' }
           ]
         }
       }
@@ -82,7 +82,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

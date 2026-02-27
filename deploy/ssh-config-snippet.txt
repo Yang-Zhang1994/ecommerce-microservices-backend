@@ -1,0 +1,11 @@
+# 追加到本机 ~/.ssh/config，减少 SSH 超时、断线
+# 用法：cat deploy/ssh-config-snippet.txt >> ~/.ssh/config
+# 然后：ssh gulimall-ec2
+
+Host gulimall-ec2
+  HostName 3.145.65.47
+  User ubuntu
+  IdentityFile ~/Downloads/ecommerce-key.pem
+  ServerAliveInterval 30
+  ServerAliveCountMax 6
+  ConnectTimeout 20

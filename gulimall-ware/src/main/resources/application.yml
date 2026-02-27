@@ -5,7 +5,7 @@ spring:
   application:
     name: gulimall-ware
   profiles:
-    active: dev  # use application-dev.yml (e.g. RDS) when running locally
+    active: dev
   cloud:
     consul:
       host: localhost
@@ -13,10 +13,12 @@ spring:
       discovery:
         enabled: true
         hostname: host.docker.internal
+        prefer-ip-address: true
+        health-check-path: /actuator/health
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ecommerce_wms}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    url: ${SPRING_DATASOURCE_URL:}
+    username: ${SPRING_DATASOURCE_USERNAME:}
     password: ${SPRING_DATASOURCE_PASSWORD:}
   sql:
     init:

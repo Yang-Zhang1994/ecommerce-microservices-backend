@@ -5,14 +5,8 @@ spring:
   application:
     name: gulimall-product
   profiles:
-    active: dev  # use application-dev.yml (e.g. RDS) when running locally
+    active: dev
   cloud:
-    alicloud:
-      access-key: ${ALIYUN_ACCESS_KEY_ID:}
-      secret-key: ${ALIYUN_ACCESS_KEY_SECRET:}
-      oss:
-        endpoint: oss-cn-hangzhou.aliyuncs.com
-        bucket-name: gulimall-a95569
     consul:
       host: localhost
       port: 8500
@@ -22,8 +16,8 @@ spring:
         prefer-ip-address: true
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/gulimall_pms}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    url: ${SPRING_DATASOURCE_URL:}
+    username: ${SPRING_DATASOURCE_USERNAME:}
     password: ${SPRING_DATASOURCE_PASSWORD:}
   sql:
     init:

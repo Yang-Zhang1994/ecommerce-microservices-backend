@@ -11,4 +11,6 @@ import java.util.List;
 public interface PurchaseDetailRepository extends JpaRepository<PurchaseDetailEntity, Long>, JpaSpecificationExecutor<PurchaseDetailEntity> {
 
     List<PurchaseDetailEntity> findByPurchaseId(Long purchaseId);
+
+    List<PurchaseDetailEntity> findByPurchaseIdAndSkuId(Long purchaseId, Long skuId);
 }

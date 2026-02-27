@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.product.entity.SkuImagesEntity;
 import com.atguigu.gulimall.product.service.SkuImagesService;
+import com.atguigu.gulimall.product.vo.SkuImagesSaveBatchVo;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
 
@@ -29,6 +31,35 @@ import com.atguigu.common.utils.R;
 public class SkuImagesController {
     @Autowired
     private SkuImagesService skuImagesService;
+
+    /**
+     * 根据 skuId 查询图片列表
+     */
+    @RequestMapping("/bysku/{skuId}")
+    public R listBySkuId(@PathVariable("skuId") Long skuId){
+        List<SkuImagesEntity> list = skuImagesService.listBySkuId(skuId);
+        return R.ok().put("list", list);
+    }
+
+    /**
+     * 批量保存 SKU 图片（覆盖式，会先删除该 SKU 已有图片）
+     */
+    @RequestMapping("/saveBatch")
+    public R saveBatch(@RequestBody SkuImagesSaveBatchVo vo){
+        List<SkuImagesEntity> entities = new java.util.ArrayList<>();
+        if (vo.getImages() != null && !vo.getImages().isEmpty()) {
+            for (int i = 0; i < vo.getImages().size(); i++) {
+                SkuImagesSaveBatchVo.SkuImageItem item = vo.getImages().get(i);
+                SkuImagesEntity e = new SkuImagesEntity();
+                e.setImgUrl(item.getImgUrl());
+                e.setImgSort(item.getImgSort() != null ? item.getImgSort() : i);
+                e.setDefaultImg(item.getDefaultImg() != null ? item.getDefaultImg() : (i == 0 ? 1 : 0));
+                entities.add(e);
+            }
+        }
+        skuImagesService.saveBatchForSku(vo.getSkuId(), entities);
+        return R.ok();
+    }
 
     /**
      * 列表

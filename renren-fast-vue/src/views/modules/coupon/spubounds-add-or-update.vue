@@ -39,16 +39,16 @@
         },
         dataRule: {
           spuId: [
-            { required: true, message: '不能为空', trigger: 'blur' }
+            { required: true, message: 'SPU ID is required', trigger: 'blur' }
           ],
           growBounds: [
-            { required: true, message: '成长积分不能为空', trigger: 'blur' }
+            { required: true, message: 'Growth Points is required', trigger: 'blur' }
           ],
           buyBounds: [
-            { required: true, message: '购物积分不能为空', trigger: 'blur' }
+            { required: true, message: 'Shopping Points is required', trigger: 'blur' }
           ],
           work: [
-            { required: true, message: '优惠生效情况[1111（四个状态位，从右到左）;0 - 无优惠，成长积分是否赠送;1 - 无优惠，购物积分是否赠送;2 - 有优惠，成长积分是否赠送;3 - 有优惠，购物积分是否赠送【状态位0：不赠送，1：赠送】]不能为空', trigger: 'blur' }
+            { required: true, message: 'Discount Status is required', trigger: 'blur' }
           ]
         }
       }
@@ -92,7 +92,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

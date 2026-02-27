@@ -1,16 +1,16 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-    <el-form-item label="优先级" prop="priority">
-      <el-input v-model="dataForm.priority" placeholder="优先级"></el-input>
+    <el-form-item label="Priority" prop="priority">
+      <el-input v-model="dataForm.priority" placeholder="Priority"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -43,7 +43,7 @@
             { required: true, message: '联系方式不能为空', trigger: 'blur' }
           ],
           priority: [
-            { required: true, message: '优先级不能为空', trigger: 'blur' }
+            { required: true, message: 'Priority is required', trigger: 'blur' }
           ],
           status: [
             { required: true, message: '状态不能为空', trigger: 'blur' }
@@ -112,7 +112,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

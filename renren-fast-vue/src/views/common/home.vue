@@ -5,60 +5,79 @@
       <div class="welcome-content">
         <h2>Welcome to E-Commerce Control Center</h2>
         <p class="welcome-text">Manage your e-commerce platform efficiently with our comprehensive backend system</p>
-        <p class="current-time">{{ currentTime }}</p>
+        <p class="current-time">
+          <i class="el-icon-time"></i> {{ currentTime }}
+        </p>
       </div>
     </el-card>
 
-    <!-- Statistics Cards -->
+    <!-- Empty State Tip (when all zeros) -->
+    <el-alert
+      v-if="isStatsEmpty && !statsLoading"
+      class="empty-tip"
+      type="info"
+      title="Getting Started"
+      :closable="false"
+      show-icon
+    >
+      No data yet. Add admins in
+      <el-button type="text" size="small" @click="navigateTo('admin')">Admin List</el-button>,
+      create products in
+      <el-button type="text" size="small" @click="navigateTo('product')">Product Management</el-button>,
+      or set up inventory in
+      <el-button type="text" size="small" @click="navigateTo('ware')">Inventory</el-button>.
+    </el-alert>
+
+    <!-- Statistics Cards (System Management, Product Management, Inventory) -->
     <el-row :gutter="20" class="stats-row">
       <el-col :xs="12" :sm="12" :md="6" :lg="6" :xl="6">
-        <el-card class="stat-card" shadow="hover">
-          <div class="stat-content">
-            <div class="stat-icon" style="background-color: #409EFF;">
+        <el-card class="stat-card" shadow="hover" @click.native="navigateTo('admin')">
+          <div v-loading="statsLoading" class="stat-content">
+            <div class="stat-icon stat-icon-purple">
+              <svg class="stat-icon-inline" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M512 512a192 192 0 1 0 0-384 192 192 0 0 0 0 384zm0 64a256 256 0 0 0-256 256v160h512V832a256 256 0 0 0-256-256z"/></svg>
+            </div>
+            <div class="stat-info">
+              <div class="stat-value">{{ stats.admins }}</div>
+              <div class="stat-label">Admins</div>
+            </div>
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :xs="12" :sm="12" :md="6" :lg="6" :xl="6">
+        <el-card class="stat-card" shadow="hover" @click.native="navigateTo('product')">
+          <div v-loading="statsLoading" class="stat-content">
+            <div class="stat-icon stat-icon-blue">
               <i class="el-icon-goods"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.products || 0 }}</div>
-              <div class="stat-label">Total Products</div>
+              <div class="stat-value">{{ stats.products }}</div>
+              <div class="stat-label">Products (SPU)</div>
             </div>
           </div>
         </el-card>
       </el-col>
       <el-col :xs="12" :sm="12" :md="6" :lg="6" :xl="6">
-        <el-card class="stat-card" shadow="hover">
-          <div class="stat-content">
-            <div class="stat-icon" style="background-color: #67C23A;">
-              <i class="el-icon-shopping-cart-full"></i>
+        <el-card class="stat-card" shadow="hover" @click.native="navigateTo('productManager')">
+          <div v-loading="statsLoading" class="stat-content">
+            <div class="stat-icon stat-icon-green">
+              <i class="el-icon-document"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.orders || 0 }}</div>
-              <div class="stat-label">Total Orders</div>
+              <div class="stat-value">{{ stats.skus }}</div>
+              <div class="stat-label">SKUs</div>
             </div>
           </div>
         </el-card>
       </el-col>
       <el-col :xs="12" :sm="12" :md="6" :lg="6" :xl="6">
-        <el-card class="stat-card" shadow="hover">
-          <div class="stat-content">
-            <div class="stat-icon" style="background-color: #E6A23C;">
-              <i class="el-icon-user"></i>
+        <el-card class="stat-card" shadow="hover" @click.native="navigateTo('ware')">
+          <div v-loading="statsLoading" class="stat-content">
+            <div class="stat-icon stat-icon-orange">
+              <svg class="stat-icon-inline" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M832 320H692V192c0-35.2-28.8-64-64-64H396c-35.2 0-64 28.8-64 64v128H192c-35.2 0-64 28.8-64 64v448c0 35.2 28.8 64 64 64h640c35.2 0 64-28.8 64-64V384c0-35.2-28.8-64-64-64zM396 192h232v128H396V192zm396 704H232V384h160v64h64v-64h232v64h64v-64h160v512z"/></svg>
             </div>
             <div class="stat-info">
-              <div class="stat-value">{{ stats.users || 0 }}</div>
-              <div class="stat-label">Total Users</div>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :xs="12" :sm="12" :md="6" :lg="6" :xl="6">
-        <el-card class="stat-card" shadow="hover">
-          <div class="stat-content">
-            <div class="stat-icon" style="background-color: #F56C6C;">
-              <i class="el-icon-money"></i>
-            </div>
-            <div class="stat-info">
-              <div class="stat-value">¥{{ formatMoney(stats.revenue || 0) }}</div>
-              <div class="stat-label">Total Revenue</div>
+              <div class="stat-value">{{ stats.purchases }}</div>
+              <div class="stat-label">Purchase Orders</div>
             </div>
           </div>
         </el-card>
@@ -68,29 +87,35 @@
     <!-- Quick Actions -->
     <el-row :gutter="20" class="actions-row">
       <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
+        <el-card shadow="hover" class="action-card" @click.native="navigateTo('admin')">
+          <div class="action-content">
+            <div class="action-icon-wrap stat-icon-purple">
+              <svg class="action-icon-inline" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M512 512a192 192 0 1 0 0-384 192 192 0 0 0 0 384zm0 64a256 256 0 0 0-256 256v160h512V832a256 256 0 0 0-256-256z"/></svg>
+            </div>
+            <h3>System Management</h3>
+            <p>Admin list and permissions</p>
+          </div>
+        </el-card>
+      </el-col>
+      <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
         <el-card shadow="hover" class="action-card" @click.native="navigateTo('product')">
           <div class="action-content">
-            <i class="el-icon-goods action-icon"></i>
+            <div class="action-icon-wrap stat-icon-blue">
+              <i class="el-icon-goods"></i>
+            </div>
             <h3>Product Management</h3>
-            <p>Manage products, categories, and inventory</p>
+            <p>Categories, brands, SPU, SKU, specifications</p>
           </div>
         </el-card>
       </el-col>
       <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
-        <el-card shadow="hover" class="action-card" @click.native="navigateTo('order')">
+        <el-card shadow="hover" class="action-card" @click.native="navigateTo('ware')">
           <div class="action-content">
-            <i class="el-icon-shopping-cart-full action-icon"></i>
-            <h3>Order Management</h3>
-            <p>View and process customer orders</p>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :xs="24" :sm="12" :md="8" :lg="8" :xl="8">
-        <el-card shadow="hover" class="action-card" @click.native="navigateTo('member')">
-          <div class="action-content">
-            <i class="el-icon-user action-icon"></i>
-            <h3>Member Management</h3>
-            <p>Manage customer accounts and information</p>
+            <div class="action-icon-wrap stat-icon-orange">
+              <svg class="action-icon-inline" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M832 384H192c-35.2 0-64 28.8-64 64v384c0 35.2 28.8 64 64 64h640c35.2 0 64-28.8 64-64V448c0-35.2-28.8-64-64-64zm0 64v128H192V448h640zm0 384H192V640h640v192z"/></svg>
+            </div>
+            <h3>Inventory</h3>
+            <p>Purchase orders, warehouse stock, tasks</p>
           </div>
         </el-card>
       </el-col>
@@ -136,63 +161,88 @@ export default {
   data() {
     return {
       stats: {
+        admins: 0,
         products: 0,
-        orders: 0,
-        users: 0,
-        revenue: 0
+        skus: 0,
+        purchases: 0
       },
+      statsLoading: false,
       currentTime: '',
-      lastUpdate: ''
+      lastUpdate: '',
+      timeTimer: null
+    }
+  },
+  computed: {
+    isStatsEmpty() {
+      return this.stats.admins === 0 && this.stats.products === 0 &&
+        this.stats.skus === 0 && this.stats.purchases === 0
     }
   },
   mounted() {
     this.updateTime()
     this.loadStatistics()
-    // Update time every minute
-    setInterval(() => {
+    // Real-time clock: update every second
+    this.timeTimer = setInterval(() => {
       this.updateTime()
-    }, 60000)
+    }, 1000)
+  },
+  beforeDestroy() {
+    if (this.timeTimer) clearInterval(this.timeTimer)
   },
   methods: {
     updateTime() {
       const now = new Date()
-      const options = { 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric', 
-        hour: '2-digit', 
+      const options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
         minute: '2-digit',
+        second: '2-digit',
         weekday: 'long'
       }
       this.currentTime = now.toLocaleDateString('en-US', options)
-      this.lastUpdate = now.toLocaleDateString('en-US', { 
-        year: 'numeric', 
-        month: 'short', 
+      this.lastUpdate = now.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
       })
     },
     loadStatistics() {
-      // You can load real statistics from API here
-      // Example:
-      // this.$http.get('/api/dashboard/stats').then(res => {
-      //   this.stats = res.data
-      // })
-    },
-    formatMoney(amount) {
-      return amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      this.statsLoading = true
+      const base = { page: 1, limit: 1 }
+      const reqs = [
+        this.$http.get(this.$http.adornUrl('/sys/user/list'), { params: this.$http.adornParams(base) }),
+        this.$http.get(this.$http.adornUrl('/product/spuinfo/list'), { params: this.$http.adornParams(base) }),
+        this.$http.get(this.$http.adornUrl('/product/skuinfo/list'), { params: this.$http.adornParams(base) }),
+        this.$http.get(this.$http.adornUrl('/ware/purchase/list'), { params: this.$http.adornParams(base) })
+      ]
+      Promise.all(reqs)
+        .then(([aRes, pRes, sRes, wRes]) => {
+          const getTotal = (res) => (res && res.data && res.data.code === 0 && res.data.page) ? (res.data.page.totalCount || 0) : 0
+          this.stats = {
+            admins: getTotal(aRes),
+            products: getTotal(pRes),
+            skus: getTotal(sRes),
+            purchases: getTotal(wRes)
+          }
+          this.statsLoading = false
+        })
+        .catch(() => {
+          this.statsLoading = false
+        })
     },
     navigateTo(module) {
-      // Navigate to different modules
       const routes = {
-        product: '/product/spu',
-        order: '/order/order',
-        member: '/member/member'
+        admin: '/sys-user',
+        product: '/product-spu',
+        productManager: '/product-manager',
+        ware: '/ware-purchase'
       }
-      if (routes[module]) {
-        this.$router.push({ name: routes[module].split('/').pop() })
-      }
+      const path = routes[module]
+      if (path) this.$router.push(path)
     }
   }
 }
@@ -248,6 +298,7 @@ export default {
 
 .stat-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
 .stat-content {
@@ -266,6 +317,16 @@ export default {
   margin-right: 20px;
   color: white;
   font-size: 28px;
+}
+.stat-icon-inline { width: 32px; height: 32px; flex-shrink: 0; }
+.action-icon-inline { width: 36px; height: 36px; flex-shrink: 0; }
+.stat-icon-purple { background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%); }
+.stat-icon-blue { background: linear-gradient(135deg, #409EFF 0%, #66b1ff 100%); }
+.stat-icon-green { background: linear-gradient(135deg, #67C23A 0%, #85ce61 100%); }
+.stat-icon-orange { background: linear-gradient(135deg, #E6A23C 0%, #ebb563 100%); }
+
+.empty-tip {
+  margin-bottom: 20px;
 }
 
 .stat-info {
@@ -301,13 +362,19 @@ export default {
 
 .action-content {
   text-align: center;
-  padding: 20px;
+  padding: 24px 20px;
 }
 
-.action-icon {
-  font-size: 48px;
-  color: #409EFF;
-  margin-bottom: 15px;
+.action-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: white;
+  margin-bottom: 16px;
 }
 
 .action-content h3 {
@@ -323,7 +390,9 @@ export default {
 }
 
 .info-card {
-  margin-top: 20px;
+  margin-top: 24px;
+  background: #fafbfc;
+  border: 1px solid #ebeef5;
 }
 
 .card-header {

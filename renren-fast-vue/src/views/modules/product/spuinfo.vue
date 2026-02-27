@@ -74,25 +74,6 @@ export default {
     this.getDataList();
   },
   methods: {
-    productUp(id) {
-      this.$http({
-        url: this.$http.adornUrl("/product/spuinfo/" + id + "/up"),
-        method: "post"
-      }).then(({ data }) => {
-        if (data && data.code === 0) {
-          this.$message({
-            message: "Operation successful",
-            type: "success",
-            duration: 1500,
-            onClose: () => {
-              this.getDataList();
-            }
-          });
-        } else {
-          this.$message.error(data.msg);
-        }
-      });
-    },
     attrUpdateShow(row) {
       console.log(row);
       this.$router.push({

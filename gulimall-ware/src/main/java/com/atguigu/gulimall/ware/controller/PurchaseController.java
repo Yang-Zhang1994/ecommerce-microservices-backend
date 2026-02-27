@@ -101,6 +101,9 @@ public class PurchaseController {
     public R save(@RequestBody PurchaseEntity purchase){
         purchase.setUpdateTime(new Date());
         purchase.setCreateTime(new Date());
+        if (purchase.getStatus() == null) {
+            purchase.setStatus(0); // 新建
+        }
 		purchaseService.save(purchase);
 
         return R.ok();

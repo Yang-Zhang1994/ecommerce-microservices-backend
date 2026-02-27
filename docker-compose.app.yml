@@ -1,0 +1,195 @@
+# Gulimall 一键运行：Consul + 各微服务 + 前端
+# 使用前在项目根目录执行: mvn clean package -DskipTests
+# 迁移到 Oregon 后：复制 .env.example 为 .env，填入 Oregon RDS 端点和账号，然后：
+#   docker compose -f docker-compose.app.yml up -d --build
+# 访问: http://localhost (前端)  API 经 Nginx 代理到 Gateway:88
+
+services:
+  consul:
+    image: hashicorp/consul:1.17
+    container_name: gulimall-consul
+    command: agent -server -ui -bootstrap-expect=1 -client=0.0.0.0
+    ports:
+      - "8500:8500"
+    healthcheck:
+      test: ["CMD", "consul", "members"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  gulimall-gateway:
+    build:
+      context: ./gulimall-gateway
+      dockerfile: Dockerfile
+    image: gulimall-gateway
+    container_name: gulimall-gateway
+    depends_on:
+      consul:
+        condition: service_healthy
+    environment:
+      AWS_REGION: us-west-2
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: "8500"
+      RENREN_FAST_URI: http://renren-fast:8080
+    ports:
+      - "88:88"
+
+  gulimall-product:
+    build:
+      context: ./gulimall-product
+      dockerfile: Dockerfile
+    image: gulimall-product
+    container_name: gulimall-product
+    depends_on:
+      consul:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      AWS_REGION: us-west-2
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: "8500"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_pms?sslmode=require
+      SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
+    expose:
+      - "10000"
+
+  gulimall-member:
+    build:
+      context: ./gulimall-member
+      dockerfile: Dockerfile
+    image: gulimall-member
+    container_name: gulimall-member
+    depends_on:
+      consul:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      AWS_REGION: us-west-2
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: "8500"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_ums?sslmode=require
+      SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
+    expose:
+      - "8000"
+
+  gulimall-ware:
+    build:
+      context: ./gulimall-ware
+      dockerfile: Dockerfile
+    image: gulimall-ware
+    container_name: gulimall-ware
+    depends_on:
+      consul:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      AWS_REGION: us-west-2
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: "8500"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_wms?sslmode=require
+      SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
+    expose:
+      - "11000"
+
+  gulimall-coupon:
+    build:
+      context: ./gulimall-coupon
+      dockerfile: Dockerfile
+    image: gulimall-coupon
+    container_name: gulimall-coupon
+    depends_on:
+      consul:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      AWS_REGION: us-west-2
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: "8500"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_sms?sslmode=require
+      SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
+    expose:
+      - "12000"
+
+  gulimall-third-party:
+    build:
+      context: ./gulimall-third-party
+      dockerfile: Dockerfile
+    image: gulimall-third-party
+    container_name: gulimall-third-party
+    depends_on:
+      consul:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      AWS_REGION: us-west-2
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: "8500"
+    expose:
+      - "30000"
+
+  gulimall-order:
+    build:
+      context: ./gulimall-order
+      dockerfile: Dockerfile
+    image: gulimall-order
+    container_name: gulimall-order
+    depends_on:
+      consul:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      AWS_REGION: us-west-2
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: "8500"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_oms?sslmode=require
+      SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
+    expose:
+      - "9000"
+
+  renren-fast:
+    build:
+      context: ./renren-fast
+      dockerfile: Dockerfile
+    image: renren-fast
+    container_name: renren-fast
+    depends_on:
+      consul:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      AWS_REGION: us-west-2
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: "8500"
+      SERVER_PORT: "8080"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_admin?sslmode=require
+      SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
+    expose:
+      - "8080"
+
+  gulimall-frontend:
+    build:
+      context: ./renren-fast-vue
+      dockerfile: Dockerfile
+    image: gulimall-frontend
+    container_name: gulimall-frontend
+    depends_on:
+      - gulimall-gateway
+    ports:
+      - "80:80"

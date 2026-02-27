@@ -55,7 +55,41 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public void updateById(PurchaseEntity entity) {
-        purchaseRepository.save(entity);
+        if (entity == null || entity.getId() == null) {
+            return;
+        }
+        PurchaseEntity existing = purchaseRepository.findById(entity.getId()).orElse(null);
+        if (existing == null) {
+            return;
+        }
+        if (entity.getAssigneeId() != null) {
+            existing.setAssigneeId(entity.getAssigneeId());
+        }
+        if (entity.getAssigneeName() != null) {
+            existing.setAssigneeName(entity.getAssigneeName());
+        }
+        if (entity.getPhone() != null) {
+            existing.setPhone(entity.getPhone());
+        }
+        if (entity.getPriority() != null) {
+            existing.setPriority(entity.getPriority());
+        }
+        if (entity.getStatus() != null) {
+            existing.setStatus(entity.getStatus());
+        }
+        if (entity.getWareId() != null) {
+            existing.setWareId(entity.getWareId());
+        }
+        if (entity.getAmount() != null) {
+            existing.setAmount(entity.getAmount());
+        }
+        if (entity.getCreateTime() != null) {
+            existing.setCreateTime(entity.getCreateTime());
+        }
+        if (entity.getUpdateTime() != null) {
+            existing.setUpdateTime(entity.getUpdateTime());
+        }
+        purchaseRepository.save(existing);
     }
 
     @Override
@@ -84,7 +118,11 @@ public class PurchaseServiceImpl implements PurchaseService {
             purchaseRepository.save(purchaseEntity);
             purchaseId = purchaseEntity.getId();
         } else {
-            getById(purchaseId);
+            PurchaseEntity existing = getById(purchaseId);
+            if (existing != null) {
+                existing.setUpdateTime(new Date());
+                purchaseRepository.save(existing);
+            }
         }
 
         if (mergeVo.getItems() != null && mergeVo.getItems().length > 0) {
@@ -113,11 +151,6 @@ public class PurchaseServiceImpl implements PurchaseService {
         }).filter(e -> e != null).toList();
 
         purchaseDetailService.updateBatchById(list);
-
-        PurchaseEntity purchaseEntity = new PurchaseEntity();
-        purchaseEntity.setId(purchaseId);
-        purchaseEntity.setUpdateTime(new Date());
-        purchaseRepository.save(purchaseEntity);
     }
 
     @Override
@@ -163,10 +196,12 @@ public class PurchaseServiceImpl implements PurchaseService {
             }
         }
 
-        PurchaseEntity purchaseEntity = new PurchaseEntity();
-        purchaseEntity.setId(doneVo.getId());
-        purchaseEntity.setStatus(flag ? WareConstant.PurchaseStatusEnum.FINISHED.getCode() : WareConstant.PurchaseStatusEnum.HASERROR.getCode());
-        purchaseEntity.setUpdateTime(new Date());
-        purchaseRepository.save(purchaseEntity);
+        PurchaseEntity purchaseEntity = getById(doneVo.getId());
+        if (purchaseEntity != null) {
+            purchaseEntity.setStatus(flag ? WareConstant.PurchaseStatusEnum.FINISHED.getCode()
+                    : WareConstant.PurchaseStatusEnum.HASERROR.getCode());
+            purchaseEntity.setUpdateTime(new Date());
+            purchaseRepository.save(purchaseEntity);
+        }
     }
 }

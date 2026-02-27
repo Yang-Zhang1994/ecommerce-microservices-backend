@@ -20,7 +20,7 @@ spring:
     # AWS 区域（Secrets Manager / Parameter Store 用；也可用环境变量 AWS_REGION）
     aws:
       region:
-        static: us-east-2
+        static: us-west-2
     consul:
       host: localhost
       port: 8500
@@ -84,13 +84,23 @@ spring:
 #          predicates:
 #            - Query=url, qq
 
-        # 验证码路由 - 必须放在 /api/** 之前
+        # 验证码路由：用 lb://renren-fast 走 Consul，不依赖 RENREN_FAST_URI（否则未设时走 localhost:8080 必超时）
+        - id: captcha-api-route
+          uri: lb://renren-fast
+          order: -1
+          predicates:
+            - Path=/api/captcha.jpg
+          filters:
+            - RewritePath=/api/(?<segment>.*), /api/$\{segment}
+
+        # 兼容旧路径 /captcha.jpg（无 /api 前缀）
         - id: captcha-route
           uri: lb://renren-fast
+          order: -1
           predicates:
             - Path=/captcha.jpg
           filters:
-            - RewritePath=/captcha.jpg, /renren-fast/captcha.jpg
+            - RewritePath=/captcha.jpg, /api/captcha.jpg
 
         # Product service route
         - id: product_route

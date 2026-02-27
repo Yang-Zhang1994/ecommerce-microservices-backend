@@ -54,30 +54,41 @@
       </el-table-column>
       <el-table-column prop="price" header-align="center" align="center" label="Price"></el-table-column>
       <el-table-column prop="saleCount" header-align="center" align="center" label="Sales"></el-table-column>
-      <el-table-column fixed="right" header-align="center" align="center" width="150" label="Operations">
-        <template slot-scope="scope">
-          <el-button type="text" size="small" @click="previewHandle(scope.row.skuId)">Preview</el-button>
-          <el-button type="text" size="small" @click="commentHandle(scope.row.skuId)">Comments</el-button>
-          <el-dropdown
-            @command="handleCommand(scope.row,$event)"
-            size="small"
-            split-button
-            type="text"
-          >
-            More
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="uploadImages">Upload Images</el-dropdown-item>
-              <el-dropdown-item command="seckillSettings">Join Seckill</el-dropdown-item>
-              <el-dropdown-item command="reductionSettings">Full Reduction Settings</el-dropdown-item>
-              <el-dropdown-item command="discountSettings">Discount Settings</el-dropdown-item>
-              <el-dropdown-item command="memberPriceSettings">Member Price</el-dropdown-item>
-              <el-dropdown-item command="stockSettings">Stock Management</el-dropdown-item>
-              <el-dropdown-item command="couponSettings">Coupons</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </template>
-      </el-table-column>
     </el-table>
+    <!-- Upload Images Dialog -->
+    <el-dialog
+      title="Upload SKU Images"
+      :visible.sync="uploadDialogVisible"
+      width="600px"
+      @close="closeUploadDialog"
+    >
+      <div v-if="uploadDialogSku">
+        <p><strong>{{ uploadDialogSku.skuName }}</strong> (SKU ID: {{ uploadDialogSku.skuId }})</p>
+        <el-form label-width="100px">
+          <el-form-item label="Images">
+            <multi-upload v-model="skuImageUrls" :max-count="10"></multi-upload>
+          </el-form-item>
+          <el-form-item label="Set Default" v-if="skuImageUrls.length > 0">
+            <el-radio-group v-model="defaultImgIndex">
+              <el-radio
+                v-for="(url, idx) in skuImageUrls"
+                :key="idx"
+                :label="idx"
+                style="display: block; margin-bottom: 8px;"
+              >
+                <img :src="url" style="width: 60px; height: 60px; object-fit: cover; vertical-align: middle; margin-right: 8px;" />
+                Image {{ idx + 1 }}
+              </el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-form>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="uploadDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" :loading="uploadSaveLoading" @click="saveSkuImages">Save</el-button>
+      </span>
+    </el-dialog>
+
     <el-pagination
       @size-change="sizeChangeHandle"
       @current-change="currentChangeHandle"
@@ -93,9 +104,16 @@
 <script>
 import CategoryCascader from "../common/category-cascader";
 import BrandSelect from "../common/brand-select";
+import MultiUpload from "@/components/upload/multiUpload";
+
 export default {
   data() {
     return {
+      uploadDialogVisible: false,
+      uploadDialogSku: null,
+      skuImageUrls: [],
+      defaultImgIndex: 0,
+      uploadSaveLoading: false,
       catPathSub: null,
       brandIdSub: null,
       dataForm: {
@@ -119,7 +137,8 @@ export default {
   },
   components: {
     CategoryCascader,
-    BrandSelect
+    BrandSelect,
+    MultiUpload
   },
   activated() {
     this.getDataList();
@@ -129,12 +148,73 @@ export default {
       //sku detail query
       console.log("Expand row...", row, expand);
     },
-    //handle more commands
-    handleCommand(row, command) {
-      console.log("~~~~~", row, command);
-      if ("stockSettings" == command) {
-        this.$router.push({ path: "/ware-sku", query: { skuId: row.skuId } });
+    uploadImagesHandle(row) {
+      this.uploadDialogSku = row;
+      this.uploadDialogVisible = true;
+      this.loadSkuImages(row.skuId);
+    },
+    loadSkuImages(skuId) {
+      this.$http({
+        url: this.$http.adornUrl(`/product/skuimages/bysku/${skuId}`),
+        method: "get"
+      }).then(({ data }) => {
+        if (data && data.code === 0 && data.list) {
+          this.skuImageUrls = data.list
+            .sort((a, b) => (a.imgSort || 0) - (b.imgSort || 0))
+            .map((item) => item.imgUrl);
+          const defaultIdx = data.list.findIndex((item) => item.defaultImg === 1);
+          this.defaultImgIndex = defaultIdx >= 0 ? defaultIdx : 0;
+        } else {
+          this.skuImageUrls = [];
+          this.defaultImgIndex = 0;
+        }
+      }).catch(() => {
+        this.skuImageUrls = [];
+        this.defaultImgIndex = 0;
+      });
+    },
+    closeUploadDialog() {
+      this.uploadDialogSku = null;
+      this.skuImageUrls = [];
+      this.defaultImgIndex = 0;
+    },
+    saveSkuImages() {
+      if (!this.uploadDialogSku || this.skuImageUrls.length === 0) {
+        this.$message.warning("Please upload at least one image");
+        return;
       }
+      this.uploadSaveLoading = true;
+      const images = this.skuImageUrls.map((imgUrl, i) => ({
+        imgUrl,
+        defaultImg: i === this.defaultImgIndex ? 1 : 0,
+        imgSort: i
+      }));
+      this.$http({
+        url: this.$http.adornUrl("/product/skuimages/saveBatch"),
+        method: "post",
+        data: this.$http.adornData({
+          skuId: this.uploadDialogSku.skuId,
+          images
+        })
+      })
+        .then(({ data }) => {
+          if (data && data.code === 0) {
+            this.$message.success("Saved successfully");
+            this.uploadDialogVisible = false;
+            this.getDataList();
+          } else {
+            this.$message.error(data.msg || "Save failed");
+          }
+        })
+        .catch((err) => {
+          this.$message.error(err.message || "Save failed");
+        })
+        .finally(() => {
+          this.uploadSaveLoading = false;
+        });
+    },
+    stockSettingsHandle(row) {
+      this.$router.push({ path: "/ware-sku", query: { skuId: row.skuId } });
     },
     searchSkuInfo() {
       this.getDataList();

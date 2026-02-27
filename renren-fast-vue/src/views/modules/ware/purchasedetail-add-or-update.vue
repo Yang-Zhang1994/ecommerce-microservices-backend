@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
@@ -9,15 +9,15 @@
       :rules="dataRule"
       ref="dataForm"
       @keyup.enter.native="dataFormSubmit()"
-      label-width="120px"
+      label-width="160px"
     >
-      <el-form-item label="采购商品id" prop="skuId">
-        <el-input v-model="dataForm.skuId" placeholder="采购商品id"></el-input>
+      <el-form-item label="Purchase Product ID" prop="skuId">
+        <el-input v-model="dataForm.skuId" placeholder="Purchase Product ID"></el-input>
       </el-form-item>
-      <el-form-item label="采购数量" prop="skuNum">
-        <el-input v-model="dataForm.skuNum" placeholder="采购数量"></el-input>
+      <el-form-item label="Purchase Quantity" prop="skuNum">
+        <el-input v-model="dataForm.skuNum" placeholder="Purchase Quantity"></el-input>
       </el-form-item>
-      <el-form-item label="仓库" prop="wareId">
+      <el-form-item label="Warehouse" prop="wareId">
         <el-select v-model="dataForm.wareId" placeholder="Select warehouse" clearable>
           <el-option :label="w.name" :value="w.id" v-for="w in wareList" :key="w.id"></el-option>
         </el-select>
@@ -34,8 +34,8 @@
       </el-form-item>-->
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -57,12 +57,12 @@ export default {
       },
       dataRule: {
         skuId: [
-          { required: true, message: "采购商品id不能为空", trigger: "blur" }
+          { required: true, message: "Purchase Product ID is required", trigger: "blur" }
         ],
         skuNum: [
-          { required: true, message: "采购数量不能为空", trigger: "blur" }
+          { required: true, message: "Purchase quantity is required", trigger: "blur" }
         ],
-        wareId: [{ required: true, message: "仓库id不能为空", trigger: "blur" }]
+        wareId: [{ required: true, message: "Warehouse is required", trigger: "blur" }]
       }
     };
   },
@@ -128,7 +128,7 @@ export default {
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
+                message: "Operation successful",
                 type: "success",
                 duration: 1500,
                 onClose: () => {

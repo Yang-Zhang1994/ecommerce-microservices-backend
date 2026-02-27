@@ -43,11 +43,12 @@
       <el-table-column prop="priority" header-align="center" align="center" label="Priority"></el-table-column>
       <el-table-column prop="status" header-align="center" align="center" label="Status">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status == 0">New</el-tag>
-          <el-tag type="info" v-if="scope.row.status == 1">Assigned</el-tag>
-          <el-tag type="warning" v-if="scope.row.status == 2">Received</el-tag>
-          <el-tag type="success" v-if="scope.row.status == 3">Completed</el-tag>
-          <el-tag type="danger" v-if="scope.row.status == 4">Abnormal</el-tag>
+          <el-tag v-if="Number(scope.row.status) === 0 || scope.row.status == null">New</el-tag>
+          <el-tag type="info" v-else-if="Number(scope.row.status) === 1">Assigned</el-tag>
+          <el-tag type="warning" v-else-if="Number(scope.row.status) === 2">Received</el-tag>
+          <el-tag type="success" v-else-if="Number(scope.row.status) === 3">Completed</el-tag>
+          <el-tag type="danger" v-else-if="Number(scope.row.status) === 4">Abnormal</el-tag>
+          <el-tag v-else>{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="wareId" header-align="center" align="center" label="Warehouse ID"></el-table-column>
@@ -59,7 +60,7 @@
           <el-button
             type="text"
             size="small"
-            v-if="scope.row.status==0||scope.row.status==1"
+            v-if="Number(scope.row.status) === 0 || Number(scope.row.status) === 1 || scope.row.status == null"
             @click="opendrawer(scope.row)"
           >Assign</el-button>
           <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">Edit</el-button>

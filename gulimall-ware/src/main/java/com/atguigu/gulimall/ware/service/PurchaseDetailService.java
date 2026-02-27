@@ -24,4 +24,6 @@ public interface PurchaseDetailService {
     void updateBatchById(List<PurchaseDetailEntity> list);
 
     List<PurchaseDetailEntity> listDetailByPurchaseId(Long purchaseId);
+
+    PurchaseDetailEntity getByPurchaseIdAndSkuId(Long purchaseId, Long skuId);
 }

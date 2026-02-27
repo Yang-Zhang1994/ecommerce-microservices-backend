@@ -65,7 +65,8 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: './',
+    // Use / so CSS url(static/img/...) resolves to /static/img/... (not /static/css/static/img/...)
+    assetsPublicPath: '/',
 
     /**
      * Source Maps

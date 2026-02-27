@@ -103,7 +103,7 @@ Each module has `application.yml` (and often `application-dev.yml`). **Database 
 - `SPRING_DATASOURCE_USERNAME`
 - `SPRING_DATASOURCE_PASSWORD`
 
-Defaults in config are localhost URL and empty password. For **AWS**: use `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, or IAM roles; do not commit secrets.
+Defaults in config are localhost URL and empty password. **Local dev:** set `SPRING_DATASOURCE_PASSWORD` in your environment or in an IDE run configuration so the app can connect (e.g. `SPRING_DATASOURCE_PASSWORD=your_local_password`). Optionally use a local-only file `application-local.yml` with your password and run with profile `local`; add `**/application-local.yml` to `.gitignore` (already ignored). For **AWS**: use `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, or IAM roles; do not commit secrets.
 
 ---
 

@@ -13,4 +13,4 @@ spring:
 aws:
   s3:
     bucket: test-bucket
-  region: us-east-2
+  region: us-west-2

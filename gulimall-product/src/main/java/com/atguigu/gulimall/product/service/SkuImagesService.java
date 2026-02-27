@@ -4,6 +4,7 @@ import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.SkuImagesEntity;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,5 +23,15 @@ public interface SkuImagesService {
     void saveAll(Iterable<SkuImagesEntity> entities);
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * List all images for a given skuId.
+     */
+    List<SkuImagesEntity> listBySkuId(Long skuId);
+
+    /**
+     * Replace all images of a SKU with the given list.
+     */
+    void saveBatchForSku(Long skuId, List<SkuImagesEntity> images);
 }
 

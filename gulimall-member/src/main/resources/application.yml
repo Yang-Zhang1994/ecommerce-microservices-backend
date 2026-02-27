@@ -17,7 +17,7 @@ spring:
     # AWS 区域（Secrets Manager / Parameter Store 用；也可用环境变量 AWS_REGION）
     aws:
       region:
-        static: us-east-2
+        static: us-west-2
     consul:
       host: localhost
       port: 8500
@@ -28,8 +28,8 @@ spring:
         prefer-ip-address: true
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/ecommerce_ums}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    url: ${SPRING_DATASOURCE_URL:}
+    username: ${SPRING_DATASOURCE_USERNAME:}
     password: ${SPRING_DATASOURCE_PASSWORD:}
   sql:
     init:

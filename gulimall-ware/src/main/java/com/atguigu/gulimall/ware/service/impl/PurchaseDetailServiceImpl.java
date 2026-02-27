@@ -89,4 +89,10 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
     public List<PurchaseDetailEntity> listDetailByPurchaseId(Long purchaseId) {
         return repository.findByPurchaseId(purchaseId);
     }
+
+    @Override
+    public PurchaseDetailEntity getByPurchaseIdAndSkuId(Long purchaseId, Long skuId) {
+        List<PurchaseDetailEntity> list = repository.findByPurchaseIdAndSkuId(purchaseId, skuId);
+        return list.isEmpty() ? null : list.get(0);
+    }
 }

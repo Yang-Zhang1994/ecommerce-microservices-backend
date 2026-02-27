@@ -1,0 +1,5 @@
+node_modules
+# dist 保留：本地构建后需 COPY 进镜像，勿忽略
+.git
+*.log
+.DS_Store

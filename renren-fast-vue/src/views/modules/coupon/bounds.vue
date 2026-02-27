@@ -32,7 +32,8 @@
         prop="spuId"
         header-align="center"
         align="center"
-        label="">
+        label="SPU ID"
+        min-width="90">
       </el-table-column>
       <el-table-column
         prop="growBounds"
@@ -50,7 +51,8 @@
         prop="work"
         header-align="center"
         align="center"
-        label="Promotion Effective Status">
+        label="Promotion Effective Status"
+        min-width="180">
         <!-- [1111 (four status bits, from right to left); 0 - No promotion, whether growth points are given; 1 - No promotion, whether shopping points are given; 2 - With promotion, whether growth points are given; 3 - With promotion, whether shopping points are given [Status bit 0: not given, 1: given]] -->
       </el-table-column>
       <el-table-column

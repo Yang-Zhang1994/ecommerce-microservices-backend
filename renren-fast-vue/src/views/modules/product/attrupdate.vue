@@ -30,7 +30,7 @@
                     placeholder="Select or enter value"
                   >
                     <el-option
-                      v-for="(val,vidx) in attr.valueSelect.split(';')"
+                      v-for="(val,vidx) in getAttrOptions(dataResp.baseAttrs[gidx][aidx], dataResp.baseAttrs[gidx][aidx].attrValues)"
                       :key="vidx"
                       :label="val"
                       :value="val"
@@ -72,26 +72,34 @@ export default {
   },
   computed: {},
   methods: {
+    /** 获取属性选项：displayOptions（含已保存值） + 当前值（allow-create 新增的） */
+    getAttrOptions(attrItem, currentVal) {
+      const opts = [...(attrItem.displayOptions || [])];
+      const vals = currentVal == null || currentVal === "" ? [] : (Array.isArray(currentVal) ? currentVal : [currentVal]);
+      vals.forEach(v => {
+        const vStr = v != null ? String(v).trim() : "";
+        if (vStr && !opts.includes(vStr)) opts.push(vStr);
+      });
+      return opts;
+    },
     clearData(){
       this.dataResp.attrGroups = [];
       this.dataResp.baseAttrs = [];
       this.spuAttrsMap = {};
     },
     getSpuBaseAttrs() {
-      this.$http({
+      return this.$http({
         url: this.$http.adornUrl(`/product/attr/base/listforspu/${this.spuId}`),
         method: "get"
       }).then(({ data }) => {
-        data.data.forEach(item => {
+        (data.data || []).forEach(item => {
           this.spuAttrsMap["" + item.attrId] = item;
         });
-        console.log("~~~~", this.spuAttrsMap);
       });
     },
     getQueryParams() {
       this.spuId = this.$route.query.spuId;
       this.catalogId = this.$route.query.catalogId;
-      console.log("----", this.spuId, this.catalogId);
     },
     showBaseAttrs() {
       let _this = this;
@@ -108,16 +116,22 @@ export default {
           let attrArray = [];
           (item.attrs || []).forEach(attr => {
             let v = "";
+            let displayOptions = ((attr.valueSelect || "").split(";")).map(s => s.trim()).filter(Boolean);
             if (_this.spuAttrsMap["" + attr.attrId]) {
-              v = _this.spuAttrsMap["" + attr.attrId].attrValue.split(";");
-              if (v.length == 1) {
-                v = v[0] + "";
+              const raw = (_this.spuAttrsMap["" + attr.attrId].attrValue || "").trim();
+              v = raw ? raw.split(";").map(s => s.trim()).filter(Boolean) : "";
+              if (Array.isArray(v) && v.length === 1 && attr.valueType != 1) {
+                v = v[0];
               }
+              (Array.isArray(v) ? v : (v ? [v] : [])).forEach(sv => {
+                if (sv && !displayOptions.includes(sv)) displayOptions.push(sv);
+              });
             }
             attrArray.push({
               attrId: attr.attrId,
               attrName: attr.attrName,
               attrValues: v,
+              displayOptions: displayOptions,
               showDesc: _this.spuAttrsMap["" + attr.attrId]
                 ? _this.spuAttrsMap["" + attr.attrId].quickShow
                 : attr.showDesc
@@ -129,7 +143,6 @@ export default {
       });
     },
     submitSpuAttrs() {
-      console.log("·····", this.dataResp.baseAttrs);
       //spu_id  attr_id  attr_name             attr_value             attr_sort  quick_show
       let submitData = [];
       this.dataResp.baseAttrs.forEach(item => {
@@ -151,7 +164,6 @@ export default {
           }
         });
       });
-
       this.$confirm("Update product specifications. Continue?", "Confirm", {
         confirmButtonText: "OK",
         cancelButtonText: "Cancel",
@@ -161,7 +173,7 @@ export default {
           this.$http({
             url: this.$http.adornUrl(`/product/attr/update/${this.spuId}`),
             method: "post",
-            data: this.$http.adornData(submitData, false)
+            data: JSON.stringify(submitData)
           }).then(({ data }) => {
             this.$message({
               type: "success",
@@ -182,8 +194,7 @@ export default {
     this.clearData();
     this.getQueryParams();
     if (this.spuId && this.catalogId) {
-      this.showBaseAttrs();
-      this.getSpuBaseAttrs();
+      this.getSpuBaseAttrs().then(() => this.showBaseAttrs());
     }
   }
 };
