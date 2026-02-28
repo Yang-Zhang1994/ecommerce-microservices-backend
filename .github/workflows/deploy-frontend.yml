@@ -57,8 +57,14 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           set -e
+          echo "EC2_HOST is set: $([ -n \"$EC2_HOST\" ] && echo yes || echo no)"
+          echo "EC2_USER is set: $([ -n \"$EC2_USER\" ] && echo yes || echo no)"
+          echo "SSH_PRIVATE_KEY is set: $([ -n \"$SSH_PRIVATE_KEY\" ] && echo yes || echo no)"
           if [ -z "$EC2_HOST" ] || [ -z "$SSH_PRIVATE_KEY" ]; then
             echo "::error::EC2_HOST or SSH_PRIVATE_KEY secret is empty"
+            echo "请检查: 1) 当前仓库 Settings → Secrets and variables → Actions 里是否有 EC2_HOST、EC2_USER、SSH_PRIVATE_KEY（名称区分大小写）"
+            echo "2) 若是从 Fork 的 PR 触发，Secrets 不会传入，请在本仓库 main 分支 push 或手动 Run workflow"
+            echo "3) 添加/修改后务必点 Add secret 或 Update secret 保存"
             exit 1
           fi
           # 去掉 Secrets 可能带有的换行/空格，避免 ssh 收到异常参数 (unknown option -- -)
