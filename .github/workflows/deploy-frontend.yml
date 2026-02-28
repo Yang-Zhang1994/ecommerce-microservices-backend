@@ -84,7 +84,7 @@ jobs:
           ' > ~/.ssh/deploy_key
           printf '\n' >> ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          if ! grep -q '-----BEGIN' ~/.ssh/deploy_key; then
+          if ! grep -q -- '-----BEGIN' ~/.ssh/deploy_key; then
             echo "::error::SSH key has no -----BEGIN line (re-paste full PEM into SSH_PRIVATE_KEY)"
             exit 1
           fi
