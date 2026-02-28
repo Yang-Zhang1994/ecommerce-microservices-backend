@@ -177,7 +177,7 @@ services:
       SPRING_CLOUD_CONSUL_HOST: consul
       SPRING_CLOUD_CONSUL_PORT: "8500"
       SERVER_PORT: "8080"
-      SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_admin?sslmode=require
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_admin?sslmode=require&connectTimeout=30000&socketTimeout=30000
       SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
     expose:
@@ -193,3 +193,6 @@ services:
       - gulimall-gateway
     ports:
       - "80:80"
+    # 挂载宿主机目录后，GitHub Actions 用 rsync 更新该目录即可生效，无需重建镜像/重启容器
+    volumes:
+      - /mydata/nginx/html:/usr/share/nginx/html:ro

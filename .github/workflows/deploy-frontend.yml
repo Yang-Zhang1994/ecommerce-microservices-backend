@@ -1,0 +1,50 @@
+# 前端构建并同步到 EC2，Nginx 挂载目录后无需重启容器即可生效
+name: Build and Deploy Frontend to EC2
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'renren-fast-vue/**'
+      - '.github/workflows/deploy-frontend.yml'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: renren-fast-vue/package-lock.json
+
+      - name: Install dependencies
+        working-directory: renren-fast-vue
+        run: npm ci
+
+      # 使用与 Docker 一致的构建：webpack 产出 dist/，再生成 config/
+      - name: Build frontend
+        working-directory: renren-fast-vue
+        run: |
+          node build/build.js
+          cp -r dist/static/config dist/config
+
+      - name: Deploy to EC2 (rsync)
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key "${EC2_USER}@${EC2_HOST}" "sudo mkdir -p /mydata/nginx/html && sudo chown -R \$USER:\$USER /mydata/nginx/html"
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key" renren-fast-vue/dist/ "${EC2_USER}@${EC2_HOST}:/mydata/nginx/html/"
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key "${EC2_USER}@${EC2_HOST}" "cp -rn /mydata/nginx/html/static/config /mydata/nginx/html/config 2>/dev/null || true"
+          rm -f ~/.ssh/deploy_key
+        if: secrets.EC2_HOST != '' && secrets.SSH_PRIVATE_KEY != ''

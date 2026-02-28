@@ -116,7 +116,8 @@
       width: 100%;
       height: 100%;
       content: "";
-      background-image: url(~@/assets/img/login_bg.jpg);
+      /* 使用绝对路径，避免懒加载 chunk 内相对路径解析错误导致背景图请求未发出 */
+      background-image: url(/static/img/login_bg.jpg);
       background-size: cover;
     }
     .site-content__wrapper {
