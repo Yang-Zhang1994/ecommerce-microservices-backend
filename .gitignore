@@ -43,4 +43,4 @@ dist/
 Thumbs.db
 
 deploy/
-docs/
+docs/test-captcha-image-ec2.sh
