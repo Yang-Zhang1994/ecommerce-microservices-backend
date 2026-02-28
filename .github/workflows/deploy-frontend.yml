@@ -47,4 +47,3 @@ jobs:
           rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key" renren-fast-vue/dist/ "${EC2_USER}@${EC2_HOST}:/mydata/nginx/html/"
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key "${EC2_USER}@${EC2_HOST}" "cp -rn /mydata/nginx/html/static/config /mydata/nginx/html/config 2>/dev/null || true"
           rm -f ~/.ssh/deploy_key
-        if: secrets.EC2_HOST != '' && secrets.SSH_PRIVATE_KEY != ''
