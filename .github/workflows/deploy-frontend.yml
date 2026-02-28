@@ -1,4 +1,5 @@
 # 前端构建并同步到 EC2，Nginx 挂载目录后无需重启容器即可生效
+# 拆成 build / deploy 两个 job，避免同一 job 内步骤卡住导致 Deploy 不开始
 name: Build and Deploy Frontend to EC2
 
 on:
@@ -10,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,12 +28,27 @@ jobs:
         working-directory: renren-fast-vue
         run: npm ci
 
-      # 使用与 Docker 一致的构建：webpack 产出 dist/，再生成 config/
       - name: Build frontend
         working-directory: renren-fast-vue
         run: |
           node build/build.js
           cp -r dist/static/config dist/config
+
+      - name: Upload dist
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: renren-fast-vue/dist/
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download dist
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist/
 
       - name: Deploy to EC2 (rsync)
         env:
@@ -40,10 +56,35 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
+          set -e
+          if [ -z "$EC2_HOST" ] || [ -z "$SSH_PRIVATE_KEY" ]; then
+            echo "::error::EC2_HOST or SSH_PRIVATE_KEY secret is empty"
+            exit 1
+          fi
+          # 去掉 Secrets 可能带有的换行/空格，避免 ssh 收到异常参数 (unknown option -- -)
+          EC2_HOST="$(printf '%s' "$EC2_HOST" | tr -d '\n\r' | xargs)"
+          EC2_USER="$(printf '%s' "$EC2_USER" | tr -d '\n\r' | xargs)"
+          if [ -z "$EC2_HOST" ]; then
+            echo "::error::EC2_HOST is empty after trim"
+            exit 1
+          fi
           mkdir -p ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          # 只保留 PEM 块，并去掉块内所有空格/换行，避免粘贴时格式错乱导致 ssh 报错
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | awk '
+            /-----BEGIN/ { print; next }
+            /-----END/   { if (b64 != "") print b64; print; b64=""; next }
+            { gsub(/[ \t\n\r]/, ""); b64 = b64 $0 }
+            END { if (b64 != "") print b64 }
+          ' > ~/.ssh/deploy_key
+          printf '\n' >> ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key "${EC2_USER}@${EC2_HOST}" "sudo mkdir -p /mydata/nginx/html && sudo chown -R \$USER:\$USER /mydata/nginx/html"
-          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key" renren-fast-vue/dist/ "${EC2_USER}@${EC2_HOST}:/mydata/nginx/html/"
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key "${EC2_USER}@${EC2_HOST}" "cp -rn /mydata/nginx/html/static/config /mydata/nginx/html/config 2>/dev/null || true"
+          if ! grep -q '-----BEGIN' ~/.ssh/deploy_key; then
+            echo "::error::SSH key has no -----BEGIN line (re-paste full PEM into SSH_PRIVATE_KEY)"
+            exit 1
+          fi
+          DEST="${EC2_USER}@${EC2_HOST}"
+          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 -i "$HOME/.ssh/deploy_key" "$DEST" "sudo mkdir -p /mydata/nginx/html && sudo chown -R \$USER:\$USER /mydata/nginx/html"
+          rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 -i $HOME/.ssh/deploy_key" dist/ "$DEST:/mydata/nginx/html/"
+          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=30 -i "$HOME/.ssh/deploy_key" "$DEST" "cp -rn /mydata/nginx/html/static/config /mydata/nginx/html/config 2>/dev/null || true"
           rm -f ~/.ssh/deploy_key
+        timeout-minutes: 5
