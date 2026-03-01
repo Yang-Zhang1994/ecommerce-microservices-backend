@@ -184,6 +184,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
       # 启动时不创建连接，避免 RDS 不可达时阻塞启动；验证码在 DB 不可用时走内存回退
       SPRING_DATASOURCE_DRUID_INITIAL_SIZE: "0"
+      # 禁用 Wall 过滤器，避免 JPA 生成的 WHERE 1=1 被误判为 SQL 注入
+      SPRING_DATASOURCE_DRUID_FILTERS: stat
     expose:
       - "8080"
 
