@@ -31,4 +31,12 @@ if [ -f "$SRC_JAVA" ]; then
 else
   echo "Warning: $SRC_JAVA not found, skip Java fix"
 fi
+# 3) 覆盖 ScheduleConfig.java：Quartz 不自动启动，避免 RDS 不可达时阻塞启动
+SCHEDULE_SRC="$SCRIPT_DIR/renren-fast-fix/ScheduleConfig.java"
+SCHEDULE_DEST="$RENREN_FAST/src/main/java/io/renren/modules/job/config/ScheduleConfig.java"
+if [ -f "$SCHEDULE_SRC" ]; then
+  mkdir -p "$(dirname "$SCHEDULE_DEST")"
+  cp "$SCHEDULE_SRC" "$SCHEDULE_DEST"
+  echo "Applied ScheduleConfig.java (Quartz auto-startup disabled)"
+fi
 echo "Captcha fix applied. Rebuild renren-fast and restart: docker compose -f docker-compose.app.yml build renren-fast && docker compose -f docker-compose.app.yml up -d renren-fast"
