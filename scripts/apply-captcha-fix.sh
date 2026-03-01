@@ -39,4 +39,11 @@ if [ -f "$SCHEDULE_SRC" ]; then
   cp "$SCHEDULE_SRC" "$SCHEDULE_DEST"
   echo "Applied ScheduleConfig.java (Quartz auto-startup disabled)"
 fi
+# 4) Druid Wall：允许 JPA 生成的 select-always-true 条件，避免 admin list 500
+for YML in "$RENREN_FAST/src/main/resources/application-dev.yml" "$RENREN_FAST/src/main/resources/application-prod.yml"; do
+  if [ -f "$YML" ] && ! grep -q "select-always-true-allow" "$YML"; then
+    perl -i -pe 's/(multi-statement-allow: true)/$1\n            select-always-true-allow: true/' "$YML"
+    echo "Applied Druid Wall select-always-true-allow to $(basename "$YML")"
+  fi
+done
 echo "Captcha fix applied. Rebuild renren-fast and restart: docker compose -f docker-compose.app.yml build renren-fast && docker compose -f docker-compose.app.yml up -d renren-fast"

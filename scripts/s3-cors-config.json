@@ -1,0 +1,15 @@
+{
+  "CORSRules": [
+    {
+      "AllowedHeaders": ["*"],
+      "AllowedMethods": ["GET", "PUT", "POST", "HEAD"],
+      "AllowedOrigins": [
+        "http://yangzhangtech.online",
+        "https://yangzhangtech.online",
+        "http://localhost:8001",
+        "http://127.0.0.1:8001"
+      ],
+      "ExposeHeaders": ["ETag"]
+    }
+  ]
+}
