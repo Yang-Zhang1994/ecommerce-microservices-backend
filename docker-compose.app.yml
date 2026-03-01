@@ -182,6 +182,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_admin?sslmode=require&connectTimeout=30000&socketTimeout=30000
       SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
+      # 启动时不创建连接，避免 RDS 不可达时阻塞启动；验证码在 DB 不可用时走内存回退
+      SPRING_DATASOURCE_DRUID_INITIAL_SIZE: "0"
     expose:
       - "8080"
 
