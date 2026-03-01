@@ -126,13 +126,17 @@
             'username': this.dataForm.userName
           })
         }).then(({data}) => {
-          if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
+          if (data && data.code === 0 && data.page) {
+            this.dataList = data.page.list || []
+            this.totalPage = data.page.totalCount != null ? data.page.totalCount : 0
           } else {
             this.dataList = []
             this.totalPage = 0
           }
+          this.dataListLoading = false
+        }).catch(() => {
+          this.dataList = []
+          this.totalPage = 0
           this.dataListLoading = false
         })
       },

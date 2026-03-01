@@ -4,7 +4,7 @@
       <div class="site-content">
         <div class="brand-info">
           <h2 class="brand-info__text">Backend Management System</h2>
-          <p class="brand-info__intro">Microservices-based e-commerce management platform with Spring Cloud Alibaba and Vue.js, providing comprehensive solutions for product, order, member, and inventory management.</p>
+          <p class="brand-info__intro">E-commerce backend with Spring Cloud and Vue.js — product, order, member, and inventory in one place.</p>
         </div>
         <div class="login-main">
           <h3 class="login-title">Admin Login</h3>
