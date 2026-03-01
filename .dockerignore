@@ -1,0 +1,8 @@
+.git
+**/target
+**/node_modules
+**/.idea
+**/*.iml
+renren-fast-vue/node_modules
+renren-fast-vue/dist
+**/.DS_Store

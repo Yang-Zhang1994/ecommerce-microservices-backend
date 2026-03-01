@@ -1,0 +1,14 @@
+# 多阶段构建：在镜像内用 Java 17 编译 renren-fast（含验证码内存回退）
+# 使用前需在仓库根目录执行: bash scripts/apply-captcha-fix.sh
+# 构建: docker build -f Dockerfile.renren-fast -t renren-fast .
+FROM eclipse-temurin:17-jdk AS builder
+WORKDIR /build
+COPY . .
+RUN mvn install -pl renren-fast -am -DskipTests -q
+
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY --from=builder /build/renren-fast/target/renren-fast*.jar app.jar
+EXPOSE 8080
+ENV JAVA_OPTS=""
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
