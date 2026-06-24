@@ -142,7 +142,7 @@ export default {
         });
       });
     },
-    // 获取数据列表
+    // Load data list
     getDataList() {
       this.dataListLoading = true;
       this.$http({
@@ -164,29 +164,29 @@ export default {
         this.dataListLoading = false;
       });
     },
-    // 每页数
+    // Page size
     sizeChangeHandle(val) {
       this.pageSize = val;
       this.pageIndex = 1;
       this.getDataList();
     },
-    // 当前页
+    // Current page
     currentChangeHandle(val) {
       this.pageIndex = val;
       this.getDataList();
     },
-    // 多选
+    // Multi-select
     selectionChangeHandle(val) {
       this.dataListSelections = val;
     },
-    // 新增 / 修改
+    // Add / Edit
     addOrUpdateHandle(id) {
       this.addOrUpdateVisible = true;
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(id);
       });
     },
-    // 删除
+    // Delete
     deleteHandle(id) {
       var ids = id
         ? [id]

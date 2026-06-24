@@ -7,7 +7,9 @@ import com.atguigu.gulimall.coupon.repository.SkuLadderRepository;
 import com.atguigu.gulimall.coupon.service.SkuLadderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Map;
@@ -19,8 +21,9 @@ public class SkuLadderServiceImpl implements SkuLadderService {
     private SkuLadderRepository repository;
 
     @Override
+    @Transactional(readOnly = true)
     public PageUtils queryPage(Map<String, Object> params) {
-        Pageable pageable = new Query<SkuLadderEntity>().getPageable(params);
+        Pageable pageable = new Query<SkuLadderEntity>().getPageable(params, Sort.by("id").ascending());
         return new PageUtils(repository.findAll(pageable));
     }
 

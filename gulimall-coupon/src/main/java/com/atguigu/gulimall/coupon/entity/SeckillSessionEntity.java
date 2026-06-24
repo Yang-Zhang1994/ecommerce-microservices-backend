@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.coupon.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -28,11 +29,13 @@ public class SeckillSessionEntity implements Serializable {
     @Column(name = "name")
     private String name;
 
-    /** 每日开始时间 */
+    /** 每日开始时间（与后台表单一致，按 America/Los_Angeles 解析/展示） */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Los_Angeles")
     @Column(name = "start_time")
     private Date startTime;
 
     /** 每日结束时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Los_Angeles")
     @Column(name = "end_time")
     private Date endTime;
 

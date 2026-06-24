@@ -1,0 +1,4 @@
+.highlight b {
+  color: var(--mall-brand, #c81623);
+  font-weight: 700;
+}

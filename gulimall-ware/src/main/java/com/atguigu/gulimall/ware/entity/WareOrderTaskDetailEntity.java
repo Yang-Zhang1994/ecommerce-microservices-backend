@@ -36,4 +36,12 @@ public class WareOrderTaskDetailEntity implements Serializable {
     /** 工作单id */
     @Column(name = "task_id")
     private Long taskId;
+
+    /** 仓库 id（锁定发生在哪条仓库库存行） */
+    @Column(name = "ware_id")
+    private Long wareId;
+
+    /** 1-锁定 2-解锁 3-扣减 */
+    @Column(name = "lock_status")
+    private Integer lockStatus;
 }

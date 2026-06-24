@@ -37,5 +37,10 @@ public interface CategoryService {
     void updateCascade(CategoryEntity category);
 
     void updateBatchById(java.util.List<CategoryEntity> list);
+
+    /**
+     * Resolve level-3 category ids whose names match any of the given search terms.
+     */
+    List<Long> findLevel3IdsBySearchTerms(List<String> terms);
 }
 

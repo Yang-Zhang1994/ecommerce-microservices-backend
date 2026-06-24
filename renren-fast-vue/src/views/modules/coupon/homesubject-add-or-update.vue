@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
@@ -11,31 +11,31 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="120px"
     >
-      <el-form-item label="专题名字" prop="name">
-        <el-input v-model="dataForm.name" placeholder="专题名字"></el-input>
+      <el-form-item label="Subject name" prop="name">
+        <el-input v-model="dataForm.name" placeholder="Subject name"></el-input>
       </el-form-item>
-      <el-form-item label="专题标题" prop="title">
-        <el-input v-model="dataForm.title" placeholder="专题标题"></el-input>
+      <el-form-item label="Subject title" prop="title">
+        <el-input v-model="dataForm.title" placeholder="Subject title"></el-input>
       </el-form-item>
-      <el-form-item label="专题副标题" prop="subTitle">
-        <el-input v-model="dataForm.subTitle" placeholder="专题副标题"></el-input>
+      <el-form-item label="Subject subtitle" prop="subTitle">
+        <el-input v-model="dataForm.subTitle" placeholder="Subject subtitle"></el-input>
       </el-form-item>
-      <el-form-item label="显示状态" prop="status">
+      <el-form-item label="Display status" prop="status">
         <el-switch v-model="dataForm.status" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
       </el-form-item>
-      <el-form-item label="详情连接" prop="url">
-        <el-input v-model="dataForm.url" placeholder="详情连接"></el-input>
+      <el-form-item label="Detail URL" prop="url">
+        <el-input v-model="dataForm.url" placeholder="Detail URL"></el-input>
       </el-form-item>
-      <el-form-item label="排序" prop="sort">
-        <el-input v-model="dataForm.sort" placeholder="排序"></el-input>
+      <el-form-item label="Sort" prop="sort">
+        <el-input v-model="dataForm.sort" placeholder="Sort"></el-input>
       </el-form-item>
-      <el-form-item label="专题图片地址" prop="img">
+      <el-form-item label="Subject image URL" prop="img">
         <single-upload v-model="dataForm.img"></single-upload>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -59,21 +59,21 @@ export default {
       },
       dataRule: {
         name: [
-          { required: true, message: "专题名字不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         title: [
-          { required: true, message: "专题标题不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         subTitle: [
-          { required: true, message: "专题副标题不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         status: [
-          { required: true, message: "显示状态不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
-        url: [{ required: true, message: "详情连接不能为空", trigger: "blur" }],
-        sort: [{ required: true, message: "排序不能为空", trigger: "blur" }],
+        url: [{ required: true, message: 'This field is required', trigger: "blur" }],
+        sort: [{ required: true, message: 'Sort is required', trigger: "blur" }],
         img: [
-          { required: true, message: "专题图片地址不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ]
       }
     };
@@ -105,7 +105,7 @@ export default {
         }
       });
     },
-    // 表单提交
+    // form submit
     dataFormSubmit() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
@@ -127,7 +127,7 @@ export default {
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
+                message: "Operation successful",
                 type: "success",
                 duration: 1500,
                 onClose: () => {

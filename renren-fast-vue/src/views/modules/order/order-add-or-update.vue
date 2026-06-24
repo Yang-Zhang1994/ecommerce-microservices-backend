@@ -1,136 +1,136 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
     <el-form-item label="member_id" prop="memberId">
       <el-input v-model="dataForm.memberId" placeholder="member_id"></el-input>
     </el-form-item>
-    <el-form-item label="订单号" prop="orderSn">
-      <el-input v-model="dataForm.orderSn" placeholder="订单号"></el-input>
+    <el-form-item label="Order Number" prop="orderSn">
+      <el-input v-model="dataForm.orderSn" placeholder="Order Number"></el-input>
     </el-form-item>
-    <el-form-item label="使用的优惠券" prop="couponId">
-      <el-input v-model="dataForm.couponId" placeholder="使用的优惠券"></el-input>
+    <el-form-item label="Coupon Used" prop="couponId">
+      <el-input v-model="dataForm.couponId" placeholder="Coupon Used"></el-input>
     </el-form-item>
     <el-form-item label="create_time" prop="createTime">
       <el-input v-model="dataForm.createTime" placeholder="create_time"></el-input>
     </el-form-item>
-    <el-form-item label="用户名" prop="memberUsername">
-      <el-input v-model="dataForm.memberUsername" placeholder="用户名"></el-input>
+    <el-form-item label="Username" prop="memberUsername">
+      <el-input v-model="dataForm.memberUsername" placeholder="Username"></el-input>
     </el-form-item>
-    <el-form-item label="订单总额" prop="totalAmount">
-      <el-input v-model="dataForm.totalAmount" placeholder="订单总额"></el-input>
+    <el-form-item label="Total Amount" prop="totalAmount">
+      <el-input v-model="dataForm.totalAmount" placeholder="Total Amount"></el-input>
     </el-form-item>
-    <el-form-item label="应付总额" prop="payAmount">
-      <el-input v-model="dataForm.payAmount" placeholder="应付总额"></el-input>
+    <el-form-item label="Pay Amount" prop="payAmount">
+      <el-input v-model="dataForm.payAmount" placeholder="Pay Amount"></el-input>
     </el-form-item>
-    <el-form-item label="运费金额" prop="freightAmount">
-      <el-input v-model="dataForm.freightAmount" placeholder="运费金额"></el-input>
+    <el-form-item label="Freight Amount" prop="freightAmount">
+      <el-input v-model="dataForm.freightAmount" placeholder="Freight Amount"></el-input>
     </el-form-item>
-    <el-form-item label="促销优化金额（促销价、满减、阶梯价）" prop="promotionAmount">
-      <el-input v-model="dataForm.promotionAmount" placeholder="促销优化金额（促销价、满减、阶梯价）"></el-input>
+    <el-form-item label="Promotion Amount" prop="promotionAmount">
+      <el-input v-model="dataForm.promotionAmount" placeholder="Promotion Amount"></el-input>
     </el-form-item>
-    <el-form-item label="积分抵扣金额" prop="integrationAmount">
-      <el-input v-model="dataForm.integrationAmount" placeholder="积分抵扣金额"></el-input>
+    <el-form-item label="Points Deduction" prop="integrationAmount">
+      <el-input v-model="dataForm.integrationAmount" placeholder="Points Deduction"></el-input>
     </el-form-item>
-    <el-form-item label="优惠券抵扣金额" prop="couponAmount">
-      <el-input v-model="dataForm.couponAmount" placeholder="优惠券抵扣金额"></el-input>
+    <el-form-item label="Coupon Deduction" prop="couponAmount">
+      <el-input v-model="dataForm.couponAmount" placeholder="Coupon Deduction"></el-input>
     </el-form-item>
-    <el-form-item label="后台调整订单使用的折扣金额" prop="discountAmount">
-      <el-input v-model="dataForm.discountAmount" placeholder="后台调整订单使用的折扣金额"></el-input>
+    <el-form-item label="Admin Discount" prop="discountAmount">
+      <el-input v-model="dataForm.discountAmount" placeholder="Admin Discount"></el-input>
     </el-form-item>
-    <el-form-item label="支付方式【1->支付宝；2->微信；3->银联； 4->货到付款；】" prop="payType">
-      <el-input v-model="dataForm.payType" placeholder="支付方式【1->支付宝；2->微信；3->银联； 4->货到付款；】"></el-input>
+    <el-form-item label="Payment Method [1-Alipay 2-WeChat 3-UnionPay 4-COD]" prop="payType">
+      <el-input v-model="dataForm.payType" placeholder="Payment Method [1-Alipay 2-WeChat 3-UnionPay 4-COD]"></el-input>
     </el-form-item>
-    <el-form-item label="订单来源[0->PC订单；1->app订单]" prop="sourceType">
-      <el-input v-model="dataForm.sourceType" placeholder="订单来源[0->PC订单；1->app订单]"></el-input>
+    <el-form-item label="Source [0-PC 1-App]" prop="sourceType">
+      <el-input v-model="dataForm.sourceType" placeholder="Source [0-PC 1-App]"></el-input>
     </el-form-item>
-    <el-form-item label="订单状态【0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单】" prop="status">
-      <el-input v-model="dataForm.status" placeholder="订单状态【0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单】"></el-input>
+    <el-form-item label="Order Status [0-Pending 1-To ship 2-Shipped 3-Done 4-Closed 5-Invalid]" prop="status">
+      <el-input v-model="dataForm.status" placeholder="Order Status [0-Pending 1-To ship 2-Shipped 3-Done 4-Closed 5-Invalid]"></el-input>
     </el-form-item>
-    <el-form-item label="物流公司(配送方式)" prop="deliveryCompany">
-      <el-input v-model="dataForm.deliveryCompany" placeholder="物流公司(配送方式)"></el-input>
+    <el-form-item label="Delivery Company" prop="deliveryCompany">
+      <el-input v-model="dataForm.deliveryCompany" placeholder="Delivery Company"></el-input>
     </el-form-item>
-    <el-form-item label="物流单号" prop="deliverySn">
-      <el-input v-model="dataForm.deliverySn" placeholder="物流单号"></el-input>
+    <el-form-item label="Tracking Number" prop="deliverySn">
+      <el-input v-model="dataForm.deliverySn" placeholder="Tracking Number"></el-input>
     </el-form-item>
-    <el-form-item label="自动确认时间（天）" prop="autoConfirmDay">
-      <el-input v-model="dataForm.autoConfirmDay" placeholder="自动确认时间（天）"></el-input>
+    <el-form-item label="Auto Confirm Time (Days)" prop="autoConfirmDay">
+      <el-input v-model="dataForm.autoConfirmDay" placeholder="Auto Confirm Time (Days)"></el-input>
     </el-form-item>
-    <el-form-item label="可以获得的积分" prop="integration">
-      <el-input v-model="dataForm.integration" placeholder="可以获得的积分"></el-input>
+    <el-form-item label="Points Earned" prop="integration">
+      <el-input v-model="dataForm.integration" placeholder="Points Earned"></el-input>
     </el-form-item>
-    <el-form-item label="可以获得的成长值" prop="growth">
-      <el-input v-model="dataForm.growth" placeholder="可以获得的成长值"></el-input>
+    <el-form-item label="Growth Value Earned" prop="growth">
+      <el-input v-model="dataForm.growth" placeholder="Growth Value Earned"></el-input>
     </el-form-item>
-    <el-form-item label="发票类型[0->不开发票；1->电子发票；2->纸质发票]" prop="billType">
-      <el-input v-model="dataForm.billType" placeholder="发票类型[0->不开发票；1->电子发票；2->纸质发票]"></el-input>
+    <el-form-item label="Invoice Type [0->No Invoice; 1->Electronic; 2->Paper]" prop="billType">
+      <el-input v-model="dataForm.billType" placeholder="Invoice Type [0->No Invoice; 1->Electronic; 2->Paper]"></el-input>
     </el-form-item>
-    <el-form-item label="发票抬头" prop="billHeader">
-      <el-input v-model="dataForm.billHeader" placeholder="发票抬头"></el-input>
+    <el-form-item label="Invoice Header" prop="billHeader">
+      <el-input v-model="dataForm.billHeader" placeholder="Invoice Header"></el-input>
     </el-form-item>
-    <el-form-item label="发票内容" prop="billContent">
-      <el-input v-model="dataForm.billContent" placeholder="发票内容"></el-input>
+    <el-form-item label="Invoice Content" prop="billContent">
+      <el-input v-model="dataForm.billContent" placeholder="Invoice Content"></el-input>
     </el-form-item>
-    <el-form-item label="收票人电话" prop="billReceiverPhone">
-      <el-input v-model="dataForm.billReceiverPhone" placeholder="收票人电话"></el-input>
+    <el-form-item label="Invoice Receiver Phone" prop="billReceiverPhone">
+      <el-input v-model="dataForm.billReceiverPhone" placeholder="Invoice Receiver Phone"></el-input>
     </el-form-item>
-    <el-form-item label="收票人邮箱" prop="billReceiverEmail">
-      <el-input v-model="dataForm.billReceiverEmail" placeholder="收票人邮箱"></el-input>
+    <el-form-item label="Invoice Receiver Email" prop="billReceiverEmail">
+      <el-input v-model="dataForm.billReceiverEmail" placeholder="Invoice Receiver Email"></el-input>
     </el-form-item>
-    <el-form-item label="收货人姓名" prop="receiverName">
-      <el-input v-model="dataForm.receiverName" placeholder="收货人姓名"></el-input>
+    <el-form-item label="Receiver Name" prop="receiverName">
+      <el-input v-model="dataForm.receiverName" placeholder="Receiver Name"></el-input>
     </el-form-item>
-    <el-form-item label="收货人电话" prop="receiverPhone">
-      <el-input v-model="dataForm.receiverPhone" placeholder="收货人电话"></el-input>
+    <el-form-item label="Receiver Phone" prop="receiverPhone">
+      <el-input v-model="dataForm.receiverPhone" placeholder="Receiver Phone"></el-input>
     </el-form-item>
-    <el-form-item label="收货人邮编" prop="receiverPostCode">
-      <el-input v-model="dataForm.receiverPostCode" placeholder="收货人邮编"></el-input>
+    <el-form-item label="Receiver Postal Code" prop="receiverPostCode">
+      <el-input v-model="dataForm.receiverPostCode" placeholder="Receiver Postal Code"></el-input>
     </el-form-item>
-    <el-form-item label="省份/直辖市" prop="receiverProvince">
-      <el-input v-model="dataForm.receiverProvince" placeholder="省份/直辖市"></el-input>
+    <el-form-item label="Province/Municipality" prop="receiverProvince">
+      <el-input v-model="dataForm.receiverProvince" placeholder="Province/Municipality"></el-input>
     </el-form-item>
-    <el-form-item label="城市" prop="receiverCity">
-      <el-input v-model="dataForm.receiverCity" placeholder="城市"></el-input>
+    <el-form-item label="City" prop="receiverCity">
+      <el-input v-model="dataForm.receiverCity" placeholder="City"></el-input>
     </el-form-item>
-    <el-form-item label="区" prop="receiverRegion">
-      <el-input v-model="dataForm.receiverRegion" placeholder="区"></el-input>
+    <el-form-item label="Region" prop="receiverRegion">
+      <el-input v-model="dataForm.receiverRegion" placeholder="Region"></el-input>
     </el-form-item>
-    <el-form-item label="详细地址" prop="receiverDetailAddress">
-      <el-input v-model="dataForm.receiverDetailAddress" placeholder="详细地址"></el-input>
+    <el-form-item label="Detail Address" prop="receiverDetailAddress">
+      <el-input v-model="dataForm.receiverDetailAddress" placeholder="Detail Address"></el-input>
     </el-form-item>
-    <el-form-item label="订单备注" prop="note">
-      <el-input v-model="dataForm.note" placeholder="订单备注"></el-input>
+    <el-form-item label="Order Remarks" prop="note">
+      <el-input v-model="dataForm.note" placeholder="Order Remarks"></el-input>
     </el-form-item>
-    <el-form-item label="确认收货状态[0->未确认；1->已确认]" prop="confirmStatus">
-      <el-input v-model="dataForm.confirmStatus" placeholder="确认收货状态[0->未确认；1->已确认]"></el-input>
+    <el-form-item label="Confirm Receipt Status [0->Unconfirmed; 1->Confirmed]" prop="confirmStatus">
+      <el-input v-model="dataForm.confirmStatus" placeholder="Confirm Receipt Status [0->Unconfirmed; 1->Confirmed]"></el-input>
     </el-form-item>
-    <el-form-item label="删除状态【0->未删除；1->已删除】" prop="deleteStatus">
-      <el-input v-model="dataForm.deleteStatus" placeholder="删除状态【0->未删除；1->已删除】"></el-input>
+    <el-form-item label="Delete Status [0->Not Deleted; 1->Deleted]" prop="deleteStatus">
+      <el-input v-model="dataForm.deleteStatus" placeholder="Delete Status [0->Not Deleted; 1->Deleted]"></el-input>
     </el-form-item>
-    <el-form-item label="下单时使用的积分" prop="useIntegration">
-      <el-input v-model="dataForm.useIntegration" placeholder="下单时使用的积分"></el-input>
+    <el-form-item label="Points Used When Ordering" prop="useIntegration">
+      <el-input v-model="dataForm.useIntegration" placeholder="Points Used When Ordering"></el-input>
     </el-form-item>
-    <el-form-item label="支付时间" prop="paymentTime">
-      <el-input v-model="dataForm.paymentTime" placeholder="支付时间"></el-input>
+    <el-form-item label="Payment Time" prop="paymentTime">
+      <el-input v-model="dataForm.paymentTime" placeholder="Payment Time"></el-input>
     </el-form-item>
-    <el-form-item label="发货时间" prop="deliveryTime">
-      <el-input v-model="dataForm.deliveryTime" placeholder="发货时间"></el-input>
+    <el-form-item label="Delivery Time" prop="deliveryTime">
+      <el-input v-model="dataForm.deliveryTime" placeholder="Delivery Time"></el-input>
     </el-form-item>
-    <el-form-item label="确认收货时间" prop="receiveTime">
-      <el-input v-model="dataForm.receiveTime" placeholder="确认收货时间"></el-input>
+    <el-form-item label="Confirm Receipt Time" prop="receiveTime">
+      <el-input v-model="dataForm.receiveTime" placeholder="Confirm Receipt Time"></el-input>
     </el-form-item>
-    <el-form-item label="评价时间" prop="commentTime">
-      <el-input v-model="dataForm.commentTime" placeholder="评价时间"></el-input>
+    <el-form-item label="Comment Time" prop="commentTime">
+      <el-input v-model="dataForm.commentTime" placeholder="Comment Time"></el-input>
     </el-form-item>
-    <el-form-item label="修改时间" prop="modifyTime">
-      <el-input v-model="dataForm.modifyTime" placeholder="修改时间"></el-input>
+    <el-form-item label="Modify Time" prop="modifyTime">
+      <el-input v-model="dataForm.modifyTime" placeholder="Modify Time"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -186,127 +186,127 @@
         },
         dataRule: {
           memberId: [
-            { required: true, message: 'member_id不能为空', trigger: 'blur' }
+            { required: true, message: 'member_id is required', trigger: 'blur' }
           ],
           orderSn: [
-            { required: true, message: '订单号不能为空', trigger: 'blur' }
+            { required: true, message: 'Order Number is required', trigger: 'blur' }
           ],
           couponId: [
-            { required: true, message: '使用的优惠券不能为空', trigger: 'blur' }
+            { required: true, message: 'Coupon Used is required', trigger: 'blur' }
           ],
           createTime: [
-            { required: true, message: 'create_time不能为空', trigger: 'blur' }
+            { required: true, message: 'create_time is required', trigger: 'blur' }
           ],
           memberUsername: [
-            { required: true, message: '用户名不能为空', trigger: 'blur' }
+            { required: true, message: 'Username is required', trigger: 'blur' }
           ],
           totalAmount: [
-            { required: true, message: '订单总额不能为空', trigger: 'blur' }
+            { required: true, message: 'Total Amount is required', trigger: 'blur' }
           ],
           payAmount: [
-            { required: true, message: '应付总额不能为空', trigger: 'blur' }
+            { required: true, message: 'Pay Amount is required', trigger: 'blur' }
           ],
           freightAmount: [
-            { required: true, message: '运费金额不能为空', trigger: 'blur' }
+            { required: true, message: 'Freight Amount is required', trigger: 'blur' }
           ],
           promotionAmount: [
-            { required: true, message: '促销优化金额（促销价、满减、阶梯价）不能为空', trigger: 'blur' }
+            { required: true, message: 'Promotion Amount is required', trigger: 'blur' }
           ],
           integrationAmount: [
-            { required: true, message: '积分抵扣金额不能为空', trigger: 'blur' }
+            { required: true, message: 'Points Deduction is required', trigger: 'blur' }
           ],
           couponAmount: [
-            { required: true, message: '优惠券抵扣金额不能为空', trigger: 'blur' }
+            { required: true, message: 'Coupon Deduction is required', trigger: 'blur' }
           ],
           discountAmount: [
-            { required: true, message: '后台调整订单使用的折扣金额不能为空', trigger: 'blur' }
+            { required: true, message: 'Admin Discount is required', trigger: 'blur' }
           ],
           payType: [
-            { required: true, message: '支付方式【1->支付宝；2->微信；3->银联； 4->货到付款；】不能为空', trigger: 'blur' }
+            { required: true, message: 'Payment Method [1-Alipay 2-WeChat 3-UnionPay 4-COD] is required', trigger: 'blur' }
           ],
           sourceType: [
-            { required: true, message: '订单来源[0->PC订单；1->app订单]不能为空', trigger: 'blur' }
+            { required: true, message: 'Source [0-PC 1-App] is required', trigger: 'blur' }
           ],
           status: [
-            { required: true, message: '订单状态【0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单】不能为空', trigger: 'blur' }
+            { required: true, message: 'Order Status [0-Pending 1-To ship 2-Shipped 3-Done 4-Closed 5-Invalid] is required', trigger: 'blur' }
           ],
           deliveryCompany: [
-            { required: true, message: '物流公司(配送方式)不能为空', trigger: 'blur' }
+            { required: true, message: 'Delivery Company is required', trigger: 'blur' }
           ],
           deliverySn: [
-            { required: true, message: '物流单号不能为空', trigger: 'blur' }
+            { required: true, message: 'Tracking Number is required', trigger: 'blur' }
           ],
           autoConfirmDay: [
-            { required: true, message: '自动确认时间（天）不能为空', trigger: 'blur' }
+            { required: true, message: 'Auto Confirm Time (Days) is required', trigger: 'blur' }
           ],
           integration: [
-            { required: true, message: '可以获得的积分不能为空', trigger: 'blur' }
+            { required: true, message: 'Points Earned is required', trigger: 'blur' }
           ],
           growth: [
-            { required: true, message: '可以获得的成长值不能为空', trigger: 'blur' }
+            { required: true, message: 'Growth Value Earned is required', trigger: 'blur' }
           ],
           billType: [
-            { required: true, message: '发票类型[0->不开发票；1->电子发票；2->纸质发票]不能为空', trigger: 'blur' }
+            { required: true, message: 'Invoice Type [0->No Invoice; 1->Electronic; 2->Paper] is required', trigger: 'blur' }
           ],
           billHeader: [
-            { required: true, message: '发票抬头不能为空', trigger: 'blur' }
+            { required: true, message: 'Invoice Header is required', trigger: 'blur' }
           ],
           billContent: [
-            { required: true, message: '发票内容不能为空', trigger: 'blur' }
+            { required: true, message: 'Invoice Content is required', trigger: 'blur' }
           ],
           billReceiverPhone: [
-            { required: true, message: '收票人电话不能为空', trigger: 'blur' }
+            { required: true, message: 'Invoice Receiver Phone is required', trigger: 'blur' }
           ],
           billReceiverEmail: [
-            { required: true, message: '收票人邮箱不能为空', trigger: 'blur' }
+            { required: true, message: 'Invoice Receiver Email is required', trigger: 'blur' }
           ],
           receiverName: [
-            { required: true, message: '收货人姓名不能为空', trigger: 'blur' }
+            { required: true, message: 'Receiver Name is required', trigger: 'blur' }
           ],
           receiverPhone: [
-            { required: true, message: '收货人电话不能为空', trigger: 'blur' }
+            { required: true, message: 'Receiver Phone is required', trigger: 'blur' }
           ],
           receiverPostCode: [
-            { required: true, message: '收货人邮编不能为空', trigger: 'blur' }
+            { required: true, message: 'Receiver Postal Code is required', trigger: 'blur' }
           ],
           receiverProvince: [
-            { required: true, message: '省份/直辖市不能为空', trigger: 'blur' }
+            { required: true, message: 'Province/Municipality is required', trigger: 'blur' }
           ],
           receiverCity: [
-            { required: true, message: '城市不能为空', trigger: 'blur' }
+            { required: true, message: 'City is required', trigger: 'blur' }
           ],
           receiverRegion: [
-            { required: true, message: '区不能为空', trigger: 'blur' }
+            { required: true, message: 'Region is required', trigger: 'blur' }
           ],
           receiverDetailAddress: [
-            { required: true, message: '详细地址不能为空', trigger: 'blur' }
+            { required: true, message: 'Detail Address is required', trigger: 'blur' }
           ],
           note: [
-            { required: true, message: '订单备注不能为空', trigger: 'blur' }
+            { required: true, message: 'Order Remarks is required', trigger: 'blur' }
           ],
           confirmStatus: [
-            { required: true, message: '确认收货状态[0->未确认；1->已确认]不能为空', trigger: 'blur' }
+            { required: true, message: 'Confirm Receipt Status [0->Unconfirmed; 1->Confirmed] is required', trigger: 'blur' }
           ],
           deleteStatus: [
-            { required: true, message: '删除状态【0->未删除；1->已删除】不能为空', trigger: 'blur' }
+            { required: true, message: 'Delete Status [0->Not Deleted; 1->Deleted] is required', trigger: 'blur' }
           ],
           useIntegration: [
-            { required: true, message: '下单时使用的积分不能为空', trigger: 'blur' }
+            { required: true, message: 'Points Used When Ordering is required', trigger: 'blur' }
           ],
           paymentTime: [
-            { required: true, message: '支付时间不能为空', trigger: 'blur' }
+            { required: true, message: 'Payment Time is required', trigger: 'blur' }
           ],
           deliveryTime: [
-            { required: true, message: '发货时间不能为空', trigger: 'blur' }
+            { required: true, message: 'Delivery Time is required', trigger: 'blur' }
           ],
           receiveTime: [
-            { required: true, message: '确认收货时间不能为空', trigger: 'blur' }
+            { required: true, message: 'Confirm Receipt Time is required', trigger: 'blur' }
           ],
           commentTime: [
-            { required: true, message: '评价时间不能为空', trigger: 'blur' }
+            { required: true, message: 'Comment Time is required', trigger: 'blur' }
           ],
           modifyTime: [
-            { required: true, message: '修改时间不能为空', trigger: 'blur' }
+            { required: true, message: 'Modify Time is required', trigger: 'blur' }
           ]
         }
       }
@@ -370,7 +370,7 @@
           }
         })
       },
-      // 表单提交
+      // Form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
@@ -424,7 +424,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

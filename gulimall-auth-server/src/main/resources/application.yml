@@ -1,0 +1,88 @@
+server:
+  port: 20000
+  # Nginx/Gateway 转发时使用 X-Forwarded-*，OAuth 重定向 URL 才能用公网域名而非容器名
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: gulimall-auth-server
+  profiles:
+    active: dev
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+            scope:
+              - openid
+              - profile
+              - email
+            # Local default; override for production via env, e.g.
+            # GULIMALL_GOOGLE_REDIRECT_URI=http://www.ecommerce.com/api/auth/login/oauth2/code/{registrationId}
+            redirect-uri: ${GULIMALL_GOOGLE_REDIRECT_URI:http://localhost:88/api/auth/login/oauth2/code/{registrationId}}
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
+      timeout: 3000ms
+  session:
+    store-type: redis
+    timeout: 30m
+    redis:
+      namespace: gulimall:auth:sessions
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        enabled: true
+        hostname: host.docker.internal
+        prefer-ip-address: true
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        instance-id: ${spring.application.name}:${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+
+logging:
+  level:
+    com.atguigu.gulimall.auth: debug
+    org.springframework.cloud.consul: info
+
+# SMS: set phone-region to NANP for Canada/US (+1). Twilio: set all three twilio.* (or env TWILIO_*) to send real SMS.
+# After Google sign-in, browser is redirected here (mall home by default).
+# Google Cloud Console → authorized redirect URIs must include:
+#   http://localhost:88/api/auth/login/oauth2/code/google   (via gateway :88)
+#   http://localhost:20000/auth/login/oauth2/code/google   (auth-server direct)
+gulimall:
+  auth:
+    # Spring Session cookie: production example GULIMALL_SESSION_COOKIE_DOMAIN=.ecommerce.com
+    # HTTPS sites: GULIMALL_SESSION_COOKIE_SECURE=true
+    session:
+      cookie-domain: ${GULIMALL_SESSION_COOKIE_DOMAIN:}
+      cookie-secure: ${GULIMALL_SESSION_COOKIE_SECURE:false}
+    oauth2:
+      # Align with gulimall-mall dev (next dev -p 3001); override per env e.g. production home URL.
+      default-target-url: ${GULIMALL_OAUTH2_SUCCESS_URL:http://localhost:3001/}
+      # Must be absolute: relative /login?error resolves with wrong Host behind LB (e.g. 172.18.0.x).
+      failure-target-url: ${GULIMALL_OAUTH2_FAILURE_URL:http://localhost:88/login?error}
+    sms:
+      phone-region: ${GULIMALL_AUTH_SMS_PHONE_REGION:CHINA}
+      # Override with env GULIMALL_AUTH_SMS_VERIFICATION_MESSAGE_TEMPLATE if needed (include literal {code} for the OTP).
+      verification-message-template: "Your verification code is {code}. Valid for 5 minutes."
+      twilio:
+        account-sid: ${TWILIO_ACCOUNT_SID:}
+        auth-token: ${TWILIO_AUTH_TOKEN:}
+        from-number: ${TWILIO_FROM_NUMBER:}

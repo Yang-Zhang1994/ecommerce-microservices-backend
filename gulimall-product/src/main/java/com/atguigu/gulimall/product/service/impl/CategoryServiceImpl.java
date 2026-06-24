@@ -7,15 +7,20 @@ import com.atguigu.gulimall.product.repository.CategoryRepository;
 import com.atguigu.gulimall.product.service.CategoryBrandRelationService;
 import com.atguigu.gulimall.product.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.util.StringUtils;
 
 @Service("categoryService")
 public class CategoryServiceImpl implements CategoryService {
@@ -31,6 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @CacheEvict(value = "category", allEntries = true)
     public void save(CategoryEntity entity) {
         categoryRepository.save(entity);
     }
@@ -46,16 +52,18 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageUtils queryPage(Map<String, Object> params) {
-        Pageable pageable = new Query<CategoryEntity>().getPageable(params);
+        Pageable pageable = new Query<CategoryEntity>().getPageable(params, Sort.by("id").ascending());
         Page<CategoryEntity> page = categoryRepository.findAll(pageable);
         return new PageUtils(page);
     }
 
     @Override
+    @Cacheable(value = "category", key = "'listWithTree'")
     public List<CategoryEntity> listWithTree() {
         List<CategoryEntity> categoryEntities = categoryRepository.findAll();
-        List<CategoryEntity> level1 = categoryEntities.stream()
+        return categoryEntities.stream()
                 .filter(categoryEntity -> categoryEntity.getParentCid() == null || categoryEntity.getParentCid() == 0)
                 .map(menu -> {
                     menu.setChildren(getChildren(menu, categoryEntities));
@@ -68,10 +76,10 @@ public class CategoryServiceImpl implements CategoryService {
                             menu2.getCatId() == null ? 0 : menu2.getCatId());
                 })
                 .collect(Collectors.toList());
-        return level1;
     }
 
     @Override
+    @CacheEvict(value = "category", allEntries = true)
     public void removeMenusByIds(List<Long> list) {
         // 逻辑删除：只把 show_status 改为 0（不显示），不物理删记录
         for (Long id : list) {
@@ -91,6 +99,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
+    @CacheEvict(value = "category", allEntries = true)
     public void updateCascade(CategoryEntity category) {
         // 只更新前端允许修改的字段，避免未传的 parentCid/catLevel/sort 等被覆盖导致分类从树中消失
         CategoryEntity existing = categoryRepository.findById(category.getCatId()).orElse(null);
@@ -104,6 +113,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @CacheEvict(value = "category", allEntries = true)
     public void updateBatchById(List<CategoryEntity> list) {
         // 只更新 sort、parentCid、catLevel，避免用请求体覆盖 name/show_status 等导致分类“消失”
         for (CategoryEntity partial : list) {
@@ -142,5 +152,20 @@ public class CategoryServiceImpl implements CategoryService {
                             e2.getCatId() == null ? 0 : e2.getCatId());
                 })
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Long> findLevel3IdsBySearchTerms(List<String> terms) {
+        if (terms == null || terms.isEmpty()) {
+            return List.of();
+        }
+        LinkedHashSet<Long> ids = new LinkedHashSet<>();
+        for (String term : terms) {
+            if (!StringUtils.hasText(term)) {
+                continue;
+            }
+            ids.addAll(categoryRepository.findLevel3IdsByNameContaining(term.trim()));
+        }
+        return new ArrayList<>(ids);
     }
 }

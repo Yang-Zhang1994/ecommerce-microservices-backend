@@ -11,6 +11,7 @@
       </el-form-item>
     </el-form>
     <el-table
+      class="admin-table-ellipsis"
       :data="dataList"
       border
       v-loading="dataListLoading"
@@ -62,6 +63,8 @@
         prop="refundContent"
         header-align="center"
         align="center"
+        min-width="160"
+        show-overflow-tooltip
         label="Refund Content">
       </el-table-column>
       <el-table-column

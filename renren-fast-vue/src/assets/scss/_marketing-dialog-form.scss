@@ -1,0 +1,11 @@
+/* Marketing Add/Edit dialogs (Bounds, Full Discount, Member Price) */
+.coupon-marketing-dialog {
+  min-width: 520px;
+}
+
+.coupon-marketing-form {
+  .el-form-item__label {
+    white-space: nowrap;
+    line-height: 32px;
+  }
+}

@@ -1,0 +1,158 @@
+{{- range $key, $app := .Values.apps }}
+{{- if $app.enabled }}
+{{- $img := index $.Values.images $app.imageKey }}
+{{- $probeDelay := default 45 $app.probeDelay }}
+{{- $probePath := default "/actuator/health" $app.probePath }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $app.name }}
+  labels:
+    app: {{ $app.name }}
+    {{- include "gulimall.labels" $ | nindent 4 }}
+spec:
+  replicas: {{ default 1 $app.replicas }}
+  revisionHistoryLimit: 1
+  {{- if eq $.Values.global.deploymentStrategy "Recreate" }}
+  strategy:
+    type: Recreate
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ $app.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $app.name }}
+    spec:
+      containers:
+        - name: {{ $key }}
+          image: {{ include "gulimall.image" (dict "Values" $.Values "repository" $img.repository "tag" $img.tag) }}
+          imagePullPolicy: {{ $.Values.global.imagePullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ $app.port }}
+          env:
+            - name: AWS_REGION
+              value: {{ $.Values.global.awsRegion | quote }}
+            - name: SPRING_PROFILES_ACTIVE
+              value: {{ $.Values.global.springProfilesActive | quote }}
+            {{- if $.Values.global.jvmOpts }}
+            - name: JAVA_OPTS
+              value: {{ $.Values.global.jvmOpts | quote }}
+            {{- end }}
+            {{- if $app.consul }}
+            {{- include "gulimall.consulEnv" $ | nindent 12 }}
+            {{- end }}
+            {{- if $app.redis }}
+            {{- include "gulimall.redisEnv" $ | nindent 12 }}
+            {{- end }}
+            {{- if $app.rabbit }}
+            {{- include "gulimall.rabbitEnv" $ | nindent 12 }}
+            {{- end }}
+            {{- if $app.rdsDb }}
+            {{- include "gulimall.rdsEnv" $ | nindent 12 }}
+            - name: RDS_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.secrets.existingSecret }}
+                  key: rds-endpoint
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://$(RDS_ENDPOINT):5432/{{ $app.rdsDb }}?sslmode=require
+            {{- end }}
+            {{- if $app.sessionCookie }}
+            - name: GULIMALL_SESSION_COOKIE_DOMAIN
+              value: {{ $.Values.secrets.gulimallSessionCookieDomain | quote }}
+            - name: GULIMALL_SESSION_COOKIE_SECURE
+              value: {{ $.Values.secrets.gulimallSessionCookieSecure | quote }}
+            {{- end }}
+            {{- if $app.stripe }}
+            - name: GULIMALL_MALL_PUBLIC_ORIGIN
+              value: {{ $.Values.secrets.gulimallMallPublicOrigin | quote }}
+            - name: ORDER_STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.secrets.existingSecret }}
+                  key: order-stripe-secret-key
+            - name: ORDER_STRIPE_WEBHOOK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.secrets.existingSecret }}
+                  key: order-stripe-webhook-secret
+            {{- end }}
+            {{- if $app.elasticsearch }}
+            - name: ELASTICSEARCH_HOST
+              value: elasticsearch
+            - name: ELASTICSEARCH_PORT
+              value: "9200"
+            {{- end }}
+            {{- if $app.awsCredentials }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.secrets.existingSecret }}
+                  key: aws-access-key-id
+                  optional: true
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.secrets.existingSecret }}
+                  key: aws-secret-access-key
+                  optional: true
+            {{- end }}
+            {{- if $app.googleOAuth }}
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.secrets.existingSecret }}
+                  key: google-client-id
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.secrets.existingSecret }}
+                  key: google-client-secret
+            {{- end }}
+            {{- range $ek, $ev := $app.extraEnv }}
+            - name: {{ $ek }}
+              value: {{ $ev | quote }}
+            {{- end }}
+          {{- if $app.resources }}
+          resources:
+            {{- toYaml $app.resources | nindent 12 }}
+          {{- end }}
+          readinessProbe:
+            httpGet:
+              path: {{ $probePath }}
+              port: http
+            initialDelaySeconds: {{ $probeDelay }}
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: {{ $probePath }}
+              port: http
+            initialDelaySeconds: {{ add $probeDelay 30 }}
+            periodSeconds: 20
+            timeoutSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $app.name }}
+  labels:
+    app: {{ $app.name }}
+spec:
+  type: {{ if and $.Values.kind.enabled $app.nodePort }}NodePort{{ else }}ClusterIP{{ end }}
+  selector:
+    app: {{ $app.name }}
+  ports:
+    - name: http
+      port: {{ $app.port }}
+      targetPort: http
+      {{- if and $.Values.kind.enabled $app.nodePort $.Values.kind.gatewayNodePort }}
+      nodePort: {{ $.Values.kind.gatewayNodePort }}
+      {{- end }}
+---
+{{- end }}
+{{- end }}

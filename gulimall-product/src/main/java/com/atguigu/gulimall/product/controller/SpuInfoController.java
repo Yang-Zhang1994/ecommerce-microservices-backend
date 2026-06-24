@@ -5,13 +5,16 @@ import java.util.Map;
 
 import com.atguigu.gulimall.product.vo.SpuSaveVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.product.entity.SpuInfoEntity;
+import com.atguigu.gulimall.product.service.ProductSearchIndexSyncService;
 import com.atguigu.gulimall.product.service.SpuInfoService;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
@@ -26,10 +29,19 @@ import com.atguigu.common.utils.R;
  * @date 2025-11-20 19:20:59
  */
 @RestController
-@RequestMapping("product/spuinfo")
+@RequestMapping("/product/spuinfo")
 public class SpuInfoController {
     @Autowired
     private SpuInfoService spuInfoService;
+
+    @Autowired
+    private ProductSearchIndexSyncService productSearchIndexSyncService;
+
+    /** 探针：确认网关→product 可达，curl http://localhost:88/api/product/spuinfo/ping */
+    @GetMapping("/ping")
+    public R ping() {
+        return R.ok().put("msg", "gulimall-product ok");
+    }
 
     /**
      * 列表
@@ -72,8 +84,8 @@ public class SpuInfoController {
     //@RequiresPermissions("product:spuinfo:update")
     public R update(@RequestBody SpuInfoEntity spuInfo){
 		spuInfoService.updateById(spuInfo);
-
-        return R.ok();
+        boolean searchSynced = productSearchIndexSyncService.refreshIfOnSale(spuInfo.getId());
+        return ProductSearchIndexSyncService.okWithSearchSync(searchSynced);
     }
 
     /**
@@ -84,7 +96,30 @@ public class SpuInfoController {
     public R delete(@RequestBody Long[] ids){
 		spuInfoService.removeByIds(Arrays.asList(ids));
 
-        return R.ok();
+        return R.ok().put("msg",
+                "SPU removed from catalog (SKUs, images, attributes, stock rows, promotions). Order history is kept.");
+    }
+
+    /**
+     * 商品上架（/product/spuinfo/{spuId}/up）。响应中返回当前 publishStatus 便于确认 DB 已更新。
+     */
+    @PostMapping("/{spuId}/up")
+    public R spuUp(@PathVariable("spuId") Long spuId) {
+        boolean updated = spuInfoService.up(spuId);
+        SpuInfoEntity spu = spuInfoService.getById(spuId);
+        Integer publishStatus = spu != null ? spu.getPublishStatus() : null;
+        return R.ok().put("publishStatus", publishStatus).put("updated", updated);
+    }
+
+    /**
+     * 商品下架（/product/spuinfo/{spuId}/down）。从 ES 删除该 SPU 下所有 SKU，并更新 DB 为下架状态。
+     */
+    @PostMapping("/{spuId}/down")
+    public R spuDown(@PathVariable("spuId") Long spuId) {
+        boolean updated = spuInfoService.down(spuId);
+        SpuInfoEntity spu = spuInfoService.getById(spuId);
+        Integer publishStatus = spu != null ? spu.getPublishStatus() : null;
+        return R.ok().put("publishStatus", publishStatus).put("updated", updated);
     }
 
 }

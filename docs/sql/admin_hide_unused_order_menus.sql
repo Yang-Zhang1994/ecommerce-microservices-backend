@@ -1,0 +1,29 @@
+-- Optional: document Order sidebar entries hidden in renren-fast-vue (adminMenuVisibility.js).
+-- Primary hide is client-side; run these only if you want to remove unused rows from sys_menu entirely.
+--
+-- Current RDS (ecommerce_admin) Order System (menu_id 44):
+--   KEEP: 56 Order Query  -> order/order
+--   KEEP: 59 Payment      -> order/payment
+--   HIDE: 57 Return       -> order/return
+--   HIDE: 58 Settings     -> order/settings
+--   HIDE: 60 Refund       -> order/refund
+--
+-- To delete hidden menus (and role links) in PostgreSQL:
+-- DELETE FROM sys_role_menu WHERE menu_id IN (57, 58, 60);
+-- DELETE FROM sys_menu WHERE menu_id IN (57, 58, 60);
+--
+-- Member System (parent_id 45) — hidden in renren-fast-vue (Growth / Statistics have no pages):
+--   HIDE: 63 Growth     -> member/growth
+--   HIDE: 64 Statistics -> member/statistics
+-- DELETE FROM sys_role_menu WHERE menu_id IN (63, 64);
+-- DELETE FROM sys_menu WHERE menu_id IN (63, 64);
+--
+-- Content Management (parent_id 46) — hidden in renren-fast-vue (no content/*.vue pages):
+--   HIDE: 65 Index         -> content/index
+--   HIDE: 66 Category Hot -> content/category
+--   HIDE: 67 Comments      -> content/comments
+-- DELETE FROM sys_role_menu WHERE menu_id IN (65, 66, 67);
+-- DELETE FROM sys_menu WHERE menu_id IN (65, 66, 67);
+-- Optional: remove empty parent folder after children are gone:
+-- DELETE FROM sys_role_menu WHERE menu_id = 46;
+-- DELETE FROM sys_menu WHERE menu_id = 46;

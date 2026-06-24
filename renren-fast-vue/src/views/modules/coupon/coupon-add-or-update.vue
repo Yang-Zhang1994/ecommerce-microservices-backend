@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
@@ -11,69 +11,69 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="120px"
     >
-      <el-form-item label="优惠卷类型" prop="couponType">
+      <el-form-item label="Coupon type" prop="couponType">
         <el-select v-model="dataForm.couponType" placeholder="Select">
-          <el-option label="全场赠券" :value="0"></el-option>
-          <el-option label="会员赠券" :value="1"></el-option>
-          <el-option label="购物赠券" :value="2"></el-option>
-          <el-option label="注册赠券" :value="3"></el-option>
+          <el-option label="Site-wide gift" :value="0"></el-option>
+          <el-option label="Member gift" :value="1"></el-option>
+          <el-option label="Purchase gift" :value="2"></el-option>
+          <el-option label="Registration gift" :value="3"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="优惠券图片" prop="couponImg">
+      <el-form-item label="Coupon image" prop="couponImg">
         <single-upload v-model="dataForm.couponImg"></single-upload>
       </el-form-item>
-      <el-form-item label="优惠卷名字" prop="couponName">
-        <el-input v-model="dataForm.couponName" placeholder="优惠卷名字"></el-input>
+      <el-form-item label="Coupon name" prop="couponName">
+        <el-input v-model="dataForm.couponName" placeholder="Coupon name"></el-input>
       </el-form-item>
-      <el-form-item label="数量" prop="num">
+      <el-form-item label="Quantity" prop="num">
         <el-input-number :min="0" v-model="dataForm.num"></el-input-number>
       </el-form-item>
-      <el-form-item label="金额" prop="amount">
+      <el-form-item label="Amount" prop="amount">
         <el-input-number :min="0" v-model="dataForm.amount" :precision="2"></el-input-number>
       </el-form-item>
-      <el-form-item label="每人限领张数" prop="perLimit">
+      <el-form-item label="Limit per person" prop="perLimit">
         <el-input-number :min="0" v-model="dataForm.perLimit"></el-input-number>
       </el-form-item>
-      <el-form-item label="使用门槛（最小积分）" prop="minPoint">
+      <el-form-item label="Min points to use" prop="minPoint">
         <el-input-number :min="0" v-model="dataForm.minPoint"></el-input-number>
       </el-form-item>
-      <el-form-item label="有效时间" prop="useTimeRange">
+      <el-form-item label="Valid period" prop="useTimeRange">
         <el-date-picker
           v-model="dataForm.useTimeRange"
           type="daterange"
           range-separator="至"
-          start-placeholder="开始时间"
-          end-placeholder="结束时间"
+          start-placeholder="Start time"
+          end-placeholder="End time"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="使用类型" prop="useType">
+      <el-form-item label="Usage type" prop="useType">
         <el-select v-model="dataForm.useType" placeholder="Select">
-          <el-option :value="0" label="全场通用"></el-option>
-          <el-option :value="1" label="指定分类"></el-option>
-          <el-option :value="2" label="指定商品"></el-option>
+          <el-option :value="0" label="Site-wide"></el-option>
+          <el-option :value="1" label="Specific category"></el-option>
+          <el-option :value="2" label="Specific product"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="备注" prop="note">
-        <el-input v-model="dataForm.note" placeholder="备注"></el-input>
+      <el-form-item label="Remark" prop="note">
+        <el-input v-model="dataForm.note" placeholder="Remark"></el-input>
       </el-form-item>
-      <el-form-item label="发行数量" prop="publishCount">
+      <el-form-item label="Publish quantity" prop="publishCount">
         <el-input-number v-model="dataForm.publishCount" :min="0"></el-input-number>
       </el-form-item>
-      <el-form-item label="领取日期" prop="enableStartTime">
+      <el-form-item label="Claim period" prop="enableStartTime">
         <el-date-picker
           v-model="dataForm.timeRange"
           type="daterange"
           range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          start-placeholder="Start date"
+          end-placeholder="End date"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="优惠码" prop="code">
-        <el-input v-model="dataForm.code" placeholder="优惠码"></el-input>
+      <el-form-item label="Promo code" prop="code">
+        <el-input v-model="dataForm.code" placeholder="Promo code"></el-input>
       </el-form-item>
-      <el-form-item label="领取所需等级" prop="memberLevel">
+      <el-form-item label="Required member level" prop="memberLevel">
         <el-select v-model="dataForm.memberLevel" placeholder="Select">
-          <el-option :value="0" label="不限制"></el-option>
+          <el-option :value="0" label="No limit"></el-option>
           <el-option
             v-for="item in memberLevels"
             :key="item.id"
@@ -84,8 +84,8 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -126,55 +126,54 @@ export default {
         couponType: [
           {
             required: true,
-            message:
-              "优惠卷类型不能为空",
+            message: 'This field is required',
             trigger: "blur"
           }
         ],
         couponImg: [
-          { required: true, message: "优惠券图片不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         couponName: [
-          { required: true, message: "优惠卷名字不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
-        num: [{ required: true, message: "数量不能为空", trigger: "blur" }],
-        amount: [{ required: true, message: "金额不能为空", trigger: "blur" }],
+        num: [{ required: true, message: 'This field is required', trigger: "blur" }],
+        amount: [{ required: true, message: 'This field is required', trigger: "blur" }],
         perLimit: [
-          { required: true, message: "每人限领张数不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         minPoint: [
-          { required: true, message: "使用门槛不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         useType: [
           {
             required: true,
-            message: "使用类型不能为空",
+            message: 'This field is required',
             trigger: "blur"
           }
         ],
-        note: [{ required: true, message: "备注不能为空", trigger: "blur" }],
+        note: [{ required: true, message: 'Remark is required', trigger: "blur" }],
         publishCount: [
-          { required: true, message: "发行数量不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         enableStartTime: [
           {
             required: true,
-            message: "可以领取的开始日期不能为空",
+            message: 'This field is required',
             trigger: "blur"
           }
         ],
         enableEndTime: [
           {
             required: true,
-            message: "可以领取的结束日期不能为空",
+            message: 'This field is required',
             trigger: "blur"
           }
         ],
-        code: [{ required: true, message: "优惠码不能为空", trigger: "blur" }],
+        code: [{ required: true, message: 'This field is required', trigger: "blur" }],
         memberLevel: [
           {
             required: true,
-            message: "可以领取的会员等级不能为空",
+            message: 'This field is required',
             trigger: "blur"
           }
         ]
@@ -186,7 +185,7 @@ export default {
   },
   methods: {
     getMemberLevels() {
-      //获取所有的会员等级
+      //获取所有的Member Level
       this.$http({
         url: this.$http.adornUrl("/member/memberlevel/list"),
         method: "get",
@@ -238,7 +237,7 @@ export default {
         }
       });
     },
-    // 表单提交
+    // form submit
     dataFormSubmit() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
@@ -272,7 +271,7 @@ export default {
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
+                message: "Operation successful",
                 type: "success",
                 duration: 1500,
                 onClose: () => {

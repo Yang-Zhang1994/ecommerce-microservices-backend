@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Elasticsearch 配置类
+ * Elasticsearch client configuration.
  */
 @Configuration
 public class GulimallElasticSearchConfiguration {
@@ -23,10 +23,14 @@ public class GulimallElasticSearchConfiguration {
     @Value("${elasticsearch.scheme:http}")
     private String scheme;
 
+    /** ES 8.x REST responses use a format the 7.17 HLRC cannot parse without compatibility headers. */
+    private static final String ES_COMPAT_MEDIA = "application/vnd.elasticsearch+json;compatible-with=7";
+
     public static final RequestOptions COMMON_OPTIONS;
     static {
         RequestOptions.Builder builder = RequestOptions.DEFAULT.toBuilder();
-        // You can add common request options here, such as authentication headers, etc.
+        builder.addHeader("Accept", ES_COMPAT_MEDIA);
+        builder.addHeader("Content-Type", ES_COMPAT_MEDIA);
         COMMON_OPTIONS = builder.build();
     }
 

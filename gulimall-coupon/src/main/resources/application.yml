@@ -2,6 +2,8 @@ server:
   port: 12000
 
 spring:
+  config:
+    import: optional:classpath:application-persistence.yml
   application:
     name: gulimall-coupon
   profiles:
@@ -24,6 +26,7 @@ spring:
       mode: never
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: America/Los_Angeles
   jpa:
     hibernate:
       ddl-auto: none

@@ -45,13 +45,13 @@
       style="width: 100%;"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <el-table-column prop="id" header-align="center" align="center" label="id"></el-table-column>
-      <el-table-column prop="purchaseId" header-align="center" align="center" label="Purchase Order ID"></el-table-column>
-      <el-table-column prop="skuId" header-align="center" align="center" label="Purchased Product ID"></el-table-column>
-      <el-table-column prop="skuNum" header-align="center" align="center" label="Purchase Quantity"></el-table-column>
-      <el-table-column prop="skuPrice" header-align="center" align="center" label="Purchase Amount"></el-table-column>
-      <el-table-column prop="wareId" header-align="center" align="center" label="Warehouse ID"></el-table-column>
-      <el-table-column prop="status" header-align="center" align="center" label="Status">
+      <el-table-column prop="id" header-align="center" align="center" min-width="72" label="id"></el-table-column>
+      <el-table-column prop="purchaseId" header-align="center" align="center" min-width="150" label="Purchase Order ID"></el-table-column>
+      <el-table-column prop="skuId" header-align="center" align="center" min-width="160" label="Purchased Product ID"></el-table-column>
+      <el-table-column prop="skuNum" header-align="center" align="center" min-width="150" label="Purchase Quantity"></el-table-column>
+      <el-table-column prop="skuPrice" header-align="center" align="center" min-width="140" label="Purchase Amount"></el-table-column>
+      <el-table-column prop="wareId" header-align="center" align="center" min-width="120" label="Warehouse ID"></el-table-column>
+      <el-table-column prop="status" header-align="center" align="center" min-width="165" label="Status">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status==0">New</el-tag>
           <el-tag type="info" v-if="scope.row.status==1">Assigned</el-tag>

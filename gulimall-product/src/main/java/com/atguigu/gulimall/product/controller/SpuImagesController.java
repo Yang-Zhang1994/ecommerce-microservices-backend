@@ -11,9 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.product.entity.SpuImagesEntity;
+import com.atguigu.gulimall.product.service.ProductSearchIndexSyncService;
 import com.atguigu.gulimall.product.service.SpuImagesService;
+import com.atguigu.gulimall.product.vo.SpuImagesSaveBatchVo;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 
@@ -29,6 +34,33 @@ import com.atguigu.common.utils.R;
 public class SpuImagesController {
     @Autowired
     private SpuImagesService spuImagesService;
+
+    @Autowired
+    private ProductSearchIndexSyncService productSearchIndexSyncService;
+
+    @RequestMapping("/byspu/{spuId}")
+    public R listBySpuId(@PathVariable("spuId") Long spuId) {
+        List<SpuImagesEntity> list = spuImagesService.listBySpuId(spuId);
+        return R.ok().put("list", list);
+    }
+
+    @RequestMapping("/saveBatch")
+    public R saveBatch(@RequestBody SpuImagesSaveBatchVo vo) {
+        List<SpuImagesEntity> entities = new ArrayList<>();
+        if (vo.getImages() != null) {
+            for (int i = 0; i < vo.getImages().size(); i++) {
+                SpuImagesSaveBatchVo.SpuImageItem item = vo.getImages().get(i);
+                SpuImagesEntity e = new SpuImagesEntity();
+                e.setImgUrl(item.getImgUrl());
+                e.setImgSort(item.getImgSort() != null ? item.getImgSort() : i);
+                e.setDefaultImg(item.getDefaultImg() != null ? item.getDefaultImg() : (i == 0 ? 1 : 0));
+                entities.add(e);
+            }
+        }
+        spuImagesService.saveBatchForSpu(vo.getSpuId(), entities);
+        boolean searchSynced = productSearchIndexSyncService.refreshIfOnSale(vo.getSpuId());
+        return ProductSearchIndexSyncService.okWithSearchSync(searchSynced);
+    }
 
     /**
      * 列表

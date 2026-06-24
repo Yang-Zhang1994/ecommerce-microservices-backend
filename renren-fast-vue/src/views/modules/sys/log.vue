@@ -2,10 +2,10 @@
   <div class="mod-log">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.key" placeholder="用户名／用户操作" clearable></el-input>
+        <el-input v-model="dataForm.key" placeholder="Username / operation" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
+        <el-button @click="getDataList()">Search</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -24,13 +24,16 @@
         prop="username"
         header-align="center"
         align="center"
-        label="用户名">
+        label="Username">
       </el-table-column>
       <el-table-column
         prop="operation"
         header-align="center"
         align="center"
-        label="用户操作">
+        label="Operation">
+        <template slot-scope="scope">
+          {{ translateSysLogOperation(scope.row.operation) }}
+        </template>
       </el-table-column>
       <el-table-column
         prop="method"
@@ -38,7 +41,7 @@
         align="center"
         width="150"
         :show-overflow-tooltip="true"
-        label="请求方法">
+        label="Request Method">
       </el-table-column>
       <el-table-column
         prop="params"
@@ -46,27 +49,27 @@
         align="center"
         width="150"
         :show-overflow-tooltip="true"
-        label="请求参数">
+        label="Request Params">
       </el-table-column>
       <el-table-column
         prop="time"
         header-align="center"
         align="center"
-        label="执行时长(毫秒)">
+        label="Duration (ms)">
       </el-table-column>
       <el-table-column
         prop="ip"
         header-align="center"
         align="center"
         width="150"
-        label="IP地址">
+        label="IP Address">
       </el-table-column>
       <el-table-column
         prop="createDate"
         header-align="center"
         align="center"
         width="180"
-        label="创建时间">
+        label="Created Time">
       </el-table-column>
     </el-table>
     <el-pagination
@@ -82,6 +85,7 @@
 </template>
 
 <script>
+  import { translateSysLogOperation } from '@/utils/menuTranslation'
   export default {
     data () {
       return {
@@ -100,7 +104,7 @@
       this.getDataList()
     },
     methods: {
-      // 获取数据列表
+      translateSysLogOperation,
       getDataList () {
         this.dataListLoading = true
         this.$http({
@@ -122,13 +126,13 @@
           this.dataListLoading = false
         })
       },
-      // 每页数
+      // Page size
       sizeChangeHandle (val) {
         this.pageSize = val
         this.pageIndex = 1
         this.getDataList()
       },
-      // 当前页
+      // Current page
       currentChangeHandle (val) {
         this.pageIndex = val
         this.getDataList()

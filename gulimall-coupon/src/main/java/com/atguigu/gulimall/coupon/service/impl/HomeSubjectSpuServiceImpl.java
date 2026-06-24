@@ -7,7 +7,9 @@ import com.atguigu.gulimall.coupon.repository.HomeSubjectSpuRepository;
 import com.atguigu.gulimall.coupon.service.HomeSubjectSpuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Map;
@@ -19,8 +21,9 @@ public class HomeSubjectSpuServiceImpl implements HomeSubjectSpuService {
     private HomeSubjectSpuRepository repository;
 
     @Override
+    @Transactional(readOnly = true)
     public PageUtils queryPage(Map<String, Object> params) {
-        Pageable pageable = new Query<HomeSubjectSpuEntity>().getPageable(params);
+        Pageable pageable = new Query<HomeSubjectSpuEntity>().getPageable(params, Sort.by("id").ascending());
         return new PageUtils(repository.findAll(pageable));
     }
 

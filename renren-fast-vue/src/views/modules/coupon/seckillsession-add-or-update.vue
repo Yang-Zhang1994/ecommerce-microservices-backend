@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
@@ -11,22 +11,35 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="120px"
     >
-      <el-form-item label="场次名称" prop="name">
-        <el-input v-model="dataForm.name" placeholder="场次名称"></el-input>
+      <el-form-item label="Session name" prop="name">
+        <el-input v-model="dataForm.name" placeholder="Session name"></el-input>
       </el-form-item>
-      <el-form-item label="每日开始时间" prop="startTime">
-        <el-date-picker type="datetime" placeholder="每日开始时间" v-model="dataForm.startTime"></el-date-picker>
+      <el-form-item label="Session start" prop="startTime">
+        <el-date-picker
+          v-model="dataForm.startTime"
+          type="datetime"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          placeholder="Session start"
+        ></el-date-picker>
       </el-form-item>
-      <el-form-item label="每日结束时间" prop="endTime">
-        <el-date-picker type="datetime" placeholder="每日结束时间" v-model="dataForm.endTime"></el-date-picker>
+      <el-form-item label="Session end" prop="endTime">
+        <el-date-picker
+          v-model="dataForm.endTime"
+          type="datetime"
+          value-format="yyyy-MM-dd HH:mm:ss"
+          placeholder="Session end"
+        ></el-date-picker>
       </el-form-item>
-      <el-form-item label="启用状态" prop="status">
-        <el-input v-model="dataForm.status" placeholder="启用状态"></el-input>
+      <el-form-item label="Enabled" prop="status">
+        <el-select v-model="dataForm.status" placeholder="Enabled">
+          <el-option :value="1" label="Enabled (1)"></el-option>
+          <el-option :value="0" label="Disabled (0)"></el-option>
+        </el-select>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -41,21 +54,21 @@ export default {
         name: "",
         startTime: "",
         endTime: "",
-        status: "",
+        status: 1,
         createTime: ""
       },
       dataRule: {
         name: [
-          { required: true, message: "场次名称不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         startTime: [
-          { required: true, message: "每日开始时间不能为空", trigger: "blur" }
+          { required: true, message: 'Session start is required', trigger: 'change' }
         ],
         endTime: [
-          { required: true, message: "每日结束时间不能为空", trigger: "blur" }
+          { required: true, message: 'Session end is required', trigger: 'change' }
         ],
         status: [
-          { required: true, message: "启用状态不能为空", trigger: "blur" }
+          { required: true, message: 'Enabled status is required', trigger: 'change' }
         ]
       }
     };
@@ -85,7 +98,7 @@ export default {
         }
       });
     },
-    // 表单提交
+    // form submit
     dataFormSubmit() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
@@ -99,13 +112,12 @@ export default {
               name: this.dataForm.name,
               startTime: this.dataForm.startTime,
               endTime: this.dataForm.endTime,
-              status: this.dataForm.status,
-              createTime: new Date()
+              status: Number(this.dataForm.status)
             })
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
+                message: "Operation successful",
                 type: "success",
                 duration: 1500,
                 onClose: () => {
@@ -114,8 +126,15 @@ export default {
                 }
               });
             } else {
-              this.$message.error(data.msg);
+              this.$message.error((data && data.msg) || 'Save failed');
             }
+          }).catch((err) => {
+            const msg =
+              (err.response && err.response.data && err.response.data.msg) ||
+              (err.response && err.response.data && err.response.data.error) ||
+              err.message ||
+              'Network error';
+            this.$message.error(msg);
           });
         }
       });

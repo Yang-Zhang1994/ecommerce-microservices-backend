@@ -14,7 +14,10 @@ public class GulimallCorsConfiguration {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        // 允许所有域名进行跨域访问
+        // 允许的源：Next 商城前端（开发 3001）+ 通用匹配
+        corsConfiguration.addAllowedOriginPattern("http://localhost:3001");
+        corsConfiguration.addAllowedOriginPattern("http://127.0.0.1:3001");
+        corsConfiguration.addAllowedOriginPattern("http://auth.ecommerce.com:3001");
         corsConfiguration.addAllowedOriginPattern("*");
         // 允许所有请求头
         corsConfiguration.addAllowedHeader("*");

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 /**
- * 谷粒商城 - 搜索服务
+ * Gulimall - Search service.
  *
  * @author gulimall
  */

@@ -1,31 +1,31 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-    <el-form-item label="退款的订单" prop="orderReturnId">
-      <el-input v-model="dataForm.orderReturnId" placeholder="退款的订单"></el-input>
+    <el-form-item label="Return Order ID" prop="orderReturnId">
+      <el-input v-model="dataForm.orderReturnId" placeholder="Return Order ID"></el-input>
     </el-form-item>
-    <el-form-item label="退款金额" prop="refund">
-      <el-input v-model="dataForm.refund" placeholder="退款金额"></el-input>
+    <el-form-item label="Refund Amount" prop="refund">
+      <el-input v-model="dataForm.refund" placeholder="Refund Amount"></el-input>
     </el-form-item>
-    <el-form-item label="退款交易流水号" prop="refundSn">
-      <el-input v-model="dataForm.refundSn" placeholder="退款交易流水号"></el-input>
+    <el-form-item label="Refund Transaction No." prop="refundSn">
+      <el-input v-model="dataForm.refundSn" placeholder="Refund Transaction No."></el-input>
     </el-form-item>
-    <el-form-item label="退款状态" prop="refundStatus">
-      <el-input v-model="dataForm.refundStatus" placeholder="退款状态"></el-input>
+    <el-form-item label="Refund Status" prop="refundStatus">
+      <el-input v-model="dataForm.refundStatus" placeholder="Refund Status"></el-input>
     </el-form-item>
-    <el-form-item label="退款渠道[1-支付宝，2-微信，3-银联，4-汇款]" prop="refundChannel">
-      <el-input v-model="dataForm.refundChannel" placeholder="退款渠道[1-支付宝，2-微信，3-银联，4-汇款]"></el-input>
+    <el-form-item label="Refund Channel [1-Alipay 2-WeChat 3-UnionPay 4-Transfer]" prop="refundChannel">
+      <el-input v-model="dataForm.refundChannel" placeholder="Refund Channel [1-Alipay 2-WeChat 3-UnionPay 4-Transfer]"></el-input>
     </el-form-item>
     <el-form-item label="" prop="refundContent">
       <el-input v-model="dataForm.refundContent" placeholder=""></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -46,22 +46,22 @@
         },
         dataRule: {
           orderReturnId: [
-            { required: true, message: '退款的订单不能为空', trigger: 'blur' }
+            { required: true, message: 'Return Order ID is required', trigger: 'blur' }
           ],
           refund: [
-            { required: true, message: '退款金额不能为空', trigger: 'blur' }
+            { required: true, message: 'Refund Amount is required', trigger: 'blur' }
           ],
           refundSn: [
-            { required: true, message: '退款交易流水号不能为空', trigger: 'blur' }
+            { required: true, message: 'Refund Transaction No. is required', trigger: 'blur' }
           ],
           refundStatus: [
-            { required: true, message: '退款状态不能为空', trigger: 'blur' }
+            { required: true, message: 'Refund Status is required', trigger: 'blur' }
           ],
           refundChannel: [
-            { required: true, message: '退款渠道[1-支付宝，2-微信，3-银联，4-汇款]不能为空', trigger: 'blur' }
+            { required: true, message: 'Refund Channel [1-Alipay 2-WeChat 3-UnionPay 4-Transfer] is required', trigger: 'blur' }
           ],
           refundContent: [
-            { required: true, message: '不能为空', trigger: 'blur' }
+            { required: true, message: ' is required', trigger: 'blur' }
           ]
         }
       }
@@ -90,7 +90,7 @@
           }
         })
       },
-      // 表单提交
+      // Form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
@@ -109,7 +109,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

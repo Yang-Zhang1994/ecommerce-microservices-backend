@@ -114,7 +114,7 @@
           }
         })
       },
-      // 表单提交
+      // form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {

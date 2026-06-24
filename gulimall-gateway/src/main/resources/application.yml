@@ -1,6 +1,16 @@
 server:
   port: 88
 
+# ALB/Target Group HTTP 健康检查：路径 /actuator/health， Matcher 默认 200
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+
 # 本地开发默认使用 dev profile（关闭 Consul，静态 URI 转发）；生产环境通过 SPRING_PROFILES_ACTIVE 覆盖
 spring:
   profiles:
@@ -9,6 +19,12 @@ spring:
     web-application-type: reactive
   application:
     name: gulimall-gateway
+  # RequestRateLimiter 使用；本地可 localhost，Docker 网关容器需指向 redis 服务名
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
   # 从 AWS 导入配置（可选：本地无 AWS 时仍可启动）
   config:
     import:
@@ -28,9 +44,18 @@ spring:
         enabled: true
         hostname: host.docker.internal
         prefer-ip-address: true
+    circuitbreaker:
+      resilience4j:
+        enabled: true
     gateway:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+        # 全 /api 路由默认限流（order/auth 路由上另有更细配额时两条规则均生效）
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: ${GATEWAY_RATELIMIT_API_REPLENISH:100}
+            redis-rate-limiter.burstCapacity: ${GATEWAY_RATELIMIT_API_BURST:200}
+            key-resolver: "#{@ipKeyResolver}"
       routes:
         # 优惠券服务路由
         - id: gulimall-coupon-route
@@ -39,6 +64,18 @@ spring:
             - Path=/api/coupon/**
           filters:
             - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+        # 秒杀服务路由（独立微服务，故障隔离）
+        - id: gulimall-seckill-route
+          uri: ${GULIMALL_SECKILL_URI:lb://gulimall-seckill}
+          predicates:
+            - Path=/api/seckill/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: seckillGatewayCb
+                fallbackUri: forward:/fallback/seckill
         
         # 会员服务路由
         - id: gulimall-member-route
@@ -47,14 +84,65 @@ spring:
             - Path=/api/member/**
           filters:
             - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: memberGatewayCb
+                fallbackUri: forward:/fallback/member
         
+        # 支付 / Stripe（更严限流，优先匹配）
+        - id: gulimall-order-pay-route
+          uri: ${GULIMALL_ORDER_URI:lb://gulimall-order}
+          order: -3
+          predicates:
+            - Path=/api/order/pay/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: orderPayGatewayCb
+                fallbackUri: forward:/fallback/order
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: ${GATEWAY_RATELIMIT_PAY_REPLENISH:30}
+                redis-rate-limiter.burstCapacity: ${GATEWAY_RATELIMIT_PAY_BURST:60}
+                key-resolver: "#{@ipKeyResolver}"
+
+        # 下单提交（POST only，更严限流）
+        - id: gulimall-order-submit-route
+          uri: ${GULIMALL_ORDER_URI:lb://gulimall-order}
+          order: -3
+          predicates:
+            - Path=/api/order/submit
+            - Method=POST
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: orderSubmitGatewayCb
+                fallbackUri: forward:/fallback/order
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: ${GATEWAY_RATELIMIT_SUBMIT_REPLENISH:20}
+                redis-rate-limiter.burstCapacity: ${GATEWAY_RATELIMIT_SUBMIT_BURST:40}
+                key-resolver: "#{@ipKeyResolver}"
+
         # 订单服务路由
         - id: gulimall-order-route
-          uri: lb://gulimall-order
+          uri: ${GULIMALL_ORDER_URI:lb://gulimall-order}
+          order: -1
           predicates:
             - Path=/api/order/**
           filters:
             - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: orderGatewayCb
+                fallbackUri: forward:/fallback/order
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: ${GATEWAY_RATELIMIT_ORDER_REPLENISH:80}
+                redis-rate-limiter.burstCapacity: ${GATEWAY_RATELIMIT_ORDER_BURST:160}
+                key-resolver: "#{@ipKeyResolver}"
         
         # 商品服务路由
 #        - id: gulimall-product-route
@@ -71,6 +159,10 @@ spring:
             - Path=/api/ware/**
           filters:
             - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: wareGatewayCb
+                fallbackUri: forward:/fallback/ware
         
 #        # 测试路由 - 百度
 #        - id: test_route
@@ -84,9 +176,9 @@ spring:
 #          predicates:
 #            - Query=url, qq
 
-        # 验证码路由：用 lb://renren-fast 走 Consul，不依赖 RENREN_FAST_URI（否则未设时走 localhost:8080 必超时）
+        # 验证码路由：优先用 RENREN_FAST_URI（host.docker.internal:8081）避免 lb 解析 No route to host
         - id: captcha-api-route
-          uri: lb://renren-fast
+          uri: ${RENREN_FAST_URI:lb://renren-fast}
           order: -1
           predicates:
             - Path=/api/captcha.jpg
@@ -95,20 +187,90 @@ spring:
 
         # 兼容旧路径 /captcha.jpg（无 /api 前缀）
         - id: captcha-route
-          uri: lb://renren-fast
+          uri: ${RENREN_FAST_URI:lb://renren-fast}
           order: -1
           predicates:
             - Path=/captcha.jpg
           filters:
             - RewritePath=/captcha.jpg, /api/captcha.jpg
 
-        # Product service route
+        # Product service route（order: -1 优先于 admin）. Docker 下可设 GULIMALL_PRODUCT_URI 直连容器
         - id: product_route
-          uri: lb://gulimall-product
+          uri: ${GULIMALL_PRODUCT_URI:lb://gulimall-product}
+          order: -1
           predicates:
             - Path=/api/product/**
           filters:
             - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: productGatewayCb
+                fallbackUri: forward:/fallback/product
+
+        # 搜索服务：search.ecommerce.com 页面请求 /api/search/** 时直连 gulimall-search
+        - id: gulimall-search-route
+          uri: ${GULIMALL_SEARCH_URI:lb://gulimall-search}
+          order: -1
+          predicates:
+            - Path=/api/search/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: searchGatewayCb
+                fallbackUri: forward:/fallback/search
+
+        # 购物车服务：/api/cart/** → gulimall-cart
+        - id: gulimall-cart-route
+          uri: ${GULIMALL_CART_URI:lb://gulimall-cart}
+          order: -1
+          predicates:
+            - Path=/api/cart/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: cartGatewayCb
+                fallbackUri: forward:/fallback/cart
+
+        # 登录 / 注册（更严限流）
+        - id: gulimall-auth-login-route
+          uri: ${GULIMALL_AUTH_URI:lb://gulimall-auth-server}
+          order: -3
+          predicates:
+            - Path=/api/auth/login,/api/auth/register,/api/auth/sms/send
+            - Method=POST
+          filters:
+            - PreserveHostHeader
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: authLoginGatewayCb
+                fallbackUri: forward:/fallback/auth
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: ${GATEWAY_RATELIMIT_LOGIN_REPLENISH:15}
+                redis-rate-limiter.burstCapacity: ${GATEWAY_RATELIMIT_LOGIN_BURST:30}
+                key-resolver: "#{@ipKeyResolver}"
+
+        # 认证中心：/api/auth/**
+        - id: gulimall-auth-server-route
+          uri: ${GULIMALL_AUTH_URI:lb://gulimall-auth-server}
+          order: -1
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - PreserveHostHeader
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: authGatewayCb
+                fallbackUri: forward:/fallback/auth
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: ${GATEWAY_RATELIMIT_AUTH_REPLENISH:120}
+                redis-rate-limiter.burstCapacity: ${GATEWAY_RATELIMIT_AUTH_BURST:240}
+                key-resolver: "#{@ipKeyResolver}"
 
         # Third-party service route
         - id: third_party_route
@@ -118,14 +280,61 @@ spring:
           filters:
             - RewritePath=/api/(?<segment>.*), /$\{segment}
 
-        # ... 其他路由 ...
+        # admin 兜底路由，order 大于 0 保证在 product/ware 等之后匹配
         - id: admin_route
-          uri: lb://renren-fast
+          uri: ${RENREN_FAST_URI:lb://renren-fast}
+          order: 1
           predicates:
             - Path=/api/**
           filters:
-            # renren-fast context-path is /api, so keep /api/xxx as path
             - RewritePath=/api/(?<segment>.*), /api/$\{segment}
+
+# 熔断器实例配置（与路由中 CircuitBreaker name 对应）；详见 docs/resilience-and-traffic.md
+resilience4j:
+  timelimiter:
+    configs:
+      default:
+        timeoutDuration: 10s
+        cancelRunningFuture: true
+    instances:
+      searchGatewayCb:
+        timeoutDuration: 15s
+      productGatewayCb:
+        timeoutDuration: 10s
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 30
+        minimumNumberOfCalls: 10
+        permittedNumberOfCallsInHalfOpenState: 5
+        waitDurationInOpenState: 15s
+        failureRateThreshold: 50
+        slowCallRateThreshold: 100
+        slowCallDurationThreshold: 3s
+    instances:
+      orderGatewayCb:
+        baseConfig: default
+      orderPayGatewayCb:
+        baseConfig: default
+      orderSubmitGatewayCb:
+        baseConfig: default
+      authGatewayCb:
+        baseConfig: default
+      authLoginGatewayCb:
+        baseConfig: default
+      searchGatewayCb:
+        baseConfig: default
+      cartGatewayCb:
+        baseConfig: default
+      productGatewayCb:
+        baseConfig: default
+      memberGatewayCb:
+        baseConfig: default
+      wareGatewayCb:
+        baseConfig: default
+      seckillGatewayCb:
+        baseConfig: default
 
 
 

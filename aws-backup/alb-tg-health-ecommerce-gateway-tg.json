@@ -1,0 +1,21 @@
+{
+    "TargetHealthDescriptions": [
+        {
+            "Target": {
+                "Id": "i-05b954f202863481b",
+                "Port": 88
+            },
+            "HealthCheckPort": "88",
+            "TargetHealth": {
+                "State": "unused",
+                "Reason": "Target.InvalidState",
+                "Description": "Target is in the stopped state"
+            },
+            "AdministrativeOverride": {
+                "State": "no_override",
+                "Reason": "AdministrativeOverride.NoOverride",
+                "Description": "No override is currently active on target"
+            }
+        }
+    ]
+}

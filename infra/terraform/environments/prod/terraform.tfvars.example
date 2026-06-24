@@ -1,0 +1,58 @@
+# Filled from AWS CLI (2026-05-16). Copy to terraform.tfvars — do not commit terraform.tfvars.
+
+account_id  = "466297333400"
+aws_region  = "us-west-2"
+environment = "prod"
+
+vpc_id            = "vpc-014eddd3289d3be1d"
+public_subnet_ids = ["subnet-01ab2b35b0835c874", "subnet-069bc46fb157dce5c"]
+
+alb_name          = "ecommerce-prod-alb"
+target_group_name = "ecommerce-gateway-tg"
+waf_web_acl_name  = "ecommerce-prod-waf"
+
+create_security_groups = false
+alb_security_group_ids = ["sg-01bcc71a8b21860d1"] # gulimall-alb-sg
+
+# --- DNS: migrate NS from Cloudflare to Route53 (see docs/route53-ns-migration.md) ---
+manage_dns_in_route53 = true
+dns_zone_name         = "yangzhangtech.online"
+
+certificate_arn           = "" # leave empty when manage_dns_in_route53=true (auto after validation)
+request_acm_certificate = true
+acm_domain_name         = "www.yangzhangtech.online"
+acm_subject_alternative_names = [
+  "yangzhangtech.online",
+  "mall.yangzhangtech.online",
+  "admin.yangzhangtech.online",
+]
+preserve_mail_dns_records     = false
+waf_rate_limit_api_wide = 3000
+# Single EC2 (disable when enable_app_asg = true)
+target_instance_ids = ["i-05b954f202863481b"]
+
+# HA: 2+ app instances + ElastiCache Redis (see docs/production-resilience-phase2.md)
+enable_app_asg           = false
+enable_elasticache       = false
+app_security_group_ids   = ["sg-0b90bf2ba9a126496"]
+asg_key_name             = "your-ec2-key"
+# asg_ami_id = "ami-xxxxxxxx"
+
+rate_limit_api_auth = 1000
+waf_associate_alb   = true # WAF exists but not linked to ALB yet
+
+tags = {
+  Owner = "gulimall"
+}
+
+# --- EKS full stack (gateway + all microservices on Spot nodes) ---
+enable_eks              = false
+eks_cluster_name        = "gulimall-prod-eks"
+eks_node_instance_types = ["t3.large"]
+eks_node_capacity_type  = "SPOT"
+eks_node_desired_size   = 2
+eks_node_min_size       = 1
+eks_node_max_size       = 3
+# RDS SG — same as ecommerce-db-oregon; Terraform adds EKS node SG ingress on 5432
+rds_security_group_id   = "sg-0b90bf2ba9a126496"
+# Scale to 0 when idle: eks_node_desired_size = 0, eks_node_min_size = 0

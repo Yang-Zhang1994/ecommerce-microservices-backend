@@ -7,8 +7,10 @@ import com.atguigu.gulimall.member.repository.MemberLevelRepository;
 import com.atguigu.gulimall.member.service.MemberLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Map;
@@ -20,9 +22,10 @@ public class MemberLevelServiceImpl implements MemberLevelService {
     private MemberLevelRepository repository;
 
     @Override
+    @Transactional(readOnly = true)
     public PageUtils queryPage(Map<String, Object> params) {
         String key = (String) params.get("key");
-        Pageable pageable = new Query<MemberLevelEntity>().getPageable(params);
+        Pageable pageable = new Query<MemberLevelEntity>().getPageable(params, Sort.by("id").ascending());
 
         if (key == null || key.trim().isEmpty()) {
             return new PageUtils(repository.findAll(pageable));

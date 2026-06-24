@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     append-to-body
     :visible.sync="visible"
@@ -12,28 +12,28 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="120px"
     >
-      <el-form-item label="活动场次id" prop="promotionSessionId">
-        <el-input v-model="sessionId" placeholder="活动场次id" :disabled="true"></el-input>
+      <el-form-item label="Promotion session ID" prop="promotionSessionId">
+        <el-input v-model="sessionId" placeholder="Promotion session ID" :disabled="true"></el-input>
       </el-form-item>
-      <el-form-item label="商品id" prop="skuId">
-        <el-input v-model="dataForm.skuId" placeholder="商品id"></el-input>
+      <el-form-item label="SKU ID" prop="skuId">
+        <el-input v-model="dataForm.skuId" placeholder="SKU ID"></el-input>
       </el-form-item>
-      <el-form-item label="秒杀价格" prop="seckillPrice">
+      <el-form-item label="Seckill price" prop="seckillPrice">
         <el-input-number v-model="dataForm.seckillPrice" :min="0" :precision="2" :step="0.1"></el-input-number>
       </el-form-item>
-      <el-form-item label="秒杀总量" prop="seckillCount">
-        <el-input-number v-model="dataForm.seckillCount" :min="1" label="秒杀总量"></el-input-number>
+      <el-form-item label="Seckill stock" prop="seckillCount">
+        <el-input-number v-model="dataForm.seckillCount" :min="1" label="Seckill stock"></el-input-number>
       </el-form-item>
-      <el-form-item label="每人限购数量" prop="seckillLimit">
-        <el-input-number v-model="dataForm.seckillLimit" :min="1" label="每人限购数量"></el-input-number>
+      <el-form-item label="Limit per user" prop="seckillLimit">
+        <el-input-number v-model="dataForm.seckillLimit" :min="1" label="Limit per user"></el-input-number>
       </el-form-item>
-      <el-form-item label="排序" prop="seckillSort">
-        <el-input v-model="dataForm.seckillSort" placeholder="排序"></el-input>
+      <el-form-item label="Sort" prop="seckillSort">
+        <el-input v-model="dataForm.seckillSort" placeholder="Sort"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -55,20 +55,20 @@ export default {
       },
       dataRule: {
         sessionId: [
-          { required: true, message: "活动场次id不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
-        skuId: [{ required: true, message: "商品id不能为空", trigger: "blur" }],
+        skuId: [{ required: true, message: 'This field is required', trigger: "blur" }],
         seckillPrice: [
-          { required: true, message: "秒杀价格不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         seckillCount: [
-          { required: true, message: "秒杀总量不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         seckillLimit: [
-          { required: true, message: "每人限购数量不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         seckillSort: [
-          { required: true, message: "排序不能为空", trigger: "blur" }
+          { required: true, message: 'Sort is required', trigger: "blur" }
         ]
       }
     };
@@ -107,7 +107,7 @@ export default {
         }
       });
     },
-    // 表单提交
+    // form submit
     dataFormSubmit() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
@@ -131,7 +131,7 @@ export default {
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
+                message: "Operation successful",
                 type: "success",
                 duration: 1500,
                 onClose: () => {

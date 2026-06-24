@@ -1,25 +1,25 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="100px">
-      <el-form-item label="bean名称" prop="beanName">
-        <el-input v-model="dataForm.beanName" placeholder="spring bean名称, 如: testTask"></el-input>
+      <el-form-item label="beanName" prop="beanName">
+        <el-input v-model="dataForm.beanName" placeholder="spring beanName, e.g. testTask"></el-input>
       </el-form-item>
-      <el-form-item label="参数" prop="params">
-        <el-input v-model="dataForm.params" placeholder="参数"></el-input>
+      <el-form-item label="Parameters" prop="params">
+        <el-input v-model="dataForm.params" placeholder="Parameters"></el-input>
       </el-form-item>
-      <el-form-item label="cron表达式" prop="cronExpression">
-        <el-input v-model="dataForm.cronExpression" placeholder="如: 0 0 12 * * ?"></el-input>
+      <el-form-item label="Cron expression" prop="cronExpression">
+        <el-input v-model="dataForm.cronExpression" placeholder="e.g. 0 0 12 * * ?"></el-input>
       </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
+      <el-form-item label="Remark" prop="remark">
+        <el-input v-model="dataForm.remark" placeholder="Remark"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -39,10 +39,10 @@
         },
         dataRule: {
           beanName: [
-            { required: true, message: '用户名不能为空', trigger: 'blur' }
+            { required: true, message: 'Username is required', trigger: 'blur' }
           ],
           cronExpression: [
-            { required: true, message: 'cron表达式不能为空', trigger: 'blur' }
+            { required: true, message: 'This field is required', trigger: 'blur' }
           ]
         }
       }
@@ -70,7 +70,7 @@
           }
         })
       },
-      // 表单提交
+      // form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
@@ -88,7 +88,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

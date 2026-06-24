@@ -1,43 +1,43 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-    <el-form-item label="订单号（对外业务号）" prop="orderSn">
-      <el-input v-model="dataForm.orderSn" placeholder="订单号（对外业务号）"></el-input>
+    <el-form-item label="Order SN" prop="orderSn">
+      <el-input v-model="dataForm.orderSn" placeholder="Order SN"></el-input>
     </el-form-item>
-    <el-form-item label="订单id" prop="orderId">
-      <el-input v-model="dataForm.orderId" placeholder="订单id"></el-input>
+    <el-form-item label="Order ID" prop="orderId">
+      <el-input v-model="dataForm.orderId" placeholder="Order ID"></el-input>
     </el-form-item>
-    <el-form-item label="支付宝交易流水号" prop="alipayTradeNo">
-      <el-input v-model="dataForm.alipayTradeNo" placeholder="支付宝交易流水号"></el-input>
+    <el-form-item label="Alipay Trade No." prop="alipayTradeNo">
+      <el-input v-model="dataForm.alipayTradeNo" placeholder="Alipay Trade No."></el-input>
     </el-form-item>
-    <el-form-item label="支付总金额" prop="totalAmount">
-      <el-input v-model="dataForm.totalAmount" placeholder="支付总金额"></el-input>
+    <el-form-item label="Total Paid" prop="totalAmount">
+      <el-input v-model="dataForm.totalAmount" placeholder="Total Paid"></el-input>
     </el-form-item>
-    <el-form-item label="交易内容" prop="subject">
-      <el-input v-model="dataForm.subject" placeholder="交易内容"></el-input>
+    <el-form-item label="Subject" prop="subject">
+      <el-input v-model="dataForm.subject" placeholder="Subject"></el-input>
     </el-form-item>
-    <el-form-item label="支付状态" prop="paymentStatus">
-      <el-input v-model="dataForm.paymentStatus" placeholder="支付状态"></el-input>
+    <el-form-item label="Payment Status" prop="paymentStatus">
+      <el-input v-model="dataForm.paymentStatus" placeholder="Payment Status"></el-input>
     </el-form-item>
-    <el-form-item label="创建时间" prop="createTime">
-      <el-input v-model="dataForm.createTime" placeholder="创建时间"></el-input>
+    <el-form-item label="Create Time" prop="createTime">
+      <el-input v-model="dataForm.createTime" placeholder="Create Time"></el-input>
     </el-form-item>
-    <el-form-item label="确认时间" prop="confirmTime">
-      <el-input v-model="dataForm.confirmTime" placeholder="确认时间"></el-input>
+    <el-form-item label="Confirm Time" prop="confirmTime">
+      <el-input v-model="dataForm.confirmTime" placeholder="Confirm Time"></el-input>
     </el-form-item>
-    <el-form-item label="回调内容" prop="callbackContent">
-      <el-input v-model="dataForm.callbackContent" placeholder="回调内容"></el-input>
+    <el-form-item label="Callback Content" prop="callbackContent">
+      <el-input v-model="dataForm.callbackContent" placeholder="Callback Content"></el-input>
     </el-form-item>
-    <el-form-item label="回调时间" prop="callbackTime">
-      <el-input v-model="dataForm.callbackTime" placeholder="回调时间"></el-input>
+    <el-form-item label="Callback Time" prop="callbackTime">
+      <el-input v-model="dataForm.callbackTime" placeholder="Callback Time"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -62,34 +62,34 @@
         },
         dataRule: {
           orderSn: [
-            { required: true, message: '订单号（对外业务号）不能为空', trigger: 'blur' }
+            { required: true, message: 'Order SN is required', trigger: 'blur' }
           ],
           orderId: [
-            { required: true, message: '订单id不能为空', trigger: 'blur' }
+            { required: true, message: 'Order ID is required', trigger: 'blur' }
           ],
           alipayTradeNo: [
-            { required: true, message: '支付宝交易流水号不能为空', trigger: 'blur' }
+            { required: true, message: 'Alipay Trade No. is required', trigger: 'blur' }
           ],
           totalAmount: [
-            { required: true, message: '支付总金额不能为空', trigger: 'blur' }
+            { required: true, message: 'Total Paid is required', trigger: 'blur' }
           ],
           subject: [
-            { required: true, message: '交易内容不能为空', trigger: 'blur' }
+            { required: true, message: 'Subject is required', trigger: 'blur' }
           ],
           paymentStatus: [
-            { required: true, message: '支付状态不能为空', trigger: 'blur' }
+            { required: true, message: 'Payment Status is required', trigger: 'blur' }
           ],
           createTime: [
-            { required: true, message: '创建时间不能为空', trigger: 'blur' }
+            { required: true, message: 'Create Time is required', trigger: 'blur' }
           ],
           confirmTime: [
-            { required: true, message: '确认时间不能为空', trigger: 'blur' }
+            { required: true, message: 'Confirm Time is required', trigger: 'blur' }
           ],
           callbackContent: [
-            { required: true, message: '回调内容不能为空', trigger: 'blur' }
+            { required: true, message: 'Callback Content is required', trigger: 'blur' }
           ],
           callbackTime: [
-            { required: true, message: '回调时间不能为空', trigger: 'blur' }
+            { required: true, message: 'Callback Time is required', trigger: 'blur' }
           ]
         }
       }
@@ -122,7 +122,7 @@
           }
         })
       },
-      // 表单提交
+      // Form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
@@ -145,7 +145,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

@@ -10,4 +10,6 @@ import java.util.List;
 public interface SpuImagesRepository extends JpaRepository<SpuImagesEntity, Long> {
 
     List<SpuImagesEntity> findBySpuId(Long spuId);
+
+    void deleteBySpuId(Long spuId);
 }

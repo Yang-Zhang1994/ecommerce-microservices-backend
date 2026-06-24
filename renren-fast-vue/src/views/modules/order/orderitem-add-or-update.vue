@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
@@ -19,52 +19,52 @@
     <el-form-item label="spu_pic" prop="spuPic">
       <el-input v-model="dataForm.spuPic" placeholder="spu_pic"></el-input>
     </el-form-item>
-    <el-form-item label="品牌" prop="spuBrand">
-      <el-input v-model="dataForm.spuBrand" placeholder="品牌"></el-input>
+    <el-form-item label="Brand" prop="spuBrand">
+      <el-input v-model="dataForm.spuBrand" placeholder="Brand"></el-input>
     </el-form-item>
-    <el-form-item label="商品分类id" prop="categoryId">
-      <el-input v-model="dataForm.categoryId" placeholder="商品分类id"></el-input>
+    <el-form-item label="Category ID" prop="categoryId">
+      <el-input v-model="dataForm.categoryId" placeholder="Category ID"></el-input>
     </el-form-item>
-    <el-form-item label="商品sku编号" prop="skuId">
-      <el-input v-model="dataForm.skuId" placeholder="商品sku编号"></el-input>
+    <el-form-item label="SKU ID" prop="skuId">
+      <el-input v-model="dataForm.skuId" placeholder="SKU ID"></el-input>
     </el-form-item>
-    <el-form-item label="商品sku名字" prop="skuName">
-      <el-input v-model="dataForm.skuName" placeholder="商品sku名字"></el-input>
+    <el-form-item label="SKU Name" prop="skuName">
+      <el-input v-model="dataForm.skuName" placeholder="SKU Name"></el-input>
     </el-form-item>
-    <el-form-item label="商品sku图片" prop="skuPic">
-      <el-input v-model="dataForm.skuPic" placeholder="商品sku图片"></el-input>
+    <el-form-item label="SKU Image" prop="skuPic">
+      <el-input v-model="dataForm.skuPic" placeholder="SKU Image"></el-input>
     </el-form-item>
-    <el-form-item label="商品sku价格" prop="skuPrice">
-      <el-input v-model="dataForm.skuPrice" placeholder="商品sku价格"></el-input>
+    <el-form-item label="SKU Price" prop="skuPrice">
+      <el-input v-model="dataForm.skuPrice" placeholder="SKU Price"></el-input>
     </el-form-item>
-    <el-form-item label="商品购买的数量" prop="skuQuantity">
-      <el-input v-model="dataForm.skuQuantity" placeholder="商品购买的数量"></el-input>
+    <el-form-item label="Quantity" prop="skuQuantity">
+      <el-input v-model="dataForm.skuQuantity" placeholder="Quantity"></el-input>
     </el-form-item>
-    <el-form-item label="商品销售属性组合（JSON）" prop="skuAttrsVals">
-      <el-input v-model="dataForm.skuAttrsVals" placeholder="商品销售属性组合（JSON）"></el-input>
+    <el-form-item label="Sale Attributes (JSON)" prop="skuAttrsVals">
+      <el-input v-model="dataForm.skuAttrsVals" placeholder="Sale Attributes (JSON)"></el-input>
     </el-form-item>
-    <el-form-item label="商品促销分解金额" prop="promotionAmount">
-      <el-input v-model="dataForm.promotionAmount" placeholder="商品促销分解金额"></el-input>
+    <el-form-item label="Promotion Amount" prop="promotionAmount">
+      <el-input v-model="dataForm.promotionAmount" placeholder="Promotion Amount"></el-input>
     </el-form-item>
-    <el-form-item label="优惠券优惠分解金额" prop="couponAmount">
-      <el-input v-model="dataForm.couponAmount" placeholder="优惠券优惠分解金额"></el-input>
+    <el-form-item label="Coupon Amount" prop="couponAmount">
+      <el-input v-model="dataForm.couponAmount" placeholder="Coupon Amount"></el-input>
     </el-form-item>
-    <el-form-item label="积分优惠分解金额" prop="integrationAmount">
-      <el-input v-model="dataForm.integrationAmount" placeholder="积分优惠分解金额"></el-input>
+    <el-form-item label="Points Amount" prop="integrationAmount">
+      <el-input v-model="dataForm.integrationAmount" placeholder="Points Amount"></el-input>
     </el-form-item>
-    <el-form-item label="该商品经过优惠后的分解金额" prop="realAmount">
-      <el-input v-model="dataForm.realAmount" placeholder="该商品经过优惠后的分解金额"></el-input>
+    <el-form-item label="Real Amount" prop="realAmount">
+      <el-input v-model="dataForm.realAmount" placeholder="Real Amount"></el-input>
     </el-form-item>
-    <el-form-item label="赠送积分" prop="giftIntegration">
-      <el-input v-model="dataForm.giftIntegration" placeholder="赠送积分"></el-input>
+    <el-form-item label="Gift Points" prop="giftIntegration">
+      <el-input v-model="dataForm.giftIntegration" placeholder="Gift Points"></el-input>
     </el-form-item>
-    <el-form-item label="赠送成长值" prop="giftGrowth">
-      <el-input v-model="dataForm.giftGrowth" placeholder="赠送成长值"></el-input>
+    <el-form-item label="Gift Growth" prop="giftGrowth">
+      <el-input v-model="dataForm.giftGrowth" placeholder="Gift Growth"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -98,61 +98,61 @@
         },
         dataRule: {
           orderId: [
-            { required: true, message: 'order_id不能为空', trigger: 'blur' }
+            { required: true, message: 'order_id is required', trigger: 'blur' }
           ],
           orderSn: [
-            { required: true, message: 'order_sn不能为空', trigger: 'blur' }
+            { required: true, message: 'order_sn is required', trigger: 'blur' }
           ],
           spuId: [
-            { required: true, message: 'spu_id不能为空', trigger: 'blur' }
+            { required: true, message: 'spu_id is required', trigger: 'blur' }
           ],
           spuName: [
-            { required: true, message: 'spu_name不能为空', trigger: 'blur' }
+            { required: true, message: 'spu_name is required', trigger: 'blur' }
           ],
           spuPic: [
-            { required: true, message: 'spu_pic不能为空', trigger: 'blur' }
+            { required: true, message: 'spu_pic is required', trigger: 'blur' }
           ],
           spuBrand: [
-            { required: true, message: '品牌不能为空', trigger: 'blur' }
+            { required: true, message: 'Brand is required', trigger: 'blur' }
           ],
           categoryId: [
-            { required: true, message: '商品分类id不能为空', trigger: 'blur' }
+            { required: true, message: 'Category ID is required', trigger: 'blur' }
           ],
           skuId: [
-            { required: true, message: '商品sku编号不能为空', trigger: 'blur' }
+            { required: true, message: 'SKU ID is required', trigger: 'blur' }
           ],
           skuName: [
-            { required: true, message: '商品sku名字不能为空', trigger: 'blur' }
+            { required: true, message: 'SKU Name is required', trigger: 'blur' }
           ],
           skuPic: [
-            { required: true, message: '商品sku图片不能为空', trigger: 'blur' }
+            { required: true, message: 'SKU Image is required', trigger: 'blur' }
           ],
           skuPrice: [
-            { required: true, message: '商品sku价格不能为空', trigger: 'blur' }
+            { required: true, message: 'SKU Price is required', trigger: 'blur' }
           ],
           skuQuantity: [
-            { required: true, message: '商品购买的数量不能为空', trigger: 'blur' }
+            { required: true, message: 'Quantity is required', trigger: 'blur' }
           ],
           skuAttrsVals: [
-            { required: true, message: '商品销售属性组合（JSON）不能为空', trigger: 'blur' }
+            { required: true, message: 'Sale Attributes (JSON) is required', trigger: 'blur' }
           ],
           promotionAmount: [
-            { required: true, message: '商品促销分解金额不能为空', trigger: 'blur' }
+            { required: true, message: 'Promotion Amount is required', trigger: 'blur' }
           ],
           couponAmount: [
-            { required: true, message: '优惠券优惠分解金额不能为空', trigger: 'blur' }
+            { required: true, message: 'Coupon Amount is required', trigger: 'blur' }
           ],
           integrationAmount: [
-            { required: true, message: '积分优惠分解金额不能为空', trigger: 'blur' }
+            { required: true, message: 'Points Amount is required', trigger: 'blur' }
           ],
           realAmount: [
-            { required: true, message: '该商品经过优惠后的分解金额不能为空', trigger: 'blur' }
+            { required: true, message: 'Real Amount is required', trigger: 'blur' }
           ],
           giftIntegration: [
-            { required: true, message: '赠送积分不能为空', trigger: 'blur' }
+            { required: true, message: 'Gift Points is required', trigger: 'blur' }
           ],
           giftGrowth: [
-            { required: true, message: '赠送成长值不能为空', trigger: 'blur' }
+            { required: true, message: 'Gift Growth is required', trigger: 'blur' }
           ]
         }
       }
@@ -194,7 +194,7 @@
           }
         })
       },
-      // 表单提交
+      // Form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
@@ -226,7 +226,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

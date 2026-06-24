@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8"/>
+    <!-- Next rewrites /register here; base resolves bootStrap, sass, js under /auth/register/ -->
+    <base href="/auth/register/"/>
+    <title>Register — Gulimall</title>
+    <script src="libs/jquery-1.12.4.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/jQuery/jquery-3.1.1.js"></script>
+    <link rel="stylesheet" type="text/css" href="bootStrap/bootstrap/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="sass/index.css"/>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+
+
+</head>
+
+<body>
+
+<div class="laoda">
+    <div class="zong">
+        <div class="tou">
+            <p><b>User agreement &amp; privacy policy</b></p>
+            <a href="https://www.jd.com/" class="cuo"><span class="glyphicon glyphicon-remove"></span></a>
+        </div>
+        <div class="zt">
+            <div class="protocol-con">
+                <div class="WordSection1" style="padding:20px;max-height:60vh;overflow:auto;line-height:1.55;font-size:13px;font-family:Segoe UI,Helvetica,Arial,sans-serif;">
+                    <h3 style="margin-top:0;">User agreement &amp; privacy</h3>
+                    <p>Please read this summary before you continue. For production, replace this text with counsel-reviewed terms.</p>
+                    <p><strong>Account.</strong> You will create a username and password. You are responsible for keeping your credentials secure.</p>
+                    <p><strong>Phone verification.</strong> We send a one-time code by SMS (Canada/US +1 or China +86, depending on server configuration) to verify your mobile number.</p>
+                    <p><strong>Data.</strong> We process the information you provide (e.g. username, mobile, password) to operate registration and login.</p>
+                    <p><strong>Links.</strong> Full <a href="#">User Agreement</a> and <a href="#">Privacy Policy</a> (placeholder).</p>
+                </div>
+            </div>
+
+        </div>
+        <div class="dibu">
+            <a href="https://www.jd.com/">
+                <button class="quxiao">Cancel</button>
+            </a>
+            <button class="ty">Agree and continue</button>
+        </div>
+    </div>
+</div>
+
+
+<header>
+    <a href="/" class="logo" title="Gulimall home"><img src="img/logo1.jpg" alt="Gulimall"></a>
+    <div class="desc">Create your account</div>
+    <div class="dfg">
+        <span>Already have an account?</span>
+        <a href="/login">Sign in</a>
+    </div>
+</header>
+<section>
+    <form action="" class="one">
+        <div class="register-box">
+            <label for="reg-username" class="username_label">Username
+                <input id="reg-username" maxlength="20" type="text" placeholder="4–20 chars, e.g. my_name" title="Letters, numbers, hyphen, underscore; 4–20 characters" autocomplete="username">
+            </label>
+            <div class="tips">
+
+            </div>
+        </div>
+        <div class="register-box">
+            <label for="reg-password" class="other_label">Password
+                <input id="reg-password" maxlength="20" type="password" placeholder="6+ characters" title="At least 6 characters" autocomplete="new-password">
+            </label>
+            <div class="tips">
+
+            </div>
+        </div>
+        <div class="register-box">
+            <label for="reg-password2" class="other_label">Confirm
+                <input id="reg-password2" maxlength="20" type="password" placeholder="Same as password" title="Re-enter your password" autocomplete="new-password">
+            </label>
+            <div class="tips">
+
+            </div>
+        </div>
+        <div class="register-box">
+            <label for="reg-phone" class="other_label">
+                <span class="country-code-wrap">
+                    <select id="smsCountry" class="phone-country-select" aria-label="Country calling code" title="Canada, US, and other +1 (NANP)">
+                        <option value="nanp" selected>+1</option>
+                        <option value="china" title="China mainland">+86</option>
+                    </select>
+                </span>
+                <input id="reg-phone" class="phone" maxlength="20" type="text" placeholder="e.g. 8259493401" title="10-digit number for +1; 11 digits starting with 1 for China" autocomplete="tel-national">
+            </label>
+            <div class="tips">
+
+            </div>
+        </div>
+        <div class="register-box register-box-sms">
+            <div class="register-box-sms-row">
+                <label for="reg-sms" class="other_label sms-code-label" title="SMS verification code">SMS code
+                    <input id="reg-sms" maxlength="6" type="text" placeholder="6 digits" class="caa sms-code-input" inputmode="numeric" autocomplete="one-time-code">
+                </label>
+                <button type="button" id="sendSmsBtn">Send</button>
+            </div>
+            <div class="tips">
+
+            </div>
+        </div>
+        <div class="arguement">
+            <input type="checkbox" id="xieyi"> I have read and agree to the
+            <a href="#">User Agreement</a>
+            and
+            <a href="#">Privacy Policy</a>
+            <div class="tips">
+
+            </div>
+            <br/>
+            <div class="submit_btn">
+                <button type="submit" id="submit_btn">Register</button>
+            </div>
+        </div>
+
+    </form>
+    <div class="two">
+        <div class="right_r">
+            <div class="right_r1">
+                <img src="img/a65a18e877a16246a92e1b755bd88a03_03.png"/>
+                <span>Business registration</span>
+            </div>
+            <div class="right_r2">
+                <img src="img/a65a18e877a16246a92e1b755bd88a03_06.png"/>
+                <span>INTERNATIONAL <br/> CUSTOMERS</span>
+            </div>
+        </div>
+    </div>
+</section>
+<br/><br/>
+<hr>
+<div class="footer">
+    <ul>
+        <li>
+            <a href="">About</a>
+        </li>
+        <li>|</li>
+        <li>
+            <a href="">Contact</a>
+        </li>
+        <li>|</li>
+        <li>
+            <a href="">Careers</a>
+        </li>
+        <li>|</li>
+        <li>
+            <a href="">Sell on Gulimall</a>
+        </li>
+        <li>|</li>
+        <li>
+            <a href="">Advertising</a>
+        </li>
+        <li>|</li>
+        <li>
+            <a href="">Mobile app</a>
+        </li>
+        <li>|</li>
+        <li>
+            <a href="">Links</a>
+        </li>
+        <li>|</li>
+        <li>
+            <a href="">Affiliate</a>
+        </li>
+        <li>|</li>
+        <li>
+            <a href="">Community</a>
+        </li>
+        <li>|</li>
+        <li>
+            <a href="">CSR</a>
+        </li>
+    </ul>
+</div>
+<p class="bq">Copyright © Gulimall. All rights reserved.</p>
+<br/><br/>
+<script type="text/javascript" charset="utf-8">
+    $(function () {
+        var AUTH_API_BASE = (typeof window.GULIMALL_AUTH_API === 'string' && window.GULIMALL_AUTH_API) || '/api/auth';
+        var smsCooldownTimer = null;
+        var stuList = getStuList();
+
+        function validSmsMobile(v) {
+            var mode = $('#smsCountry').val();
+            var s = (v || '').trim();
+            if (mode === 'china') {
+                return /^1[3-9]\d{9}$/.test(s);
+            }
+            var d = s.replace(/\D/g, '');
+            if (d.length === 11 && d.charAt(0) === '1') {
+                d = d.substring(1);
+            }
+            if (d.length !== 10) {
+                return false;
+            }
+            return /^[2-9]\d{2}[2-9]\d{2}\d{4}$/.test(d);
+        }
+
+        function updatePhonePlaceholder() {
+            var $p = $('#reg-phone');
+            if ($('#smsCountry').val() === 'china') {
+                $p.attr('placeholder', 'e.g. 13800138000');
+            } else {
+                $p.attr('placeholder', 'e.g. 8259493401');
+            }
+        }
+
+        $('#smsCountry').on('change', updatePhonePlaceholder);
+        updatePhonePlaceholder();
+
+        function smsFieldTips($input) {
+            return $input.closest('.register-box').children('.tips').first();
+        }
+
+        $('input').eq(0).focus(function () {
+            if ($(this).val().length === 0) {
+                $(this).parent().next('div').text('Use letters, numbers, hyphen or underscore (4–20 characters).');
+            }
+        });
+        $('input').eq(1).focus(function () {
+            if ($(this).val().length === 0) {
+                $(this).parent().next('div').text('At least 6 characters; mixing letters and numbers is recommended.');
+            }
+        });
+        $('input').eq(2).focus(function () {
+            if ($(this).val().length === 0) {
+                $(this).parent().next('div').text('Re-enter the same password.');
+            }
+        });
+        $('input').eq(3).focus(function () {
+            if ($(this).val().length === 0) {
+                $(this).parent().next('div').text('Used for SMS verification, sign-in, and account recovery.');
+            }
+        });
+        $('input').eq(4).focus(function () {
+            if ($(this).val().length === 0) {
+                smsFieldTips($(this)).text('Tap Send first, then enter the 6-digit code.');
+            }
+        });
+
+        $('input').eq(0).blur(function () {
+            if ($(this).val().length === 0) {
+                $(this).parent().next('div').text('').css('color', '#ccc');
+            } else if ($(this).val().length > 0 && $(this).val().length < 4) {
+                $(this).parent().next('div').text('Username must be 4–20 characters.').css('color', 'red');
+            } else if ($(this).val().length >= 4 && !isNaN($(this).val())) {
+                $(this).parent().next('div').text('Username cannot be all numbers.').css('color', 'red');
+            } else {
+                for (var m = 0; m < stuList.length; m++) {
+                    if ($(this).val() === stuList[m].name) {
+                        $(this).parent().next('div').text('That username is already taken.').css('color', 'red');
+                        return;
+                    }
+                }
+                $(this).parent().next('div').text('');
+            }
+        });
+
+        $('input').eq(1).blur(function () {
+            if ($(this).val().length === 0) {
+                $(this).parent().next('div').text('').css('color', '#ccc');
+            } else if ($(this).val().length > 0 && $(this).val().length < 6) {
+                $(this).parent().next('div').text('Password must be at least 6 characters.').css('color', 'red');
+            } else {
+                $(this).parent().next('div').text('');
+            }
+        });
+
+        $('input').eq(2).blur(function () {
+            if ($(this).val().length === 0) {
+                $(this).parent().next('div').text('').css('color', '#ccc');
+            } else if ($(this).val() !== $('input').eq(1).val()) {
+                $(this).parent().next('div').text('Passwords do not match.').css('color', 'red');
+            } else {
+                $(this).parent().next('div').text('');
+            }
+        });
+
+        $('input').eq(3).blur(function () {
+            if ($(this).val().length === 0) {
+                $(this).parent().next('div').text('').css('color', '#ccc');
+            } else if (!validSmsMobile($(this).val())) {
+                $(this).parent().next('div').text('Invalid phone number for the selected country.').css('color', 'red');
+            } else {
+                $(this).parent().next('div').text('');
+            }
+        });
+
+        function startSmsCooldown(sec) {
+            var left = sec;
+            var $btn = $('#sendSmsBtn');
+            $btn.prop('disabled', true);
+            if (smsCooldownTimer) {
+                clearInterval(smsCooldownTimer);
+            }
+            function tick() {
+                if (left <= 0) {
+                    clearInterval(smsCooldownTimer);
+                    smsCooldownTimer = null;
+                    $btn.prop('disabled', false).text('Send');
+                    return;
+                }
+                $btn.text('Resend in ' + left + 's');
+                left--;
+            }
+            tick();
+            smsCooldownTimer = setInterval(tick, 1000);
+        }
+
+        $('#sendSmsBtn').click(function () {
+            var mobile = ($('input').eq(3).val() || '').trim();
+            if (!validSmsMobile(mobile)) {
+                $('input').eq(3).parent().next('div').text('Enter a valid mobile number.').css('color', 'red');
+                return;
+            }
+            $.ajax({
+                url: AUTH_API_BASE + '/sms/send',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ mobile: mobile }),
+                success: function (data) {
+                    if (data.code === 0) {
+                        startSmsCooldown(60);
+                    } else {
+                        alert(data.msg || 'Failed to send code');
+                        if (data.msg && data.msg.indexOf('60 seconds') >= 0) {
+                            startSmsCooldown(60);
+                        }
+                    }
+                },
+                error: function () {
+                    alert('Network error');
+                }
+            });
+        });
+
+        $('input').eq(4).blur(function () {
+            var v = $(this).val().trim();
+            var $tips = smsFieldTips($(this));
+            if (v.length === 0) {
+                $tips.text('').css('color', '#ccc');
+            } else if (!/^\d{6}$/.test(v)) {
+                $tips.text('Enter the 6-digit code.').css('color', 'red');
+            } else {
+                $tips.text('');
+            }
+        });
+
+        /** Same rules as blur handlers; call before register AJAX. */
+        function validateRegisterFormForSubmit() {
+            var $inp = $('form.one input');
+            function rowTips(i) {
+                if (i === 4) {
+                    return smsFieldTips($inp.eq(4));
+                }
+                return $inp.eq(i).parent().next('.tips');
+            }
+            var user = $inp.eq(0).val();
+            var pass = $inp.eq(1).val();
+            var pass2 = $inp.eq(2).val();
+            var mobile = $inp.eq(3).val().trim();
+            var code = $inp.eq(4).val().trim();
+
+            if (user.length < 4 || user.length > 20) {
+                rowTips(0).text('Username must be 4–20 characters.').css('color', 'red');
+                $inp.eq(0).focus();
+                return false;
+            }
+            if (user.length >= 4 && !isNaN(user)) {
+                rowTips(0).text('Username cannot be all numbers.').css('color', 'red');
+                $inp.eq(0).focus();
+                return false;
+            }
+            var si;
+            for (si = 0; si < stuList.length; si++) {
+                if (user === stuList[si].name) {
+                    rowTips(0).text('That username is already taken.').css('color', 'red');
+                    $inp.eq(0).focus();
+                    return false;
+                }
+            }
+            if (pass.length < 6) {
+                rowTips(1).text('Password must be at least 6 characters.').css('color', 'red');
+                $inp.eq(1).focus();
+                return false;
+            }
+            if (pass !== pass2) {
+                rowTips(2).text('Passwords do not match.').css('color', 'red');
+                $inp.eq(2).focus();
+                return false;
+            }
+            if (!validSmsMobile(mobile)) {
+                rowTips(3).text('Invalid phone number for the selected country.').css('color', 'red');
+                $inp.eq(3).focus();
+                return false;
+            }
+            if (!/^\d{6}$/.test(code)) {
+                rowTips(4).text('Enter the 6-digit code.').css('color', 'red');
+                $inp.eq(4).focus();
+                return false;
+            }
+            return true;
+        }
+
+        $('#submit_btn').click(function (e) {
+            e.preventDefault();
+            for (var j = 0; j < 5; j++) {
+                if ($('input').eq(j).val().length === 0) {
+                    $('input').eq(j).focus();
+                    if (j === 4) {
+                        smsFieldTips($('input').eq(j)).text('This field is required.').css('color', 'red');
+                        return;
+                    }
+                    $('input').eq(j).parent().next('.tips').text('This field is required.').css('color', 'red');
+                    return;
+                }
+            }
+            if (!$('#xieyi')[0].checked) {
+                $('#xieyi').next().next().next('.tips').text('Please accept the terms.').css('color', 'red');
+                return;
+            }
+            if (!validateRegisterFormForSubmit()) {
+                return;
+            }
+            var payload = {
+                username: $('input').eq(0).val(),
+                password: $('input').eq(1).val(),
+                mobile: $('input').eq(3).val().trim(),
+                smsCode: $('input').eq(4).val().trim()
+            };
+            $.ajax({
+                url: AUTH_API_BASE + '/register',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function (data) {
+                    if (data.code === 0) {
+                        alert('Registration successful');
+                        window.location.href = '/login';
+                    } else {
+                        alert(data.msg || 'Registration failed');
+                    }
+                },
+                error: function () {
+                    alert('Network error');
+                }
+            });
+        });
+
+        function Student(name, password, tel, id) {
+            this.name = name;
+            this.password = password;
+            this.tel = tel;
+            this.id = id;
+        }
+
+        function getStuList() {
+            var list = localStorage.getItem('stuList');
+            if (list != null) {
+                return JSON.parse(list);
+            }
+            return [];
+        }
+    });
+    $('.ty').click(function () {
+        $('.zong').hide();
+        $('.laoda').hide();
+    });
+    $('.cuo').click(function () {
+        $('.zong').hide();
+    });
+</script>
+</body>
+
+</html>

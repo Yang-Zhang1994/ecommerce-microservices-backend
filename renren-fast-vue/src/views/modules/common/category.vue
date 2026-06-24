@@ -1,7 +1,12 @@
 <template>
-  <div>
-    <el-input placeholder="Enter keywords to filter" v-model="filterText"></el-input>
+  <div class="category-filter-panel">
+    <el-input
+      class="category-filter-panel__search"
+      placeholder="Enter keywords to filter"
+      v-model="filterText"
+    ></el-input>
     <el-tree
+      class="category-filter-panel__tree"
       :data="menus"
       :props="defaultProps"
       node-key="catId"
@@ -15,7 +20,7 @@
 
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
-//例如：import 《组件名称》 from '《组件路径》';
+//例如：import 《组件Name》 from '《组件路径》';
 
 export default {
   //import引入的组件需要注入到对象中才能使用
@@ -46,7 +51,9 @@ export default {
     //树节点过滤
     filterNode(value, data) {
       if (!value) return true;
-      return data.name.indexOf(value) !== -1;
+      const q = String(value).trim().toLowerCase();
+      const name = String(data.name || '').toLowerCase();
+      return name.includes(q);
     },
     getMenus() {
       this.$http({
@@ -77,6 +84,8 @@ export default {
   activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
-<style scoped>
-
+<style scoped>
+.category-filter-panel__search {
+  margin-bottom: 20px;
+}
 </style>

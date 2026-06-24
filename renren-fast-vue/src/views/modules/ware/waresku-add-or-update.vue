@@ -51,13 +51,13 @@ export default {
         stockLocked: 0
       },
       dataRule: {
-        skuId: [{ required: true, message: "SKU ID is required", trigger: "blur" }],
+        skuId: [{ required: true, message: 'SKU ID is required', trigger: "blur" }],
         wareId: [
-          { required: true, message: "Warehouse is required", trigger: "blur" }
+          { required: true, message: 'Warehouse is required', trigger: "blur" }
         ],
-        stock: [{ required: true, message: "Stock quantity is required", trigger: "blur" }],
+        stock: [{ required: true, message: 'Stock quantity is required', trigger: "blur" }],
         skuName: [
-          { required: true, message: "SKU Name is required", trigger: "blur" }
+          { required: true, message: 'SKU Name is required', trigger: "blur" }
         ]
       }
     };
@@ -100,7 +100,7 @@ export default {
         }
       });
     },
-    // 表单提交
+    // form submit
     dataFormSubmit() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {

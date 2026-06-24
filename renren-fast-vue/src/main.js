@@ -8,11 +8,15 @@ import '@/icons' // api: http://www.iconfont.cn/
 import '@/element-ui-theme'
 import '@/assets/scss/index.scss'
 import httpRequest from '@/utils/httpRequest' // api: https://github.com/axios/axios
+import tableScrollPreserve from '@/mixins/tableScrollPreserve'
+import tablePageSizePersist from '@/mixins/tablePageSizePersist'
 import { isAuth } from '@/utils'
 import cloneDeep from 'lodash/cloneDeep'
 import PubSub from 'pubsub-js'
 
 Vue.use(VueCookie)
+Vue.mixin(tableScrollPreserve)
+Vue.mixin(tablePageSizePersist)
 Vue.config.productionTip = false
 
 // 非生产环境, 适配mockjs模拟数据                 // api: https://github.com/nuysoft/Mock

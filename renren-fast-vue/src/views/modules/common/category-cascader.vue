@@ -1,16 +1,8 @@
 <template>
-<!-- 
-使用说明：
-1）、引入category-cascader.vue
-2）、语法：<category-cascader :catelogPath.sync="catelogPath"></category-cascader>
-    解释：
-      catelogPath：指定的值是cascader初始化需要显示的值，应该和父组件的catelogPath绑定;
-          由于有sync修饰符，所以cascader路径变化以后自动会修改父的catelogPath，这是结合子组件this.$emit("update:catelogPath",v);做的
-      -->
   <div>
     <el-cascader
       filterable
-      clearable 
+      clearable
       placeholder="Try searching: Mobile phone"
       v-model="paths"
       :options="categorys"
@@ -20,59 +12,80 @@
 </template>
 
 <script>
-//这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
-//例如：import 《组件名称》 from '《组件路径》';
-
 export default {
-  //import引入的组件需要注入到对象中才能使用
-  components: {},
-  //接受父组件传来的值
   props: {
     catelogPath: {
       type: Array,
-      default(){
-        return [];
+      default () {
+        return []
       }
     }
   },
-  data() {
-    //这里存放数据
+  data () {
     return {
       setting: {
-        value: "catId",
-        label: "name",
-        children: "children"
+        value: 'catId',
+        label: 'name',
+        children: 'children'
       },
       categorys: [],
-      paths: this.catelogPath
-    };
+      paths: []
+    }
   },
-  watch:{
-    catelogPath(v){
-      this.paths = this.catelogPath;
+  watch: {
+    catelogPath: {
+      handler () {
+        this.syncPathsFromProp()
+      },
+      deep: true,
+      immediate: true
     },
-    paths(v){
-      this.$emit("update:catelogPath",v);
-      //还可以使用pubsub-js进行传值
-      this.PubSub.publish("catPath",v);
+    categorys () {
+      this.syncPathsFromProp()
+    },
+    paths (v) {
+      const normalized = this.normalizePath(v)
+      if (JSON.stringify(normalized) !== JSON.stringify(this.normalizePath(this.catelogPath))) {
+        this.$emit('update:catelogPath', normalized)
+        this.PubSub.publish('catPath', normalized)
+      }
     }
   },
-  //方法集合
+  created () {
+    this.getCategorys()
+  },
   methods: {
-    getCategorys() {
+    normalizePath (path) {
+      if (!path || !path.length) return []
+      return path.map(id => Number(id)).filter(id => !Number.isNaN(id))
+    },
+    syncPathsFromProp () {
+      const normalized = this.normalizePath(this.catelogPath)
+      if (!normalized.length) {
+        this.paths = []
+        return
+      }
+      if (!this.categorys || !this.categorys.length) {
+        return
+      }
+      this.paths = normalized
+    },
+    getCategorys () {
       this.$http({
-        url: this.$http.adornUrl("/product/category/list/tree"),
-        method: "get"
+        url: this.$http.adornUrl('/product/category/list/tree'),
+        method: 'get'
       }).then(({ data }) => {
-        this.categorys = data.data;
-      });
+        if (data && data.code === 0) {
+          this.categorys = data.data || []
+        } else {
+          this.categorys = data.data || []
+        }
+        this.$nextTick(() => this.syncPathsFromProp())
+      })
     }
-  },
-  //生命周期 - 创建完成（可以访问当前this实例）
-  created() {
-    this.getCategorys();
   }
-};
+}
 </script>
-<style scoped>
+
+<style scoped>
 </style>

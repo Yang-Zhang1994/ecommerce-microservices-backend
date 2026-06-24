@@ -1,0 +1,39 @@
+.wrapper {
+  position: relative;
+  width: 100%;
+  background: #1a1a1a;
+}
+
+.link {
+  display: block;
+  width: 100%;
+}
+
+.link img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 120px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.close {
+  position: absolute;
+  top: 8px;
+  right: 84px;
+  z-index: 10;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #999;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.close:hover {
+  color: #fff;
+}

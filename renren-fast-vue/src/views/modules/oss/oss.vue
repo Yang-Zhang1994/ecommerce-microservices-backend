@@ -2,9 +2,9 @@
   <div class="mod-oss">
     <el-form :inline="true" :model="dataForm">
       <el-form-item>
-        <el-button type="primary" @click="configHandle()">云存储配置</el-button>
-        <el-button type="primary" @click="uploadHandle()">上传文件</el-button>
-        <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button type="primary" @click="configHandle()">Cloud Storage Config</el-button>
+        <el-button type="primary" @click="uploadHandle()">Upload File</el-button>
+        <el-button type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">Batch Delete</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -30,23 +30,23 @@
         prop="url"
         header-align="center"
         align="center"
-        label="URL地址">
+        label="URL">
       </el-table-column>
       <el-table-column
         prop="createDate"
         header-align="center"
         align="center"
         width="180"
-        label="创建时间">
+        label="Created At">
       </el-table-column>
       <el-table-column
         fixed="right"
         header-align="center"
         align="center"
         width="150"
-        label="操作">
+        label="Actions">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">Delete</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -59,9 +59,9 @@
       :total="totalPage"
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
-    <!-- 弹窗, 云存储配置 -->
+    <!-- 弹窗, Cloud Storage Config -->
     <config v-if="configVisible" ref="config"></config>
-    <!-- 弹窗, 上传文件 -->
+    <!-- 弹窗, Upload File -->
     <upload v-if="uploadVisible" ref="upload" @refreshDataList="getDataList"></upload>
   </div>
 </template>
@@ -91,7 +91,7 @@
       this.getDataList()
     },
     methods: {
-      // 获取数据列表
+      // Load data list
       getDataList () {
         this.dataListLoading = true
         this.$http({
@@ -112,43 +112,43 @@
           this.dataListLoading = false
         })
       },
-      // 每页数
+      // Page size
       sizeChangeHandle (val) {
         this.pageSize = val
         this.pageIndex = 1
         this.getDataList()
       },
-      // 当前页
+      // Current page
       currentChangeHandle (val) {
         this.pageIndex = val
         this.getDataList()
       },
-      // 多选
+      // Multi-select
       selectionChangeHandle (val) {
         this.dataListSelections = val
       },
-      // 云存储配置
+      // Cloud Storage Config
       configHandle () {
         this.configVisible = true
         this.$nextTick(() => {
           this.$refs.config.init()
         })
       },
-      // 上传文件
+      // Upload File
       uploadHandle () {
         this.uploadVisible = true
         this.$nextTick(() => {
           this.$refs.upload.init()
         })
       },
-      // 删除
+      // Delete
       deleteHandle (id) {
         var ids = id ? [id] : this.dataListSelections.map(item => {
           return item.id
         })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
+        this.$confirm(`Are you sure you want to [${id ? 'delete' : 'batch delete'}] [id=${ids.join(',')}]?`, 'Tip', {
+          confirmButtonText: 'Confirm',
+          cancelButtonText: 'Cancel',
           type: 'warning'
         }).then(() => {
           this.$http({
@@ -158,7 +158,7 @@
           }).then(({data}) => {
             if (data && data.code === 0) {
               this.$message({
-                message: '操作成功',
+                message: 'Operation successful',
                 type: 'success',
                 duration: 1500,
                 onClose: () => {

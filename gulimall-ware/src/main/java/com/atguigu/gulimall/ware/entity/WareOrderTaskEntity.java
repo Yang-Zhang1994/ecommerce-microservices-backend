@@ -50,7 +50,7 @@ public class WareOrderTaskEntity implements Serializable {
     @Column(name = "payment_way")
     private Integer paymentWay;
 
-    /** 任务状态 */
+    /** 任务状态 — 见 {@link com.atguigu.gulimall.ware.enums.WareOrderTaskStatusEnum} */
     @Column(name = "task_status")
     private Integer taskStatus;
 

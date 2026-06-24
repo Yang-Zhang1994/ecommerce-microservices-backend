@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.product.entity.SkuInfoEntity;
+import com.atguigu.gulimall.product.service.ProductSearchIndexSyncService;
 import com.atguigu.gulimall.product.service.SkuInfoService;
+import com.atguigu.gulimall.product.vo.OrderSkuMetaVo;
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.R;
 
@@ -29,6 +32,9 @@ import com.atguigu.common.utils.R;
 public class SkuInfoController {
     @Autowired
     private SkuInfoService skuInfoService;
+
+    @Autowired
+    private ProductSearchIndexSyncService productSearchIndexSyncService;
 
     /**
      * 列表
@@ -54,14 +60,23 @@ public class SkuInfoController {
     }
 
     /**
+     * Batch lightweight order meta by skuIds.
+     * Gateway path: /api/product/skuinfo/order/meta
+     */
+    @RequestMapping("/order/meta")
+    public R orderMeta(@RequestBody List<Long> skuIds){
+        List<OrderSkuMetaVo> data = skuInfoService.getOrderSkuMetaBySkuIds(skuIds);
+        return R.ok().put("data", data);
+    }
+
+    /**
      * 保存
      */
     @RequestMapping("/save")
     //@RequiresPermissions("product:skuinfo:save")
     public R save(@RequestBody SkuInfoEntity skuInfo){
 		skuInfoService.save(skuInfo);
-
-        return R.ok();
+        return R.ok().put("skuInfo", skuInfo);
     }
 
     /**
@@ -71,8 +86,8 @@ public class SkuInfoController {
     //@RequiresPermissions("product:skuinfo:update")
     public R update(@RequestBody SkuInfoEntity skuInfo){
 		skuInfoService.updateById(skuInfo);
-
-        return R.ok();
+        boolean searchSynced = productSearchIndexSyncService.refreshIfOnSaleBySkuId(skuInfo.getSkuId());
+        return ProductSearchIndexSyncService.okWithSearchSync(searchSynced);
     }
 
     /**
@@ -83,7 +98,8 @@ public class SkuInfoController {
     public R delete(@RequestBody Long[] skuIds){
 		skuInfoService.removeByIds(Arrays.asList(skuIds));
 
-        return R.ok();
+        return R.ok().put("msg",
+                "SKU removed from catalog (images, sale attrs, stock rows, promotions). Order history is kept.");
     }
 
 }

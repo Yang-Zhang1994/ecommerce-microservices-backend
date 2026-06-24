@@ -1,46 +1,46 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-    <el-form-item label="名字" prop="name">
-      <el-input v-model="dataForm.name" placeholder="名字"></el-input>
+    <el-form-item label="Name" prop="name">
+      <el-input v-model="dataForm.name" placeholder="Name"></el-input>
     </el-form-item>
-    <el-form-item label="图片地址" prop="pic">
-      <el-input v-model="dataForm.pic" placeholder="图片地址"></el-input>
+    <el-form-item label="Image URL" prop="pic">
+      <el-input v-model="dataForm.pic" placeholder="Image URL"></el-input>
     </el-form-item>
-    <el-form-item label="开始时间" prop="startTime">
-      <el-input v-model="dataForm.startTime" placeholder="开始时间"></el-input>
+    <el-form-item label="Start time" prop="startTime">
+      <el-input v-model="dataForm.startTime" placeholder="Start time"></el-input>
     </el-form-item>
-    <el-form-item label="结束时间" prop="endTime">
-      <el-input v-model="dataForm.endTime" placeholder="结束时间"></el-input>
+    <el-form-item label="End time" prop="endTime">
+      <el-input v-model="dataForm.endTime" placeholder="End time"></el-input>
     </el-form-item>
-    <el-form-item label="状态" prop="status">
-      <el-input v-model="dataForm.status" placeholder="状态"></el-input>
+    <el-form-item label="Status" prop="status">
+      <el-input v-model="dataForm.status" placeholder="Status"></el-input>
     </el-form-item>
-    <el-form-item label="点击数" prop="clickCount">
-      <el-input v-model="dataForm.clickCount" placeholder="点击数"></el-input>
+    <el-form-item label="Click count" prop="clickCount">
+      <el-input v-model="dataForm.clickCount" placeholder="Click count"></el-input>
     </el-form-item>
-    <el-form-item label="广告详情连接地址" prop="url">
-      <el-input v-model="dataForm.url" placeholder="广告详情连接地址"></el-input>
+    <el-form-item label="Ad detail URL" prop="url">
+      <el-input v-model="dataForm.url" placeholder="Ad detail URL"></el-input>
     </el-form-item>
-    <el-form-item label="备注" prop="note">
-      <el-input v-model="dataForm.note" placeholder="备注"></el-input>
+    <el-form-item label="Remark" prop="note">
+      <el-input v-model="dataForm.note" placeholder="Remark"></el-input>
     </el-form-item>
-    <el-form-item label="排序" prop="sort">
-      <el-input v-model="dataForm.sort" placeholder="排序"></el-input>
+    <el-form-item label="Sort" prop="sort">
+      <el-input v-model="dataForm.sort" placeholder="Sort"></el-input>
     </el-form-item>
-    <el-form-item label="发布者" prop="publisherId">
-      <el-input v-model="dataForm.publisherId" placeholder="发布者"></el-input>
+    <el-form-item label="Publisher" prop="publisherId">
+      <el-input v-model="dataForm.publisherId" placeholder="Publisher"></el-input>
     </el-form-item>
-    <el-form-item label="审核者" prop="authId">
-      <el-input v-model="dataForm.authId" placeholder="审核者"></el-input>
+    <el-form-item label="Reviewer" prop="authId">
+      <el-input v-model="dataForm.authId" placeholder="Reviewer"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -66,37 +66,37 @@
         },
         dataRule: {
           name: [
-            { required: true, message: '名字不能为空', trigger: 'blur' }
+            { required: true, message: 'This field is required', trigger: 'blur' }
           ],
           pic: [
-            { required: true, message: '图片地址不能为空', trigger: 'blur' }
+            { required: true, message: 'This field is required', trigger: 'blur' }
           ],
           startTime: [
-            { required: true, message: '开始时间不能为空', trigger: 'blur' }
+            { required: true, message: 'This field is required', trigger: 'blur' }
           ],
           endTime: [
-            { required: true, message: '结束时间不能为空', trigger: 'blur' }
+            { required: true, message: 'This field is required', trigger: 'blur' }
           ],
           status: [
-            { required: true, message: '状态不能为空', trigger: 'blur' }
+            { required: true, message: 'Status is required', trigger: 'blur' }
           ],
           clickCount: [
-            { required: true, message: '点击数不能为空', trigger: 'blur' }
+            { required: true, message: 'This field is required', trigger: 'blur' }
           ],
           url: [
-            { required: true, message: '广告详情连接地址不能为空', trigger: 'blur' }
+            { required: true, message: 'This field is required', trigger: 'blur' }
           ],
           note: [
-            { required: true, message: '备注不能为空', trigger: 'blur' }
+            { required: true, message: 'Remark is required', trigger: 'blur' }
           ],
           sort: [
-            { required: true, message: '排序不能为空', trigger: 'blur' }
+            { required: true, message: 'Sort is required', trigger: 'blur' }
           ],
           publisherId: [
-            { required: true, message: '发布者不能为空', trigger: 'blur' }
+            { required: true, message: 'This field is required', trigger: 'blur' }
           ],
           authId: [
-            { required: true, message: '审核者不能为空', trigger: 'blur' }
+            { required: true, message: 'This field is required', trigger: 'blur' }
           ]
         }
       }
@@ -130,7 +130,7 @@
           }
         })
       },
-      // 表单提交
+      // form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
@@ -154,7 +154,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

@@ -36,7 +36,9 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
-      'proxy-agent': resolve('src/utils/proxy-agent-mock.js')
+      'proxy-agent': resolve('src/utils/proxy-agent-mock.js'),
+      'natives': resolve('src/utils/empty-module.js'),
+      'v8': resolve('src/utils/empty-module.js')
     }
   },
   module: {
@@ -90,6 +92,8 @@ module.exports = {
     net: 'empty',
     tls: 'empty',
     child_process: 'empty',
-    dns: 'empty'
+    dns: 'empty',
+    module: 'empty',
+    v8: 'empty'
   }
 }

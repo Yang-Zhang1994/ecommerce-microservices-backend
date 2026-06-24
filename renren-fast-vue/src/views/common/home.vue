@@ -3,8 +3,8 @@
     <!-- Welcome Section -->
     <el-card class="welcome-card" shadow="never">
       <div class="welcome-content">
-        <h2>Welcome to E-Commerce Control Center</h2>
-        <p class="welcome-text">Manage your e-commerce platform efficiently with our comprehensive backend system</p>
+        <h2>Welcome to GrainMart Control Center</h2>
+        <p class="welcome-text">Manage the GrainMart storefront — products, orders, members, and inventory.</p>
         <p class="current-time">
           <i class="el-icon-time"></i> {{ currentTime }}
         </p>
@@ -130,7 +130,7 @@
         <el-col :span="12">
           <div class="info-item">
             <span class="info-label">System Version:</span>
-            <span class="info-value">E-Commerce Control Center v1.0.0</span>
+            <span class="info-value">GrainMart Admin v1.0.0</span>
           </div>
         </el-col>
         <el-col :span="12">
@@ -213,26 +213,34 @@ export default {
     loadStatistics() {
       this.statsLoading = true
       const base = { page: 1, limit: 1 }
-      const reqs = [
-        this.$http.get(this.$http.adornUrl('/sys/user/list'), { params: this.$http.adornParams(base) }),
-        this.$http.get(this.$http.adornUrl('/product/spuinfo/list'), { params: this.$http.adornParams(base) }),
-        this.$http.get(this.$http.adornUrl('/product/skuinfo/list'), { params: this.$http.adornParams(base) }),
-        this.$http.get(this.$http.adornUrl('/ware/purchase/list'), { params: this.$http.adornParams(base) })
+      const getTotal = (res) =>
+        (res && res.data && res.data.code === 0 && res.data.page)
+          ? (res.data.page.totalCount || 0)
+          : 0
+      const specs = [
+        { key: 'admins', url: '/sys/user/list' },
+        { key: 'products', url: '/product/spuinfo/list' },
+        { key: 'skus', url: '/product/skuinfo/list' },
+        { key: 'purchases', url: '/ware/purchase/list' }
       ]
-      Promise.all(reqs)
-        .then(([aRes, pRes, sRes, wRes]) => {
-          const getTotal = (res) => (res && res.data && res.data.code === 0 && res.data.page) ? (res.data.page.totalCount || 0) : 0
-          this.stats = {
-            admins: getTotal(aRes),
-            products: getTotal(pRes),
-            skus: getTotal(sRes),
-            purchases: getTotal(wRes)
-          }
-          this.statsLoading = false
+      const reqs = specs.map((s) =>
+        this.$http
+          .get(this.$http.adornUrl(s.url), { params: this.$http.adornParams(base) })
+          .then((res) => ({ key: s.key, total: getTotal(res) }))
+          .catch(() => ({ key: s.key, total: 0, failed: true }))
+      )
+      Promise.all(reqs).then((rows) => {
+        const next = { admins: 0, products: 0, skus: 0, purchases: 0 }
+        rows.forEach((row) => {
+          next[row.key] = row.total
         })
-        .catch(() => {
-          this.statsLoading = false
-        })
+        this.stats = next
+        this.statsLoading = false
+        const failed = rows.filter((r) => r.failed).map((r) => r.key)
+        if (failed.length > 0 && failed.length < rows.length) {
+          this.$message.warning('Some statistics could not be loaded (inventory service may be down).')
+        }
+      })
     },
     navigateTo(module) {
       const routes = {

@@ -36,8 +36,12 @@ public class PurchaseController {
      */
     @PostMapping("/done")
     public R done(@RequestBody PurchaseDoneVo doneVo){
-        purchaseService.done(doneVo);
-        return R.ok();
+        try {
+            purchaseService.done(doneVo);
+            return R.ok();
+        } catch (IllegalArgumentException e) {
+            return R.error(e.getMessage());
+        }
     }
 
 

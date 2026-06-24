@@ -170,15 +170,22 @@ export default {
   },
   watch: {
     catelogPath(path) {
-      //listen to path change, need to get group info for this level 3 category
-      console.log("Path changed", path);
+      const normalized = this.normalizeCatelogPath(path);
+      if (!normalized.length) {
+        this.attrGroups = [];
+        this.dataForm.attrGroupId = "";
+        this.dataForm.catelogId = "";
+        return;
+      }
       this.attrGroups = [];
-      this.dataForm.attrGroupId = "";
-      this.dataForm.catelogId = path[path.length - 1];
-      if (path && path.length == 3) {
+      if (!this.dataForm.attrId) {
+        this.dataForm.attrGroupId = "";
+      }
+      this.dataForm.catelogId = normalized[normalized.length - 1];
+      if (normalized.length === 3) {
         this.$http({
           url: this.$http.adornUrl(
-            `/product/attrgroup/list/${path[path.length - 1]}`
+            `/product/attrgroup/list/${normalized[normalized.length - 1]}`
           ),
           method: "get",
           params: this.$http.adornParams({ page: 1, limit: 10000000 })
@@ -189,8 +196,6 @@ export default {
             this.$message.error(data.msg);
           }
         });
-      } else if (path.length == 0) {
-        this.dataForm.catelogId = "";
       } else {
         this.$message.error("Please select correct category");
         this.dataForm.catelogId = "";
@@ -200,12 +205,30 @@ export default {
   components: { CategoryCascader },
   methods: {
     // id: 属性 ID（编辑时有值）；currentCatId: 左侧树选中的三级分类 ID（添加时传入，用于预填分类）
+    normalizeCatelogPath (path) {
+      if (!path || !path.length) return [];
+      return path.map(id => Number(id)).filter(id => !Number.isNaN(id));
+    },
+    applyCatelogPath (path, catelogId, attrGroupId) {
+      const normalized = this.normalizeCatelogPath(path);
+      this.catelogPath = normalized;
+      if (catelogId != null && catelogId !== "") {
+        this.dataForm.catelogId = Number(catelogId);
+      }
+      if (attrGroupId != null && attrGroupId !== "") {
+        this.$nextTick(() => {
+          this.dataForm.attrGroupId = attrGroupId;
+        });
+      }
+    },
     init(id, currentCatId) {
       this.dataForm.attrId = id || 0;
       this.dataForm.attrType = this.type;
+      this.catelogPath = [];
       this.visible = true;
       this.$nextTick(() => {
         this.$refs["dataForm"].resetFields();
+        this.catelogPath = [];
         if (this.dataForm.attrId) {
           this.$http({
             url: this.$http.adornUrl(
@@ -219,27 +242,27 @@ export default {
               this.dataForm.searchType = data.attr.searchType;
               this.dataForm.valueType = data.attr.valueType;
               this.dataForm.icon = data.attr.icon;
-              this.dataForm.valueSelect = data.attr.valueSelect.split(";");
+              this.dataForm.valueSelect = data.attr.valueSelect
+                ? data.attr.valueSelect.split(";")
+                : [];
               this.dataForm.attrType = data.attr.attrType;
               this.dataForm.enable = data.attr.enable;
-              this.dataForm.catelogId = data.attr.catelogId;
               this.dataForm.showDesc = data.attr.showDesc;
-              this.catelogPath = data.attr.catelogPath;
-              this.$nextTick(() => {
-                this.dataForm.attrGroupId = data.attr.attrGroupId;
-              });
+              this.applyCatelogPath(
+                data.attr.catelogPath,
+                data.attr.catelogId,
+                data.attr.attrGroupId
+              );
             }
           });
         } else if (currentCatId) {
-          // 添加时：用左侧选中的分类预填，保证新属性与列表同分类
           this.$http({
             url: this.$http.adornUrl(`/product/category/info/${currentCatId}`),
             method: "get",
             params: this.$http.adornParams()
           }).then(({ data }) => {
             if (data && data.code === 0 && data.data && data.data.catelogPath) {
-              this.catelogPath = data.data.catelogPath;
-              this.dataForm.catelogId = currentCatId;
+              this.applyCatelogPath(data.data.catelogPath, currentCatId);
             }
           });
         }

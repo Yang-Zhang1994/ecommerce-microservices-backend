@@ -3,7 +3,7 @@
     class="site-wrapper"
     :class="{ 'site-sidebar--fold': sidebarFold }"
     v-loading.fullscreen.lock="loading"
-    element-loading-text="拼命加载中">
+    element-loading-text="Loading...">
     <template v-if="!loading">
       <main-navbar />
       <main-sidebar />
@@ -21,7 +21,7 @@
   export default {
     provide () {
       return {
-        // 刷新
+        // Refresh
         refresh () {
           this.$store.commit('common/updateContentIsNeedRefresh', true)
           this.$nextTick(() => {
@@ -64,7 +64,7 @@
       this.resetDocumentClientHeight()
     },
     methods: {
-      // 重置窗口可视高度
+      // Reset窗口可视高度
       resetDocumentClientHeight () {
         this.documentClientHeight = document.documentElement['clientHeight']
         window.onresize = () => {

@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="上传文件"
+    title="Upload File"
     :close-on-click-modal="false"
     @close="closeHandle"
     :visible.sync="visible">
@@ -13,13 +13,14 @@
       :file-list="fileList"
       style="text-align: center;">
       <i class="el-icon-upload"></i>
-      <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-      <div class="el-upload__tip" slot="tip">只支持jpg、png、gif格式的图片！</div>
+      <div class="el-upload__text">Drop file here, or <em>click to upload</em></div>
+      <div class="el-upload__tip" slot="tip">JPG, PNG and GIF only.</div>
     </el-upload>
   </el-dialog>
 </template>
 
 <script>
+  import { getToken } from '@/utils/authToken'
   export default {
     data () {
       return {
@@ -32,26 +33,26 @@
     },
     methods: {
       init (id) {
-        this.url = this.$http.adornUrl(`/sys/oss/upload?token=${this.$cookie.get('token')}`)
+        this.url = this.$http.adornUrl(`/sys/oss/upload?token=${encodeURIComponent(getToken())}`)
         this.visible = true
       },
-      // 上传之前
+      // Upload之前
       beforeUploadHandle (file) {
         if (file.type !== 'image/jpg' && file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif') {
-          this.$message.error('只支持jpg、png、gif格式的图片！')
+          this.$message.error('Only JPG, PNG, and GIF images are supported')
           return false
         }
         this.num++
       },
-      // 上传成功
+      // UploadSuccess
       successHandle (response, file, fileList) {
         this.fileList = fileList
         this.successNum++
         if (response && response.code === 0) {
           if (this.num === this.successNum) {
-            this.$confirm('操作成功, 是否继续操作?', '提示', {
-              confirmButtonText: '确定',
-              cancelButtonText: '取消',
+            this.$confirm('Operation successful. Continue uploading?', 'Tip', {
+              confirmButtonText: 'Confirm',
+              cancelButtonText: 'Cancel',
               type: 'warning'
             }).catch(() => {
               this.visible = false
@@ -61,7 +62,7 @@
           this.$message.error(response.msg)
         }
       },
-      // 弹窗关闭时
+      // 弹窗Close时
       closeHandle () {
         this.fileList = []
         this.$emit('refreshDataList')

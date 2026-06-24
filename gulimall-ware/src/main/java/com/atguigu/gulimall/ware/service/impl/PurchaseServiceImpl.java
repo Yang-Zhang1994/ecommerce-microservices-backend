@@ -15,6 +15,7 @@ import com.atguigu.gulimall.ware.vo.PurchaseItemDoneVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +38,9 @@ public class PurchaseServiceImpl implements PurchaseService {
     private WareSkuService wareSkuService;
 
     @Override
+    @Transactional(readOnly = true)
     public PageUtils queryPage(Map<String, Object> params) {
-        Pageable pageable = new Query<PurchaseEntity>().getPageable(params);
+        Pageable pageable = new Query<PurchaseEntity>().getPageable(params, Sort.by("id").ascending());
         Page<PurchaseEntity> page = purchaseRepository.findAll(pageable);
         return new PageUtils(page);
     }
@@ -98,10 +100,11 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageUtils queryPageUnreceivePurchase(Map<String, Object> params) {
         Specification<PurchaseEntity> spec = (root, query, cb) ->
                 cb.or(cb.equal(root.get("status"), 0), cb.equal(root.get("status"), 1));
-        Pageable pageable = new Query<PurchaseEntity>().getPageable(params);
+        Pageable pageable = new Query<PurchaseEntity>().getPageable(params, Sort.by("id").ascending());
         Page<PurchaseEntity> page = purchaseRepository.findAll(spec, pageable);
         return new PageUtils(page);
     }
@@ -178,30 +181,83 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Transactional
     @Override
     public void done(PurchaseDoneVo doneVo) {
-        boolean flag = true;
+        if (doneVo == null || doneVo.getId() == null) {
+            throw new IllegalArgumentException("Purchase id is required");
+        }
+        if (doneVo.getItems() == null || doneVo.getItems().isEmpty()) {
+            throw new IllegalArgumentException("At least one purchase detail item is required");
+        }
+        Long purchaseId = doneVo.getId();
+        PurchaseEntity purchaseEntity = getById(purchaseId);
+        if (purchaseEntity == null) {
+            throw new IllegalArgumentException("Purchase order not found: id=" + purchaseId);
+        }
+
         for (PurchaseItemDoneVo item : doneVo.getItems()) {
-            if (item.getStatus() == WareConstant.PurchaseDetailStatusEnum.HASERROR.getCode()) {
-                flag = false;
+            if (item.getStatus() == null) {
+                throw new IllegalArgumentException("Each item must include status");
             }
-            PurchaseDetailEntity detailEntity = purchaseDetailService.getById(item.getItemId());
-            if (detailEntity != null) {
-                detailEntity.setStatus(item.getStatus());
-                purchaseDetailService.updateById(detailEntity);
-            }
+            PurchaseDetailEntity detail = resolvePurchaseDetail(purchaseId, item);
+            detail.setStatus(item.getStatus());
+            purchaseDetailService.updateById(detail);
             if (item.getStatus() == WareConstant.PurchaseDetailStatusEnum.FINISHED.getCode()) {
-                PurchaseDetailEntity entity = purchaseDetailService.getById(item.getItemId());
-                if (entity != null) {
-                    wareSkuService.addStock(entity.getSkuId(), entity.getWareId(), entity.getSkuNum());
-                }
+                wareSkuService.addStock(detail.getSkuId(), detail.getWareId(), detail.getSkuNum());
             }
         }
 
-        PurchaseEntity purchaseEntity = getById(doneVo.getId());
-        if (purchaseEntity != null) {
-            purchaseEntity.setStatus(flag ? WareConstant.PurchaseStatusEnum.FINISHED.getCode()
-                    : WareConstant.PurchaseStatusEnum.HASERROR.getCode());
-            purchaseEntity.setUpdateTime(new Date());
-            purchaseRepository.save(purchaseEntity);
+        List<PurchaseDetailEntity> allDetails = purchaseDetailService.listDetailByPurchaseId(purchaseId);
+        if (allDetails.isEmpty()) {
+            throw new IllegalArgumentException("Purchase order has no detail lines: id=" + purchaseId);
         }
+        boolean anyError = allDetails.stream()
+                .anyMatch(d -> d.getStatus() != null
+                        && d.getStatus() == WareConstant.PurchaseDetailStatusEnum.HASERROR.getCode());
+        boolean allTerminal = allDetails.stream().allMatch(d -> {
+            if (d.getStatus() == null) {
+                return false;
+            }
+            int s = d.getStatus();
+            return s == WareConstant.PurchaseDetailStatusEnum.FINISHED.getCode()
+                    || s == WareConstant.PurchaseDetailStatusEnum.HASERROR.getCode();
+        });
+        if (allTerminal) {
+            purchaseEntity.setStatus(anyError
+                    ? WareConstant.PurchaseStatusEnum.HASERROR.getCode()
+                    : WareConstant.PurchaseStatusEnum.FINISHED.getCode());
+        } else {
+            purchaseEntity.setStatus(WareConstant.PurchaseStatusEnum.RECEIVED.getCode());
+        }
+        purchaseEntity.setUpdateTime(new Date());
+        purchaseRepository.save(purchaseEntity);
+    }
+
+    /**
+     * itemId = wms_purchase_detail.id (NOT sku id). When skuId is sent instead, resolve by purchaseId + skuId.
+     */
+    private PurchaseDetailEntity resolvePurchaseDetail(Long purchaseId, PurchaseItemDoneVo item) {
+        if (item.getItemId() != null) {
+            PurchaseDetailEntity byId = purchaseDetailService.getById(item.getItemId());
+            if (byId != null) {
+                if (!purchaseId.equals(byId.getPurchaseId())) {
+                    throw new IllegalArgumentException(
+                            "Detail id=" + item.getItemId() + " belongs to purchase "
+                                    + byId.getPurchaseId() + ", not purchase " + purchaseId
+                                    + ". Use the correct detail id or pass skuId instead.");
+                }
+                return byId;
+            }
+        }
+        if (item.getSkuId() != null) {
+            PurchaseDetailEntity bySku = purchaseDetailService.getByPurchaseIdAndSkuId(purchaseId, item.getSkuId());
+            if (bySku != null) {
+                return bySku;
+            }
+            throw new IllegalArgumentException(
+                    "No purchase detail for purchaseId=" + purchaseId + " skuId=" + item.getSkuId());
+        }
+        throw new IllegalArgumentException(
+                "Purchase detail not found. itemId is wms_purchase_detail.id (not sku id). "
+                        + "Query GET /ware/purchasedetail/list?key=" + purchaseId
+                        + " or pass skuId with purchase = purchased product id.");
     }
 }

@@ -16,7 +16,12 @@ import java.util.Date;
  */
 @Data
 @Entity
-@Table(name = "oms_order")
+@Table(
+        name = "oms_order",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_oms_order_order_sn", columnNames = {"order_sn"})
+        }
+)
 public class OrderEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -29,7 +34,7 @@ public class OrderEntity implements Serializable {
     private Long memberId;
 
     /** 订单号 */
-    @Column(name = "order_sn")
+    @Column(name = "order_sn", nullable = false, unique = true)
     private String orderSn;
 
     /** 使用的优惠券 */
@@ -79,7 +84,7 @@ public class OrderEntity implements Serializable {
     @Column(name = "source_type")
     private Integer sourceType;
 
-    /** 订单状态【0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单】 */
+    /** 订单状态（see {@code com.atguigu.gulimall.order.enums.OrderStatusEnum}） */
     @Column(name = "status")
     private Integer status;
 

@@ -1,0 +1,140 @@
+# Mall (Next.js) + Admin (renren-fast-vue static) on EKS — apply after images are in ECR.
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gulimall-mall
+  namespace: gulimall
+  labels:
+    app: gulimall-mall
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gulimall-mall
+  template:
+    metadata:
+      labels:
+        app: gulimall-mall
+    spec:
+      containers:
+        - name: mall
+          image: 466297333400.dkr.ecr.us-west-2.amazonaws.com/gulimall-mall:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3001
+          env:
+            - name: PORT
+              value: "3001"
+            - name: HOSTNAME
+              value: "0.0.0.0"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3001
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 6
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gulimall-mall
+  namespace: gulimall
+spec:
+  selector:
+    app: gulimall-mall
+  ports:
+    - port: 3001
+      targetPort: 3001
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gulimall-mall
+  namespace: gulimall
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-west-2:466297333400:certificate/db83fba4-4af8-4d09-a469-9555c933ff94
+spec:
+  ingressClassName: alb
+  rules:
+    - host: mall.yangzhangtech.online
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gulimall-mall
+                port:
+                  number: 3001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: renren-fast-vue
+  namespace: gulimall
+  labels:
+    app: renren-fast-vue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: renren-fast-vue
+  template:
+    metadata:
+      labels:
+        app: renren-fast-vue
+    spec:
+      containers:
+        - name: admin-ui
+          image: 466297333400.dkr.ecr.us-west-2.amazonaws.com/renren-fast-vue:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: renren-fast-vue
+  namespace: gulimall
+spec:
+  selector:
+    app: renren-fast-vue
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: renren-fast-vue
+  namespace: gulimall
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-west-2:466297333400:certificate/db83fba4-4af8-4d09-a469-9555c933ff94
+spec:
+  ingressClassName: alb
+  rules:
+    - host: admin.yangzhangtech.online
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: renren-fast-vue
+                port:
+                  number: 80

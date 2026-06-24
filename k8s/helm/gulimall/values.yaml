@@ -1,0 +1,265 @@
+# Default values for kind (local Kubernetes).
+# EKS overrides: values-eks.yaml
+
+global:
+  namespace: gulimall
+  imagePullPolicy: Never
+  imageRegistry: ""
+  # CD sets to git SHA (overrides per-image tags in values-eks.yaml when non-empty).
+  imageTag: ""
+  springProfilesActive: dev
+  awsRegion: us-west-2
+  # Tight heap for single-node kind (raise on EKS).
+  jvmOpts: "-Xms128m -Xmx384m"
+  deploymentStrategy: RollingUpdate
+
+kind:
+  enabled: true
+  gatewayNodePort: 30088
+
+ingress:
+  enabled: false
+  className: alb
+  host: ""
+  annotations: {}
+
+# CPU-based HPA (requires metrics-server and container CPU requests).
+hpa:
+  enabled: false
+
+infra:
+  consul:
+    enabled: true
+    image: hashicorp/consul:1.17
+  redis:
+    enabled: true
+    image: redis:7-alpine
+  rabbitmq:
+    enabled: true
+    image: rabbitmq:3-management
+    username: guest
+    password: guest
+  elasticsearch:
+    enabled: true
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    javaOpts: "-Xms256m -Xmx256m"
+  jaeger:
+    enabled: false
+    image: jaegertracing/all-in-one:1.57
+
+images:
+  gateway:
+    repository: gulimall-gateway
+    tag: local
+  auth-server:
+    repository: gulimall-auth-server
+    tag: local
+  product:
+    repository: gulimall-product
+    tag: local
+  member:
+    repository: gulimall-member
+    tag: local
+  cart:
+    repository: gulimall-cart
+    tag: local
+  order:
+    repository: gulimall-order
+    tag: local
+  ware:
+    repository: gulimall-ware
+    tag: local
+  coupon:
+    repository: gulimall-coupon
+    tag: local
+  search:
+    repository: gulimall-search
+    tag: local
+  seckill:
+    repository: gulimall-seckill
+    tag: local
+  third-party:
+    repository: gulimall-third-party
+    tag: local
+  renren-fast:
+    repository: renren-fast
+    tag: local
+
+# apps.* keys are logical names; name = K8s Service/Deployment name.
+apps:
+  gateway:
+    enabled: true
+    name: gulimall-gateway
+    imageKey: gateway
+    replicas: 1
+    port: 88
+    consul: true
+    redis: true
+    probeDelay: 30
+    nodePort: true
+    extraEnv:
+      GULIMALL_PRODUCT_URI: http://gulimall-product:10000
+      GULIMALL_SEARCH_URI: http://gulimall-search:12001
+      GULIMALL_CART_URI: http://gulimall-cart:13000
+      GULIMALL_ORDER_URI: http://gulimall-order:9000
+      GULIMALL_AUTH_URI: lb://gulimall-auth-server
+      RENREN_FAST_URI: http://renren-fast:8080
+      GATEWAY_RATELIMIT_API_REPLENISH: "100"
+      GATEWAY_RATELIMIT_API_BURST: "200"
+      GATEWAY_RATELIMIT_ORDER_REPLENISH: "80"
+      GATEWAY_RATELIMIT_ORDER_BURST: "160"
+      GATEWAY_RATELIMIT_AUTH_REPLENISH: "120"
+      GATEWAY_RATELIMIT_AUTH_BURST: "240"
+      GATEWAY_RATELIMIT_LOGIN_REPLENISH: "15"
+      GATEWAY_RATELIMIT_LOGIN_BURST: "30"
+      GATEWAY_RATELIMIT_PAY_REPLENISH: "30"
+      GATEWAY_RATELIMIT_PAY_BURST: "60"
+      GATEWAY_RATELIMIT_SUBMIT_REPLENISH: "20"
+      GATEWAY_RATELIMIT_SUBMIT_BURST: "40"
+  auth-server:
+    enabled: true
+    name: gulimall-auth-server
+    imageKey: auth-server
+    replicas: 1
+    port: 20000
+    consul: true
+    redis: true
+    sessionCookie: true
+    googleOAuth: true
+    probeDelay: 45
+    extraEnv:
+      GULIMALL_AUTH_SMS_PHONE_REGION: NANP
+      GULIMALL_GOOGLE_REDIRECT_URI: http://localhost:3088/api/auth/login/oauth2/code/{registrationId}
+      GULIMALL_OAUTH2_SUCCESS_URL: http://localhost:3001/
+      GULIMALL_OAUTH2_FAILURE_URL: http://localhost:3088/login?error
+  product:
+    enabled: true
+    name: gulimall-product
+    imageKey: product
+    replicas: 1
+    port: 10000
+    consul: true
+    redis: true
+    rdsDb: ecommerce_pms
+    probeDelay: 45
+  member:
+    enabled: true
+    name: gulimall-member
+    imageKey: member
+    replicas: 1
+    port: 8000
+    consul: true
+    redis: true
+    rabbit: true
+    rdsDb: ecommerce_ums
+    probeDelay: 45
+  cart:
+    enabled: true
+    name: gulimall-cart
+    imageKey: cart
+    replicas: 1
+    port: 13000
+    consul: true
+    redis: true
+    sessionCookie: true
+    probeDelay: 45
+  order:
+    enabled: true
+    name: gulimall-order
+    imageKey: order
+    replicas: 1
+    port: 9000
+    consul: true
+    redis: true
+    rabbit: true
+    rdsDb: ecommerce_oms
+    sessionCookie: true
+    stripe: true
+    probeDelay: 45
+    extraEnv:
+      GULIMALL_ORDER_PAY_TIMEOUT_MINUTES: "30"
+  ware:
+    enabled: true
+    name: gulimall-ware
+    imageKey: ware
+    replicas: 1
+    port: 11000
+    consul: true
+    rabbit: true
+    rdsDb: ecommerce_wms
+    probeDelay: 45
+    extraEnv:
+      GULIMALL_STOCK_LOCK_DELAY_MINUTES: "50"
+  coupon:
+    enabled: true
+    name: gulimall-coupon
+    imageKey: coupon
+    replicas: 1
+    port: 12000
+    consul: true
+    rdsDb: ecommerce_sms
+    probeDelay: 45
+  search:
+    enabled: true
+    name: gulimall-search
+    imageKey: search
+    replicas: 1
+    port: 12001
+    consul: true
+    elasticsearch: true
+    probeDelay: 60
+  seckill:
+    enabled: true
+    name: gulimall-seckill
+    imageKey: seckill
+    replicas: 1
+    port: 14000
+    consul: true
+    redis: true
+    rabbit: true
+    probeDelay: 45
+  third-party:
+    enabled: true
+    name: gulimall-third-party
+    imageKey: third-party
+    replicas: 1
+    port: 30000
+    consul: true
+    awsCredentials: true
+    probeDelay: 45
+  renren-fast:
+    enabled: true
+    name: renren-fast
+    imageKey: renren-fast
+    replicas: 1
+    port: 8080
+    consul: true
+    rdsDb: ecommerce_admin
+    probeDelay: 60
+    probePath: /api/actuator/health
+    extraEnv:
+      SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME: renren-fast
+      SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: "false"
+      SERVER_PORT: "8080"
+      SPRING_AUTOCONFIGURE_EXCLUDE: org.apache.shiro.spring.config.web.autoconfigure.ShiroWebAutoConfiguration,org.apache.shiro.spring.boot.autoconfigure.ShiroAutoConfiguration,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration
+      SPRING_DATASOURCE_DRUID_INITIAL_SIZE: "0"
+      SPRING_DATASOURCE_DRUID_FILTERS: stat
+
+otel:
+  enabled: false
+  exporterEndpoint: http://jaeger:4317
+  exporterProtocol: grpc
+  tracesSampler: always_on
+  messagingReceiveTelemetry: "true"
+
+secrets:
+  existingSecret: gulimall-secrets
+  createPlaceholder: false
+  rdsEndpoint: ""
+  rdsUsername: postgres
+  rdsPassword: ""
+  orderStripeSecretKey: ""
+  orderStripeWebhookSecret: ""
+  gulimallMallPublicOrigin: http://localhost:3001
+  gulimallSessionCookieDomain: ""
+  gulimallSessionCookieSecure: "false"

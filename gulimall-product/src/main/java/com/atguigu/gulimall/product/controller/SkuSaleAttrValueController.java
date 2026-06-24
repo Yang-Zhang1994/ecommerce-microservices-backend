@@ -54,6 +54,14 @@ public class SkuSaleAttrValueController {
     }
 
     /**
+     * 当前 SKU 的销售属性字符串列表（如 Color:Black）。
+     */
+    @RequestMapping("/strings/{skuId}")
+    public R strings(@PathVariable("skuId") Long skuId){
+        return R.ok().put("data", skuSaleAttrValueService.getSaleAttrStringsBySkuId(skuId));
+    }
+
+    /**
      * 保存
      */
     @RequestMapping("/save")

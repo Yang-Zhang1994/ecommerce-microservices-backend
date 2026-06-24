@@ -1,5 +1,6 @@
 <template>
   <div class="mod-config">
+    <marketing-storefront-notice />
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
         <el-input v-model="dataForm.key" placeholder="Parameter Name" clearable></el-input>
@@ -39,12 +40,14 @@
         prop="growBounds"
         header-align="center"
         align="center"
+        min-width="130"
         label="Growth Points">
       </el-table-column>
       <el-table-column
         prop="buyBounds"
         header-align="center"
         align="center"
+        min-width="140"
         label="Shopping Points">
       </el-table-column>
       <el-table-column
@@ -83,6 +86,7 @@
 
 <script>
   import AddOrUpdate from './spubounds-add-or-update'
+  import MarketingStorefrontNotice from '@/components/admin/MarketingStorefrontNotice'
   export default {
     data () {
       return {
@@ -99,7 +103,8 @@
       }
     },
     components: {
-      AddOrUpdate
+      AddOrUpdate,
+      MarketingStorefrontNotice
     },
     activated () {
       this.getDataList()

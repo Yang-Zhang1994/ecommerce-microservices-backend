@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.atguigu.gulimall.product.entity.ProductAttrValueEntity;
+import com.atguigu.gulimall.product.service.ProductSearchIndexSyncService;
 import com.atguigu.gulimall.product.service.ProductAttrValueService;
 import com.atguigu.gulimall.product.vo.AttrRespVo;
 import com.atguigu.gulimall.product.vo.AttrVo;
@@ -31,6 +32,9 @@ public class AttrController {
     private AttrService attrService;
     @Autowired
     private ProductAttrValueService productAttrValueService;
+
+    @Autowired
+    private ProductSearchIndexSyncService productSearchIndexSyncService;
 
 
     /**
@@ -79,6 +83,14 @@ public class AttrController {
     }
 
     /**
+     * Search facet metadata for given attr ids (searchType=1 + value_select options).
+     */
+    @GetMapping("/search-filter-meta")
+    public R searchFilterMeta(@RequestParam("attrIds") List<Long> attrIds) {
+        return R.ok().put("data", attrService.listSearchFilterMeta(attrIds));
+    }
+
+    /**
      * 保存
      */
     @RequestMapping("/save")
@@ -108,7 +120,8 @@ public class AttrController {
     public R updateSpuAttr(@PathVariable("spuId") Long spuId,
                            @RequestBody List<ProductAttrValueEntity> entities) {
         productAttrValueService.updateSpuAttr(spuId, entities);
-        return R.ok();
+        boolean searchSynced = productSearchIndexSyncService.refreshIfOnSale(spuId);
+        return ProductSearchIndexSyncService.okWithSearchSync(searchSynced);
     }
 
     /**

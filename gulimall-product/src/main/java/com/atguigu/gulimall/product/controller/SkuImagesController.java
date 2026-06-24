@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.atguigu.gulimall.product.entity.SkuImagesEntity;
+import com.atguigu.gulimall.product.service.ProductSearchIndexSyncService;
 import com.atguigu.gulimall.product.service.SkuImagesService;
 import com.atguigu.gulimall.product.vo.SkuImagesSaveBatchVo;
 import com.atguigu.common.utils.PageUtils;
@@ -31,6 +32,9 @@ import com.atguigu.common.utils.R;
 public class SkuImagesController {
     @Autowired
     private SkuImagesService skuImagesService;
+
+    @Autowired
+    private ProductSearchIndexSyncService productSearchIndexSyncService;
 
     /**
      * 根据 skuId 查询图片列表
@@ -58,7 +62,8 @@ public class SkuImagesController {
             }
         }
         skuImagesService.saveBatchForSku(vo.getSkuId(), entities);
-        return R.ok();
+        boolean searchSynced = productSearchIndexSyncService.refreshIfOnSaleBySkuId(vo.getSkuId());
+        return ProductSearchIndexSyncService.okWithSearchSync(searchSynced);
     }
 
     /**

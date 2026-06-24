@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.product.exception;
 
 import com.atguigu.common.exception.BisCodeEnum;
+import com.atguigu.common.exception.BisException;
 import com.atguigu.common.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
@@ -14,6 +15,12 @@ import java.util.HashMap;
 @Slf4j
 @RestControllerAdvice(basePackages = "com.atguigu.gulimall.product.controller")
 public class GulimallExceptionControllerAdvice {
+
+    @ExceptionHandler(BisException.class)
+    public R handleBisException(BisException e) {
+        log.warn("Business rule: {}", e.getMessage());
+        return R.error(e.getBiz());
+    }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public R handleValidException(MethodArgumentNotValidException e) {

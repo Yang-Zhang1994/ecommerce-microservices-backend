@@ -2,6 +2,8 @@ server:
   port: 9000
 
 spring:
+  config:
+    import: optional:classpath:application-persistence.yml
   application:
     name: gulimall-order
   profiles:
@@ -20,6 +22,15 @@ spring:
     url: ${SPRING_DATASOURCE_URL:}
     username: ${SPRING_DATASOURCE_USERNAME:}
     password: ${SPRING_DATASOURCE_PASSWORD:}
+    hikari:
+      # Keep pool healthy against RDS/network idle disconnects.
+      max-lifetime: ${SPRING_DATASOURCE_HIKARI_MAX_LIFETIME_MS:1200000}
+      keepalive-time: ${SPRING_DATASOURCE_HIKARI_KEEPALIVE_MS:60000}
+      idle-timeout: ${SPRING_DATASOURCE_HIKARI_IDLE_TIMEOUT_MS:300000}
+      connection-timeout: ${SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT_MS:10000}
+      validation-timeout: ${SPRING_DATASOURCE_HIKARI_VALIDATION_TIMEOUT_MS:3000}
+      maximum-pool-size: ${SPRING_DATASOURCE_HIKARI_MAX_POOL_SIZE:20}
+      minimum-idle: ${SPRING_DATASOURCE_HIKARI_MIN_IDLE:5}
   sql:
     init:
       mode: never
@@ -34,7 +45,75 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
+  session:
+    store-type: redis
+    timeout: 30m
+    redis:
+      # Must match auth-server namespace so order can read the same login SESSION.
+      namespace: gulimall:auth:sessions
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:guest}
+    password: ${SPRING_RABBITMQ_PASSWORD:guest}
+    virtual-host: ${SPRING_RABBITMQ_VHOST:/}
+    # Required for RabbitTemplate confirm callbacks + CorrelationData (see OrderRabbitPublisherConfig)
+    publisher-confirm-type: correlated
+    publisher-returns: true
 
 logging:
   level:
     com.atguigu.gulimall.order: debug
+
+order:
+  cart-service-url: ${ORDER_CART_SERVICE_URL:http://gulimall-cart:13000}
+  member-service-url: ${ORDER_MEMBER_SERVICE_URL:http://gulimall-gateway:88/api/member}
+  product-service-url: ${ORDER_PRODUCT_SERVICE_URL:http://gulimall-gateway:88/api/product}
+  ware-service-url: ${ORDER_WARE_SERVICE_URL:http://gulimall-gateway:88/api/ware}
+  auth-session-url: ${ORDER_AUTH_SESSION_URL:http://gulimall-gateway:88/api/auth/oauth/member/session}
+  token-ttl-seconds: 1800
+  default-freight: 8
+  free-shipping-threshold: 99
+  # Unpaid order → delay queue TTL for auto-close (independent of stock lock delay)
+  pay-timeout-minutes: ${GULIMALL_ORDER_PAY_TIMEOUT_MINUTES:30}
+  flash-pay-timeout-minutes: ${GULIMALL_ORDER_FLASH_PAY_TIMEOUT_MINUTES:15}
+  # Browser-visible mall origin (no trailing slash). Dev: http://localhost:3001  Prod SSO: https://www.ecommerce.com (same registrable domain as SESSION cookie).
+  mall-public-origin: ${GULIMALL_MALL_PUBLIC_ORIGIN:http://localhost:3001}
+  stripe:
+    webhook-replay-secret: ${ORDER_STRIPE_WEBHOOK_REPLAY_SECRET:}
+    # Server secret key (sk_...) used to create Checkout Session.
+    secret-key: ${ORDER_STRIPE_SECRET_KEY:}
+    # Webhook signing secret (whsec_...) for Stripe-Signature verification.
+    webhook-secret: ${ORDER_STRIPE_WEBHOOK_SECRET:}
+    currency: ${ORDER_STRIPE_CURRENCY:cad}
+    # Optional overrides. If blank, URLs are mall-public-origin + /order/success?paid=1 and .../pay?cancelled=1
+    success-url: ${ORDER_STRIPE_SUCCESS_URL:}
+    cancel-url: ${ORDER_STRIPE_CANCEL_URL:}
+  mq-outbox:
+    scan-interval-ms: ${ORDER_MQ_OUTBOX_SCAN_MS:5000}
+    batch-size: ${ORDER_MQ_OUTBOX_BATCH_SIZE:100}
+
+gulimall:
+  auth:
+    session:
+      cookie-domain: ${GULIMALL_SESSION_COOKIE_DOMAIN:}
+      cookie-secure: ${GULIMALL_SESSION_COOKIE_SECURE:false}
+
+# Resilience4j：订单服务内下游 HTTP 熔断（示例：memberService，见 MemberProfileHttpClient）
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 20
+        minimumNumberOfCalls: 8
+        permittedNumberOfCallsInHalfOpenState: 3
+        waitDurationInOpenState: 20s
+        failureRateThreshold: 50
+    instances:
+      memberService:
+        baseConfig: default

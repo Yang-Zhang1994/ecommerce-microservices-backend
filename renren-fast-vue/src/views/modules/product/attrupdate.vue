@@ -9,7 +9,7 @@
               v-for="(group,gidx) in dataResp.attrGroups"
               :key="group.attrGroupId"
             >
-              <!-- 遍历属性,每个tab-pane对应一个表单，每个属性是一个表单项  spu.baseAttrs[0] = [{attrId:xx,val:}]-->
+              <!-- 遍历属性,每个tab-pane对应一个表单，每个属性Yes一个表单项  spu.baseAttrs[0] = [{attrId:xx,val:}]-->
               <el-form ref="form" :model="dataResp">
                 <el-form-item
                   :label="attr.attrName"
@@ -23,7 +23,7 @@
                   ></el-input>
                   <el-select
                     v-model="dataResp.baseAttrs[gidx][aidx].attrValues"
-                    :multiple="attr.valueType == 1"
+                    :multiple="Number(attr.valueType) === 1"
                     filterable
                     allow-create
                     default-first-option
@@ -46,7 +46,7 @@
             </el-tab-pane>
           </el-tabs>
           <div style="margin:auto">
-            <el-button type="success" style="float:right" @click="submitSpuAttrs">Confirm Changes</el-button>
+            <el-button type="success" style="float:right" @click="submitSpuAttrs">Are you sure you want to Changes</el-button>
           </div>
         </el-card>
       </el-col>
@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import { formatSaveWithSearchSync } from "@/utils/searchSyncMessage";
+
 export default {
   components: {},
   props: {},
@@ -63,7 +65,7 @@ export default {
       spuId: "",
       catalogId: "",
       dataResp: {
-        //后台返回的所有数据
+        //后台Back的所有数据
         attrGroups: [],
         baseAttrs: []
       },
@@ -71,8 +73,29 @@ export default {
     };
   },
   computed: {},
+  watch: {
+    $route() {
+      this.loadPage();
+    }
+  },
   methods: {
-    /** 获取属性选项：displayOptions（含已保存值） + 当前值（allow-create 新增的） */
+    loadPage() {
+      this.clearData();
+      this.getQueryParams();
+      if (this.spuId && this.catalogId) {
+        this.getSpuBaseAttrs().then(() => this.showBaseAttrs());
+      }
+    },
+    /** Map saved attr_value to el-select model (single vs multi by valueType). */
+    resolveAttrValues(attr, raw) {
+      const trimmed = (raw || "").trim();
+      if (!trimmed) {
+        return Number(attr.valueType) === 1 ? [] : "";
+      }
+      const parts = trimmed.split(";").map(s => s.trim()).filter(Boolean);
+      return Number(attr.valueType) === 1 ? parts : (parts[0] || "");
+    },
+    /** 获取属性选项：displayOptions（含已Save值） + 当前值（allow-create Add的） */
     getAttrOptions(attrItem, currentVal) {
       const opts = [...(attrItem.displayOptions || [])];
       const vals = currentVal == null || currentVal === "" ? [] : (Array.isArray(currentVal) ? currentVal : [currentVal]);
@@ -92,8 +115,11 @@ export default {
         url: this.$http.adornUrl(`/product/attr/base/listforspu/${this.spuId}`),
         method: "get"
       }).then(({ data }) => {
+        if (!data || data.code !== 0) {
+          return;
+        }
         (data.data || []).forEach(item => {
-          this.spuAttrsMap["" + item.attrId] = item;
+          this.spuAttrsMap[String(item.attrId)] = item;
         });
       });
     },
@@ -102,44 +128,50 @@ export default {
       this.catalogId = this.$route.query.catalogId;
     },
     showBaseAttrs() {
-      let _this = this;
-      this.$http({
+      const spuAttrsMap = this.spuAttrsMap;
+      return this.$http({
         url: this.$http.adornUrl(
           `/product/attrgroup/${this.catalogId}/withattr`
         ),
         method: "get",
         params: this.$http.adornParams({})
       }).then(({ data }) => {
-        // Normalize: backend may return attrs as null for groups with no attrs
+        if (!data || data.code !== 0) {
+          return;
+        }
         const groups = (data.data || []).map(item => ({ ...item, attrs: item.attrs || [] }));
+        const baseAttrs = [];
         groups.forEach(item => {
-          let attrArray = [];
+          const attrArray = [];
           (item.attrs || []).forEach(attr => {
-            let v = "";
-            let displayOptions = ((attr.valueSelect || "").split(";")).map(s => s.trim()).filter(Boolean);
-            if (_this.spuAttrsMap["" + attr.attrId]) {
-              const raw = (_this.spuAttrsMap["" + attr.attrId].attrValue || "").trim();
-              v = raw ? raw.split(";").map(s => s.trim()).filter(Boolean) : "";
-              if (Array.isArray(v) && v.length === 1 && attr.valueType != 1) {
-                v = v[0];
+            const displayOptions = (attr.valueSelect || "")
+              .split(";")
+              .map(s => s.trim())
+              .filter(Boolean);
+            const saved = spuAttrsMap[String(attr.attrId)];
+            const v = saved
+              ? this.resolveAttrValues(attr, saved.attrValue)
+              : Number(attr.valueType) === 1
+                ? []
+                : "";
+            const savedParts = Array.isArray(v) ? v : v ? [v] : [];
+            savedParts.forEach(sv => {
+              if (sv && !displayOptions.includes(sv)) {
+                displayOptions.push(sv);
               }
-              (Array.isArray(v) ? v : (v ? [v] : [])).forEach(sv => {
-                if (sv && !displayOptions.includes(sv)) displayOptions.push(sv);
-              });
-            }
+            });
             attrArray.push({
               attrId: attr.attrId,
               attrName: attr.attrName,
               attrValues: v,
-              displayOptions: displayOptions,
-              showDesc: _this.spuAttrsMap["" + attr.attrId]
-                ? _this.spuAttrsMap["" + attr.attrId].quickShow
-                : attr.showDesc
+              displayOptions,
+              showDesc: saved ? saved.quickShow : attr.showDesc
             });
           });
-          this.dataResp.baseAttrs.push(attrArray);
+          baseAttrs.push(attrArray);
         });
         this.dataResp.attrGroups = groups;
+        this.dataResp.baseAttrs = baseAttrs;
       });
     },
     submitSpuAttrs() {
@@ -173,12 +205,15 @@ export default {
           this.$http({
             url: this.$http.adornUrl(`/product/attr/update/${this.spuId}`),
             method: "post",
-            data: JSON.stringify(submitData)
+            data: submitData
           }).then(({ data }) => {
-            this.$message({
-              type: "success",
-              message: "Specifications updated successfully!"
-            });
+            if (data && data.code === 0) {
+              const msg = formatSaveWithSearchSync(data, "Specifications updated");
+              this.$message.success(msg || "Specifications updated");
+              this.loadPage();
+            } else {
+              this.$message.error((data && data.msg) || "Update failed");
+            }
           });
         })
         .catch((e) => {
@@ -189,13 +224,11 @@ export default {
         });
     }
   },
-  created() {},
+  mounted() {
+    this.loadPage();
+  },
   activated() {
-    this.clearData();
-    this.getQueryParams();
-    if (this.spuId && this.catalogId) {
-      this.getSpuBaseAttrs().then(() => this.showBaseAttrs());
-    }
+    this.loadPage();
   }
 };
 </script>

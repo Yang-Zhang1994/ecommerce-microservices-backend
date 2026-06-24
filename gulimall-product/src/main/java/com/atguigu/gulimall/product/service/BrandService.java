@@ -4,6 +4,7 @@ import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.BrandEntity;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,5 +24,10 @@ public interface BrandService {
     PageUtils queryPage(Map<String, Object> params);
 
     void updateDetail(BrandEntity brand);
+
+    /**
+     * 批量查询品牌信息
+     */
+    List<BrandEntity> getBrandByIds(List<Long> brandIds);
 }
 

@@ -3,7 +3,13 @@
     :title="!dataForm.id ? 'Add New' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
+    <el-form
+      class="user-add-form"
+      :model="dataForm"
+      :rules="dataRule"
+      ref="dataForm"
+      @keyup.enter.native="dataFormSubmit()"
+      label-width="150px">
       <el-form-item label="Username" prop="userName">
         <el-input v-model="dataForm.userName" placeholder="Login Account"></el-input>
       </el-form-item>
@@ -19,16 +25,22 @@
       <el-form-item label="Phone Number" prop="mobile">
         <el-input v-model="dataForm.mobile" placeholder="Phone Number"></el-input>
       </el-form-item>
-      <el-form-item label="Role" size="mini" prop="roleIdList">
-        <el-checkbox-group v-model="dataForm.roleIdList">
-          <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}</el-checkbox>
-        </el-checkbox-group>
-      </el-form-item>
-      <el-form-item label="Status" size="mini" prop="status">
-        <el-radio-group v-model="dataForm.status">
-          <el-radio :label="0">Disabled</el-radio>
-          <el-radio :label="1">Normal</el-radio>
-        </el-radio-group>
+      <el-form-item size="mini" prop="roleIdList" class="user-add-form__role-row">
+        <template slot="label">
+          <span class="role-status-labels">
+            <span>Role</span>
+            <span>Status</span>
+          </span>
+        </template>
+        <div class="role-status-row">
+          <el-checkbox-group v-model="dataForm.roleIdList" class="role-status-row__roles">
+            <el-checkbox v-for="role in roleList" :key="role.roleId" :label="role.roleId">{{ role.roleName }}</el-checkbox>
+          </el-checkbox-group>
+          <el-radio-group v-model="dataForm.status" size="mini" class="role-status-row__radios">
+            <el-radio :label="0">Disabled</el-radio>
+            <el-radio :label="1">Normal</el-radio>
+          </el-radio-group>
+        </div>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -178,3 +190,37 @@
     }
   }
 </script>
+
+<style scoped>
+.user-add-form >>> .el-form-item__label {
+  white-space: nowrap;
+}
+.user-add-form__role-row >>> .el-form-item__label {
+  line-height: 28px;
+}
+.user-add-form__role-row >>> .el-form-item__content {
+  flex: 1;
+  line-height: 28px;
+}
+.role-status-labels {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  white-space: nowrap;
+}
+.role-status-row {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+.role-status-row__roles {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+.role-status-row__radios {
+  white-space: nowrap;
+}
+</style>

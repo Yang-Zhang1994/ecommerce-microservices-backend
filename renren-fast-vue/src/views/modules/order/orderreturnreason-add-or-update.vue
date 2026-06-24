@@ -1,25 +1,25 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-    <el-form-item label="退货原因名" prop="name">
-      <el-input v-model="dataForm.name" placeholder="退货原因名"></el-input>
+    <el-form-item label="Return Reason" prop="name">
+      <el-input v-model="dataForm.name" placeholder="Return Reason"></el-input>
     </el-form-item>
-    <el-form-item label="排序" prop="sort">
-      <el-input v-model="dataForm.sort" placeholder="排序"></el-input>
+    <el-form-item label="Sort" prop="sort">
+      <el-input v-model="dataForm.sort" placeholder="Sort"></el-input>
     </el-form-item>
-    <el-form-item label="启用状态" prop="status">
-      <el-input v-model="dataForm.status" placeholder="启用状态"></el-input>
+    <el-form-item label="Status" prop="status">
+      <el-input v-model="dataForm.status" placeholder="Status"></el-input>
     </el-form-item>
     <el-form-item label="create_time" prop="createTime">
       <el-input v-model="dataForm.createTime" placeholder="create_time"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -38,16 +38,16 @@
         },
         dataRule: {
           name: [
-            { required: true, message: '退货原因名不能为空', trigger: 'blur' }
+            { required: true, message: 'Return Reason is required', trigger: 'blur' }
           ],
           sort: [
-            { required: true, message: '排序不能为空', trigger: 'blur' }
+            { required: true, message: 'Sort is required', trigger: 'blur' }
           ],
           status: [
-            { required: true, message: '启用状态不能为空', trigger: 'blur' }
+            { required: true, message: 'Status is required', trigger: 'blur' }
           ],
           createTime: [
-            { required: true, message: 'create_time不能为空', trigger: 'blur' }
+            { required: true, message: 'create_time is required', trigger: 'blur' }
           ]
         }
       }
@@ -74,7 +74,7 @@
           }
         })
       },
-      // 表单提交
+      // Form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
@@ -91,7 +91,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

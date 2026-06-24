@@ -16,8 +16,10 @@
     >
       <i class="el-icon-plus"></i>
     </el-upload>
-    <el-dialog :visible.sync="dialogVisible">
-      <img width="100%" :src="dialogImageUrl" alt />
+    <el-dialog :visible.sync="dialogVisible" width="720px">
+      <div class="admin-image-preview-wrap">
+        <img :src="dialogImageUrl" alt="" />
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -74,12 +76,12 @@ export default {
     beforeUpload(file) {
       const isJpgPng = file.type === 'image/jpeg' || file.type === 'image/png';
       if (!isJpgPng) {
-        this.$message.error('仅支持 jpg/png 图片');
+        this.$message.error('Only JPG and PNG images are supported');
         return Promise.reject();
       }
       const isLt10M = file.size / 1024 / 1024 < 10;
       if (!isLt10M) {
-        this.$message.error('单张图片不超过 10MB');
+        this.$message.error('Each image must be 10MB or smaller');
         return Promise.reject();
       }
       return Promise.resolve(true);
@@ -105,7 +107,7 @@ export default {
           });
         })
         .catch(err => {
-          this.$message.error(err.message || '上传失败');
+          this.$message.error(err.message || 'Upload failed');
           onError(err);
         });
     },
@@ -114,7 +116,7 @@ export default {
     },
     handleExceed(files, fileList) {
       this.$message({
-        message: "最多只能上传" + this.maxCount + "张图片",
+        message: "You can upload at most " + this.maxCount + " image(s)",
         type: "warning",
         duration: 1000
       });

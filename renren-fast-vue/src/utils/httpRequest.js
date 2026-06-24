@@ -4,6 +4,7 @@ import router from '@/router'
 import qs from 'qs'
 import merge from 'lodash/merge'
 import { clearLoginInfo } from '@/utils'
+import { getToken } from '@/utils/authToken'
 
 const http = axios.create({
   timeout: 1000 * 30,
@@ -17,7 +18,7 @@ const http = axios.create({
  * 请求拦截
  */
 http.interceptors.request.use(config => {
-  config.headers['token'] = Vue.cookie.get('token') // 请求头带上token
+  config.headers['token'] = getToken() // 与 cookie / sessionStorage 一致
   return config
 }, error => {
   return Promise.reject(error)
@@ -27,9 +28,12 @@ http.interceptors.request.use(config => {
  * 响应拦截
  */
 http.interceptors.response.use(response => {
-  if (response.data && response.data.code === 401) { // 401, token失效
+  if (response.data && Number(response.data.code) === 401) { // 401, token失效
     clearLoginInfo()
-    router.push({ name: 'login' })
+    // 使用 replace，避免登录页与历史栈中受保护路由来回叠
+    if (router.currentRoute.name !== 'login') {
+      router.replace({ name: 'login' })
+    }
   }
   return response
 }, error => {

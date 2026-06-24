@@ -9,8 +9,8 @@ spring:
       - io.awspring.cloud.autoconfigure.config.secretsmanager.SecretsManagerAutoConfiguration
       - io.awspring.cloud.autoconfigure.config.parameterstore.ParameterStoreAutoConfiguration
   profiles:
-    active: dev
-  # 测试用数据源（与 main 一致，避免未连 AWS 时缺配置）
+    active: test
+  # 测试用数据源：明确 URL 与 dialect，避免 Hibernate 报 Unable to determine Dialect
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/gulimall_pms}
@@ -19,6 +19,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   sql:
     init:
       mode: never

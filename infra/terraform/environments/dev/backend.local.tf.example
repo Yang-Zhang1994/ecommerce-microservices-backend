@@ -1,0 +1,9 @@
+# First-time local plan without S3 backend:
+#   cp backend.local.tf.example backend.override.tf
+#   cd environments/dev && terraform init -reconfigure
+#
+terraform {
+  backend "local" {
+    path = "terraform.tfstate"
+  }
+}

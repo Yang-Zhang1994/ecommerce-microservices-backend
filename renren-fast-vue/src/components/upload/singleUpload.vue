@@ -15,8 +15,10 @@
       <el-button size="small" type="primary">Click to upload</el-button>
       <div slot="tip" class="el-upload__tip">Only jpg/png files can be uploaded, and the size should not exceed 10MB</div>
     </el-upload>
-    <el-dialog :visible.sync="dialogVisible">
-      <img width="100%" :src="fileList[0].url" alt="">
+    <el-dialog :visible.sync="dialogVisible" width="720px">
+      <div class="admin-image-preview-wrap">
+        <img :src="fileList[0] && fileList[0].url" alt="" />
+      </div>
     </el-dialog>
   </div>
 </template>

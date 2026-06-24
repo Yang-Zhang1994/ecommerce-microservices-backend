@@ -1,0 +1,132 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+/* Main carousel: 4 slides stacked, show one by index */
+.swiper {
+  position: relative;
+  width: 100%;
+  height: 340px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  transition: opacity 0.5s ease;
+}
+
+.slide img {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Control overlay: does not block clicks except on buttons */
+.controls {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.controls > * {
+  pointer-events: auto;
+}
+
+.pagination {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.bullet,
+.bulletActive {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.6);
+  transition: opacity 0.2s;
+  text-decoration: none;
+}
+
+.bulletActive {
+  background: #f10215;
+  opacity: 1;
+}
+
+.bullet:hover {
+  opacity: 1;
+}
+
+.arrowPrev,
+.arrowNext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+  border-radius: 4px;
+}
+
+.arrowPrev {
+  left: 8px;
+}
+
+.arrowNext {
+  right: 8px;
+}
+
+.arrowPrev:hover,
+.arrowNext:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Bottom row */
+.sideImages {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+/* Left and right images use the same size as the legacy right-side promo (about 140px high) */
+.sideImagesLeft,
+.sideImagesRight {
+  flex: 1;
+  min-width: 0;
+  display: block;
+  height: 140px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.sideImagesLeft img,
+.sideImagesRight img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}

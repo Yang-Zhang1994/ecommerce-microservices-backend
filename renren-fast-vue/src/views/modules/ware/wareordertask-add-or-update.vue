@@ -22,11 +22,25 @@
     <el-form-item label="Order Comment" prop="orderComment">
       <el-input v-model="dataForm.orderComment" placeholder="Order Comment"></el-input>
     </el-form-item>
-    <el-form-item label="Payment Method [1:Online 2:COD]" prop="paymentWay">
-      <el-input v-model="dataForm.paymentWay" placeholder="Payment Method [1:Online Payment 2:Cash on Delivery]"></el-input>
+    <el-form-item label="Payment Method" prop="paymentWay">
+      <el-select v-model="dataForm.paymentWay" placeholder="Payment Method" clearable style="width: 100%;">
+        <el-option
+          v-for="item in paymentWayOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
     </el-form-item>
     <el-form-item label="Task Status" prop="taskStatus">
-      <el-input v-model="dataForm.taskStatus" placeholder="Task Status"></el-input>
+      <el-select v-model="dataForm.taskStatus" placeholder="Task Status" clearable style="width: 100%;">
+        <el-option
+          v-for="item in taskStatusOptions"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value">
+        </el-option>
+      </el-select>
     </el-form-item>
     <el-form-item label="Order Description" prop="orderBody">
       <el-input v-model="dataForm.orderBody" placeholder="Order Description"></el-input>
@@ -52,9 +66,13 @@
 </template>
 
 <script>
+  import { PAYMENT_WAY_OPTIONS, TASK_STATUS_OPTIONS } from './ware-order-task-meta'
+
   export default {
     data () {
       return {
+        paymentWayOptions: PAYMENT_WAY_OPTIONS,
+        taskStatusOptions: TASK_STATUS_OPTIONS,
         visible: false,
         dataForm: {
           id: 0,
@@ -64,8 +82,8 @@
           consigneeTel: '',
           deliveryAddress: '',
           orderComment: '',
-          paymentWay: '',
-          taskStatus: '',
+          paymentWay: null,
+          taskStatus: null,
           orderBody: '',
           trackingNo: '',
           createTime: '',
@@ -92,10 +110,10 @@
             { required: true, message: 'Order comment is required', trigger: 'blur' }
           ],
           paymentWay: [
-            { required: true, message: 'Payment method is required', trigger: 'blur' }
+            { required: true, message: 'Payment method is required', trigger: 'change' }
           ],
           taskStatus: [
-            { required: true, message: 'Task status is required', trigger: 'blur' }
+            { required: true, message: 'Task status is required', trigger: 'change' }
           ],
           orderBody: [
             { required: true, message: 'Order description is required', trigger: 'blur' }
@@ -134,8 +152,8 @@
                 this.dataForm.consigneeTel = data.wareOrderTask.consigneeTel
                 this.dataForm.deliveryAddress = data.wareOrderTask.deliveryAddress
                 this.dataForm.orderComment = data.wareOrderTask.orderComment
-                this.dataForm.paymentWay = data.wareOrderTask.paymentWay
-                this.dataForm.taskStatus = data.wareOrderTask.taskStatus
+                this.dataForm.paymentWay = data.wareOrderTask.paymentWay != null ? Number(data.wareOrderTask.paymentWay) : null
+                this.dataForm.taskStatus = data.wareOrderTask.taskStatus != null ? Number(data.wareOrderTask.taskStatus) : null
                 this.dataForm.orderBody = data.wareOrderTask.orderBody
                 this.dataForm.trackingNo = data.wareOrderTask.trackingNo
                 this.dataForm.createTime = data.wareOrderTask.createTime
@@ -146,7 +164,7 @@
           }
         })
       },
-      // 表单提交
+      // form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {

@@ -2,6 +2,10 @@ server:
   port: 10000
 
 spring:
+  config:
+    import:
+      - optional:classpath:application-resilience.yml
+      - optional:classpath:application-persistence.yml
   application:
     name: gulimall-product
   profiles:
@@ -33,7 +37,55 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD:}
+      timeout: 3000ms
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1h
+      cache-null-values: true
+      use-key-prefix: true
+      # key-prefix 不设置时，默认使用 cacheName 作为前缀（如 category::listWithTree）
+
+# Actuator：堆/内存、GC 监控（不改镜像，通过 HTTP 查看）
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+    metrics:
+      enabled: true
 
 logging:
   level:
     com.atguigu.gulimall.product: debug
+
+# 商品详情聚合等异步任务线程池（可按环境调优）
+gulimall:
+  thread:
+    core-size: 20
+    max-size: 200
+    keep-alive-time: 10
+    queue-capacity: 100000
+  # 高频读缓存（商品详情）防穿透/击穿/雪崩参数，详见 ProtectedCache
+  cache:
+    protected:
+      base-ttl: 30m          # 真实值基础过期时间
+      ttl-jitter: 5m         # 雪崩：在 base-ttl 之上叠加的随机抖动上限
+      null-ttl: 60s          # 穿透：空值标记的短过期
+      lock-ttl: 5s           # 击穿：单飞分布式锁的持有上限
+      lock-wait-timeout: 500ms  # 等待持锁线程回填缓存的总时长
+      lock-wait-interval: 50ms  # 等待期间重读缓存的间隔
+  # SKU ID 合法性范围（防穿透第一道闸：明显越界直接拒，详见 SkuIdValidator）
+  product:
+    sku-id:
+      min: 1
+      max: 1000000000000

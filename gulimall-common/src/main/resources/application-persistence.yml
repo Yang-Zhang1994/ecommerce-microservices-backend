@@ -1,0 +1,22 @@
+# 统一的 Hibernate/JPA 批处理配置。
+# 各 JPA 服务在 application.yml 中导入：spring.config.import: optional:classpath:application-persistence.yml
+#
+# - hibernate.jdbc.batch_size：开启 JDBC 批量，攒够 N 条再发往数据库。
+# - order_inserts/order_updates：把同表的 insert/update 重排聚拢，提升批的合并率。
+# - batch_versioned_data：带 @Version 乐观锁的实体也参与批处理。
+# - reWriteBatchedInserts：PostgreSQL JDBC 驱动参数，把批量 insert 改写成单条多值 INSERT，
+#   显著减少往返。数据源 URL 由环境变量/Secrets 注入，故以 Hikari data-source-properties 形式下发，
+#   不依赖各环境的 URL 写法。
+spring:
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+        batch_versioned_data: true
+  datasource:
+    hikari:
+      data-source-properties:
+        reWriteBatchedInserts: true

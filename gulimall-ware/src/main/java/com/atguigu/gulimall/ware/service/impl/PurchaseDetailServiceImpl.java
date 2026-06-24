@@ -8,8 +8,10 @@ import com.atguigu.gulimall.ware.service.PurchaseDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.criteria.Predicate;
 import java.util.Collection;
@@ -23,6 +25,7 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
     private PurchaseDetailRepository repository;
 
     @Override
+    @Transactional(readOnly = true)
     public PageUtils queryPage(Map<String, Object> params) {
         String key = (String) params.get("key");
         String status = (String) params.get("status");
@@ -50,7 +53,7 @@ public class PurchaseDetailServiceImpl implements PurchaseDetailService {
             }
             return predicates.isEmpty() ? cb.conjunction() : cb.and(predicates.toArray(new Predicate[0]));
         };
-        Pageable pageable = new Query<PurchaseDetailEntity>().getPageable(params);
+        Pageable pageable = new Query<PurchaseDetailEntity>().getPageable(params, Sort.by("id").ascending());
         Page<PurchaseDetailEntity> page = repository.findAll(spec, pageable);
         return new PageUtils(page);
     }

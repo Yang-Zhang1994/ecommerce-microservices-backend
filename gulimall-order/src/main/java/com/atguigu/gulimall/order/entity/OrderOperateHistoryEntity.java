@@ -36,7 +36,7 @@ public class OrderOperateHistoryEntity implements Serializable {
     @Column(name = "create_time")
     private Date createTime;
 
-    /** 订单状态【0->待付款；1->待发货；2->已发货；3->已完成；4->已关闭；5->无效订单】 */
+    /** 订单状态（see {@code com.atguigu.gulimall.order.enums.OrderStatusEnum}） */
     @Column(name = "order_status")
     private Integer orderStatus;
 

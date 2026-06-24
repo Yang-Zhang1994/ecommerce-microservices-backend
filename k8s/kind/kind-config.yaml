@@ -1,0 +1,10 @@
+# kind cluster for gulimall (maps gateway NodePort to host :88).
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 30088
+        hostPort: 3088
+        listenAddress: 127.0.0.1
+        protocol: TCP

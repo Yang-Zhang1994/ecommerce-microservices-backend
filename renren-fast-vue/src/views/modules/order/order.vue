@@ -11,6 +11,8 @@
       </el-form-item>
     </el-form>
     <el-table
+      class="admin-table-wide admin-table-ellipsis"
+      :fit="false"
       :data="dataList"
       border
       v-loading="dataListLoading"
@@ -38,121 +40,184 @@
         prop="orderSn"
         header-align="center"
         align="center"
-        label="Order Number">
+        min-width="150"
+        show-overflow-tooltip
+        label="Order SN">
       </el-table-column>
       <el-table-column
         prop="couponId"
         header-align="center"
         align="center"
-        label="Used Coupon">
+        min-width="90"
+        label="Coupon">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.couponId" type="success" size="small">Used</el-tag>
+          <span v-else>—</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
-        label="Create Time">
+        min-width="100"
+        show-overflow-tooltip
+        label="Created">
       </el-table-column>
       <el-table-column
         prop="memberUsername"
         header-align="center"
         align="center"
+        min-width="120"
+        show-overflow-tooltip
         label="Username">
       </el-table-column>
       <el-table-column
         prop="totalAmount"
         header-align="center"
         align="center"
-        label="Total Order Amount">
+        min-width="100"
+        show-overflow-tooltip
+        label="Total">
       </el-table-column>
       <el-table-column
         prop="payAmount"
         header-align="center"
         align="center"
-        label="Total Payable Amount">
+        min-width="100"
+        show-overflow-tooltip
+        label="Payable">
       </el-table-column>
       <el-table-column
         prop="freightAmount"
         header-align="center"
         align="center"
-        label="Shipping Fee Amount">
+        min-width="90"
+        show-overflow-tooltip
+        label="Freight">
       </el-table-column>
       <el-table-column
         prop="promotionAmount"
         header-align="center"
         align="center"
-        label="Promotion Optimization Amount (Promotional Price, Full Reduction, Tiered Price)">
+        min-width="100"
+        show-overflow-tooltip
+        label="Promotion">
       </el-table-column>
       <el-table-column
         prop="integrationAmount"
         header-align="center"
         align="center"
-        label="Points Deduction Amount">
+        min-width="100"
+        show-overflow-tooltip
+        label="Points Ded.">
       </el-table-column>
       <el-table-column
         prop="couponAmount"
         header-align="center"
         align="center"
-        label="Coupon Deduction Amount">
+        min-width="100"
+        show-overflow-tooltip
+        label="Coupon Ded.">
       </el-table-column>
       <el-table-column
         prop="discountAmount"
         header-align="center"
         align="center"
-        label="Admin Adjusted Discount Amount">
+        min-width="110"
+        show-overflow-tooltip
+        label="Admin Disc.">
       </el-table-column>
       <el-table-column
         prop="payType"
         header-align="center"
         align="center"
-        label="Payment Method [1->Alipay; 2->WeChat; 3->UnionPay; 4->Cash on Delivery]">
+        min-width="130"
+        label="Pay Type">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.payType != null && scope.row.payType !== ''" :type="payTypeTagType(scope.row.payType)" size="small">
+            {{ formatPayType(scope.row.payType) }}
+          </el-tag>
+          <span v-else>—</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="sourceType"
         header-align="center"
         align="center"
-        label="Order Source [0->PC Order; 1->App Order]">
+        min-width="80"
+        label="Source">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.sourceType != null && scope.row.sourceType !== ''" :type="sourceTypeTagType(scope.row.sourceType)" size="small">
+            {{ formatSourceType(scope.row.sourceType) }}
+          </el-tag>
+          <span v-else>—</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="status"
         header-align="center"
         align="center"
-        label="Order Status [0->Pending Payment; 1->Pending Shipment; 2->Shipped; 3->Completed; 4->Closed; 5->Invalid Order]">
+        min-width="130"
+        label="Status">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status != null && scope.row.status !== ''" :type="orderStatusTagType(scope.row.status)" size="small">
+            {{ formatOrderStatus(scope.row.status) }}
+          </el-tag>
+          <span v-else>—</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="deliveryCompany"
         header-align="center"
         align="center"
-        label="Delivery Company (Shipping Method)">
+        min-width="100"
+        show-overflow-tooltip
+        label="Carrier">
       </el-table-column>
       <el-table-column
         prop="deliverySn"
         header-align="center"
         align="center"
-        label="Tracking Number">
+        min-width="110"
+        show-overflow-tooltip
+        label="Tracking">
       </el-table-column>
       <el-table-column
         prop="autoConfirmDay"
         header-align="center"
         align="center"
-        label="Auto Confirm Time (Days)">
+        min-width="100"
+        show-overflow-tooltip
+        label="Auto Confirm (d)">
       </el-table-column>
       <el-table-column
         prop="integration"
         header-align="center"
         align="center"
-        label="Points Earned">
+        min-width="80"
+        show-overflow-tooltip
+        label="Points">
       </el-table-column>
       <el-table-column
         prop="growth"
         header-align="center"
         align="center"
-        label="Growth Value Earned">
+        min-width="90"
+        show-overflow-tooltip
+        label="Growth">
       </el-table-column>
       <el-table-column
         prop="billType"
         header-align="center"
         align="center"
-        label="Invoice Type [0->No Invoice; 1->Electronic Invoice; 2->Paper Invoice]">
+        min-width="110"
+        label="Invoice Type">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.billType != null && scope.row.billType !== ''" :type="billTypeTagType(scope.row.billType)" size="small">
+            {{ formatBillType(scope.row.billType) }}
+          </el-tag>
+          <span v-else>—</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="billHeader"
@@ -170,13 +235,17 @@
         prop="billReceiverPhone"
         header-align="center"
         align="center"
-        label="Invoice Receiver Phone">
+        min-width="110"
+        show-overflow-tooltip
+        label="Invoice Phone">
       </el-table-column>
       <el-table-column
         prop="billReceiverEmail"
         header-align="center"
         align="center"
-        label="Invoice Receiver Email">
+        min-width="110"
+        show-overflow-tooltip
+        label="Invoice Email">
       </el-table-column>
       <el-table-column
         prop="receiverName"
@@ -194,13 +263,17 @@
         prop="receiverPostCode"
         header-align="center"
         align="center"
-        label="Receiver Postal Code">
+        min-width="90"
+        show-overflow-tooltip
+        label="Postal Code">
       </el-table-column>
       <el-table-column
         prop="receiverProvince"
         header-align="center"
         align="center"
-        label="Province/Municipality">
+        min-width="100"
+        show-overflow-tooltip
+        label="Province">
       </el-table-column>
       <el-table-column
         prop="receiverCity"
@@ -218,31 +291,51 @@
         prop="receiverDetailAddress"
         header-align="center"
         align="center"
-        label="Detail Address">
+        min-width="120"
+        show-overflow-tooltip
+        label="Address">
       </el-table-column>
       <el-table-column
         prop="note"
         header-align="center"
         align="center"
-        label="Order Remarks">
+        min-width="100"
+        show-overflow-tooltip
+        label="Remarks">
       </el-table-column>
       <el-table-column
         prop="confirmStatus"
         header-align="center"
         align="center"
-        label="Confirm Receipt Status [0->Unconfirmed; 1->Confirmed]">
+        min-width="120"
+        label="Receipt">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.confirmStatus != null && scope.row.confirmStatus !== ''" :type="confirmStatusTagType(scope.row.confirmStatus)" size="small">
+            {{ formatConfirmStatus(scope.row.confirmStatus) }}
+          </el-tag>
+          <span v-else>—</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="deleteStatus"
         header-align="center"
         align="center"
-        label="Delete Status [0->Not Deleted; 1->Deleted]">
+        min-width="90"
+        label="Record">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.deleteStatus != null && scope.row.deleteStatus !== ''" :type="deleteStatusTagType(scope.row.deleteStatus)" size="small">
+            {{ formatDeleteStatus(scope.row.deleteStatus) }}
+          </el-tag>
+          <span v-else>—</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="useIntegration"
         header-align="center"
         align="center"
-        label="Points Used When Ordering">
+        min-width="100"
+        show-overflow-tooltip
+        label="Points Used">
       </el-table-column>
       <el-table-column
         prop="paymentTime"
@@ -260,7 +353,9 @@
         prop="receiveTime"
         header-align="center"
         align="center"
-        label="Confirm Receipt Time">
+        min-width="100"
+        show-overflow-tooltip
+        label="Received At">
       </el-table-column>
       <el-table-column
         prop="commentTime"
@@ -302,6 +397,21 @@
 
 <script>
   import AddOrUpdate from './order-add-or-update'
+  import {
+    formatOrderStatus,
+    orderStatusTagType,
+    formatPayType,
+    payTypeTagType,
+    formatSourceType,
+    sourceTypeTagType,
+    formatBillType,
+    billTypeTagType,
+    formatConfirmStatus,
+    confirmStatusTagType,
+    formatDeleteStatus,
+    deleteStatusTagType
+  } from './order-admin-meta'
+
   export default {
     data () {
       return {
@@ -324,6 +434,18 @@
       this.getDataList()
     },
     methods: {
+      formatOrderStatus,
+      orderStatusTagType,
+      formatPayType,
+      payTypeTagType,
+      formatSourceType,
+      sourceTypeTagType,
+      formatBillType,
+      billTypeTagType,
+      formatConfirmStatus,
+      confirmStatusTagType,
+      formatDeleteStatus,
+      deleteStatusTagType,
       // Get data list
       getDataList () {
         this.dataListLoading = true

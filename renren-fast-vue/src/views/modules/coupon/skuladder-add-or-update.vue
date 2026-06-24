@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
@@ -14,25 +14,25 @@
       <el-form-item label="spu_id" prop="skuId">
         <el-input v-model="dataForm.skuId" placeholder="spu_id"></el-input>
       </el-form-item>
-      <el-form-item label="满几件" prop="fullCount">
-        <el-input v-model="dataForm.fullCount" placeholder="满几件"></el-input>
+      <el-form-item label="Min quantity" prop="fullCount">
+        <el-input v-model="dataForm.fullCount" placeholder="Min quantity"></el-input>
       </el-form-item>
-      <el-form-item label="打几折" prop="discount">
-        <el-input v-model="dataForm.discount" placeholder="打几折"></el-input>
+      <el-form-item label="Discount" prop="discount">
+        <el-input v-model="dataForm.discount" placeholder="Discount"></el-input>
       </el-form-item>
-      <el-form-item label="折后价" prop="price">
-        <el-input v-model="dataForm.price" placeholder="折后价"></el-input>
+      <el-form-item label="Discounted price" prop="price">
+        <el-input v-model="dataForm.price" placeholder="Discounted price"></el-input>
       </el-form-item>
-      <el-form-item label="是否叠加其他优惠" prop="addOther">
+      <el-form-item label="Stackable with other offers" prop="addOther">
         <el-select v-model="dataForm.addOther" placeholder="Select">
-          <el-option label="不可叠加" :value="0"></el-option>
-          <el-option label="不可叠加" :value="1"></el-option>
+          <el-option label="Not stackable" :value="0"></el-option>
+          <el-option label="Stackable" :value="1"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -51,18 +51,18 @@ export default {
         addOther: ""
       },
       dataRule: {
-        skuId: [{ required: true, message: "spu_id不能为空", trigger: "blur" }],
+        skuId: [{ required: true, message: 'Spu id is required', trigger: "blur" }],
         fullCount: [
-          { required: true, message: "满几件不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         discount: [
-          { required: true, message: "打几折不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
-        price: [{ required: true, message: "折后价不能为空", trigger: "blur" }],
+        price: [{ required: true, message: 'This field is required', trigger: "blur" }],
         addOther: [
           {
             required: true,
-            message: "是否叠加其他优惠[0-不可叠加，1-可叠加]不能为空",
+            message: 'This field is required',
             trigger: "blur"
           }
         ]
@@ -94,7 +94,7 @@ export default {
         }
       });
     },
-    // 表单提交
+    // form submit
     dataFormSubmit() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
@@ -114,7 +114,7 @@ export default {
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
+                message: "Operation successful",
                 type: "success",
                 duration: 1500,
                 onClose: () => {

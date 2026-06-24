@@ -1,41 +1,44 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    class="coupon-marketing-dialog"
+    width="600px"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
     <el-form
+      class="coupon-marketing-form"
       :model="dataForm"
       :rules="dataRule"
       ref="dataForm"
       @keyup.enter.native="dataFormSubmit()"
-      label-width="120px"
+      label-width="220px"
     >
-      <el-form-item label="sku_id" prop="skuId">
-        <el-input v-model="dataForm.skuId" placeholder="sku_id"></el-input>
+      <el-form-item label="SKU ID" prop="skuId">
+        <el-input v-model="dataForm.skuId" placeholder="SKU ID"></el-input>
       </el-form-item>
-      <el-form-item label="会员等级id" prop="memberLevelId">
-        <el-input v-model="dataForm.memberLevelId" placeholder="会员等级id"></el-input>
+      <el-form-item label="Member Level ID" prop="memberLevelId">
+        <el-input v-model="dataForm.memberLevelId" placeholder="Member Level ID"></el-input>
       </el-form-item>
-      <el-form-item label="会员等级名" prop="memberLevelName">
-        <el-input v-model="dataForm.memberLevelName" placeholder="会员等级名"></el-input>
+      <el-form-item label="Member Level Name" prop="memberLevelName">
+        <el-input v-model="dataForm.memberLevelName" placeholder="Member Level Name"></el-input>
       </el-form-item>
-      <el-form-item label="会员对应价格" prop="memberPrice">
-        <el-input v-model="dataForm.memberPrice" placeholder="会员对应价格"></el-input>
+      <el-form-item label="Member Price" prop="memberPrice">
+        <el-input v-model="dataForm.memberPrice" placeholder="Member Price"></el-input>
       </el-form-item>
-      <el-form-item label="可否叠加其他优惠" prop="addOther">
+      <el-form-item label="Stack Other Promotions" prop="addOther">
         <el-switch
           v-model="dataForm.addOther"
           :active-value="1"
           inactive-value="0"
-          active-text="可叠加"
-          inactive-text="不可叠加"
+          active-text="Can Stack"
+          inactive-text="Cannot Stack"
         ></el-switch>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -54,20 +57,20 @@ export default {
         addOther: ""
       },
       dataRule: {
-        skuId: [{ required: true, message: "sku_id不能为空", trigger: "blur" }],
+        skuId: [{ required: true, message: 'SKU ID is required', trigger: "blur" }],
         memberLevelId: [
-          { required: true, message: "会员等级id不能为空", trigger: "blur" }
+          { required: true, message: 'Member Level ID is required', trigger: "blur" }
         ],
         memberLevelName: [
-          { required: true, message: "会员等级名不能为空", trigger: "blur" }
+          { required: true, message: 'Member Level Name is required', trigger: "blur" }
         ],
         memberPrice: [
-          { required: true, message: "会员对应价格不能为空", trigger: "blur" }
+          { required: true, message: 'Member Price is required', trigger: "blur" }
         ],
         addOther: [
           {
             required: true,
-            message: "可否叠加其他优惠[0-不可叠加优惠，1-可叠加]不能为空",
+            message: 'Stack Other Promotions is required',
             trigger: "blur"
           }
         ]
@@ -99,7 +102,7 @@ export default {
         }
       });
     },
-    // 表单提交
+    // form submit
     dataFormSubmit() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
@@ -119,7 +122,7 @@ export default {
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
+                message: "Operation successful",
                 type: "success",
                 duration: 1500,
                 onClose: () => {

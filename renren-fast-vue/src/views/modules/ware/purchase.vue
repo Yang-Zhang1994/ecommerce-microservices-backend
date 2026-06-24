@@ -36,12 +36,12 @@
       style="width: 100%;"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <el-table-column prop="id" header-align="center" align="center" label="Purchase Order ID"></el-table-column>
-      <el-table-column prop="assigneeId" header-align="center" align="center" label="Purchaser ID"></el-table-column>
-      <el-table-column prop="assigneeName" header-align="center" align="center" label="Purchaser Name"></el-table-column>
-      <el-table-column prop="phone" header-align="center" align="center" label="Contact Information"></el-table-column>
-      <el-table-column prop="priority" header-align="center" align="center" label="Priority"></el-table-column>
-      <el-table-column prop="status" header-align="center" align="center" label="Status">
+      <el-table-column prop="id" header-align="center" align="center" min-width="150" label="Purchase Order ID"></el-table-column>
+      <el-table-column prop="assigneeId" header-align="center" align="center" min-width="120" label="Purchaser ID"></el-table-column>
+      <el-table-column prop="assigneeName" header-align="center" align="center" min-width="140" label="Purchaser Name"></el-table-column>
+      <el-table-column prop="phone" header-align="center" align="center" min-width="170" label="Contact Information"></el-table-column>
+      <el-table-column prop="priority" header-align="center" align="center" min-width="100" label="Priority"></el-table-column>
+      <el-table-column prop="status" header-align="center" align="center" min-width="165" label="Status">
         <template slot-scope="scope">
           <el-tag v-if="Number(scope.row.status) === 0 || scope.row.status == null">New</el-tag>
           <el-tag type="info" v-else-if="Number(scope.row.status) === 1">Assigned</el-tag>
@@ -51,10 +51,10 @@
           <el-tag v-else>{{ scope.row.status }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="wareId" header-align="center" align="center" label="Warehouse ID"></el-table-column>
-      <el-table-column prop="amount" header-align="center" align="center" label="Total Amount"></el-table-column>
-      <el-table-column prop="createTime" header-align="center" align="center" label="Creation Date"></el-table-column>
-      <el-table-column prop="updateTime" header-align="center" align="center" label="Update Date"></el-table-column>
+      <el-table-column prop="wareId" header-align="center" align="center" min-width="120" label="Warehouse ID"></el-table-column>
+      <el-table-column prop="amount" header-align="center" align="center" min-width="120" label="Total Amount"></el-table-column>
+      <el-table-column prop="createTime" header-align="center" align="center" min-width="140" label="Creation Date"></el-table-column>
+      <el-table-column prop="updateTime" header-align="center" align="center" min-width="130" label="Update Date"></el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="150" label="Actions">
         <template slot-scope="scope">
           <el-button
@@ -157,7 +157,7 @@ export default {
       }).then(({ data }) => {
         if (data && data.code === 0) {
           this.$message({
-            message: "操作成功",
+            message: "Operation successful",
             type: "success",
             duration: 1500
           });

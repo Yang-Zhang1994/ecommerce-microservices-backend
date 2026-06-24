@@ -8,7 +8,9 @@ import com.atguigu.gulimall.product.service.CommentReplayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -39,8 +41,9 @@ public class CommentReplayServiceImpl implements CommentReplayService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageUtils queryPage(Map<String, Object> params) {
-        Pageable pageable = new Query<CommentReplayEntity>().getPageable(params);
+        Pageable pageable = new Query<CommentReplayEntity>().getPageable(params, Sort.by("id").ascending());
         Page<CommentReplayEntity> page = commentReplayRepository.findAll(pageable);
         return new PageUtils(page);
     }

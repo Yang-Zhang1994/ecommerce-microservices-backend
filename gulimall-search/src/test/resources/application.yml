@@ -1,4 +1,4 @@
-# 测试时禁用 AWS 配置导入与自动配置，避免 SDK 要求 region/凭证导致测试失败
+# Disable AWS config import and auto-config during tests to avoid SDK requiring region/credentials.
 spring:
   application:
     name: gulimall-search
@@ -9,8 +9,8 @@ spring:
       - io.awspring.cloud.autoconfigure.config.secretsmanager.SecretsManagerAutoConfiguration
       - io.awspring.cloud.autoconfigure.config.parameterstore.ParameterStoreAutoConfiguration
 
-# 测试用 Elasticsearch 占位（与 main 一致，实际需本机或虚拟机 ES）
+# Elasticsearch placeholder for tests (same as main; defaults to local ES).
 elasticsearch:
-  host: 192.168.56.10
-  port: 9200
+  host: ${ELASTICSEARCH_HOST:localhost}
+  port: ${ELASTICSEARCH_PORT:9200}
   scheme: http

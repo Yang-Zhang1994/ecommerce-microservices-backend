@@ -2,6 +2,9 @@
 # Run:  docker compose up -d
 # UI:   http://localhost:8500
 # Stop: docker compose down
+#
+# RabbitMQ is not defined here (avoids duplicate brokers on host ports 5672/15672).
+# Use docker-compose.app.yml for RabbitMQ + gulimall-ware and the rest of the stack.
 
 services:
   consul:

@@ -8,8 +8,10 @@ import com.atguigu.gulimall.ware.service.WareInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ public class WareInfoServiceImpl implements WareInfoService {
     private WareInfoRepository repository;
 
     @Override
+    @Transactional(readOnly = true)
     public PageUtils queryPage(Map<String, Object> params) {
         String key = (String) params.get("key");
         Specification<WareInfoEntity> spec = (root, query, cb) -> {
@@ -44,7 +47,7 @@ public class WareInfoServiceImpl implements WareInfoService {
                 );
             }
         };
-        Pageable pageable = new Query<WareInfoEntity>().getPageable(params);
+        Pageable pageable = new Query<WareInfoEntity>().getPageable(params, Sort.by("id").ascending());
         Page<WareInfoEntity> page = repository.findAll(spec, pageable);
         return new PageUtils(page);
     }

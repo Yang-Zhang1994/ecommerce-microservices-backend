@@ -8,7 +8,7 @@
         class="site-sidebar__menu">
         <el-menu-item index="home" @click="$router.push({ name: 'home' })">
           <icon-svg name="shouye" class="site-sidebar__menu-icon"></icon-svg>
-          <span slot="title">Home</span>
+          <span slot="title">Dashboard</span>
         </el-menu-item>
         <sub-menu
           v-for="menu in menuList"
@@ -68,7 +68,7 @@
       this.routeHandle(this.$route)
     },
     methods: {
-      // 路由操作
+      // 路由Actions
       routeHandle (route) {
         if (route.meta.isTab) {
           // tab选中, 不存在先添加
@@ -90,6 +90,10 @@
               query: route.query
             }
             this.mainTabs = this.mainTabs.concat(tab)
+          } else {
+            tab.query = route.query
+            tab.params = route.params
+            this.mainTabs = this.mainTabs.slice()
           }
           this.menuActiveName = tab.menuId + ''
           this.mainTabsActiveName = tab.name

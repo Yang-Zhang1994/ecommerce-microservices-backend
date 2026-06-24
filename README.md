@@ -68,6 +68,8 @@ The project supports **AWS** for production-style deployment:
 
 - **Object storage (AWS S3):** **gulimall-third-party** exposes presigned URL upload so the frontend can upload files directly to **Amazon S3** (e.g. bucket in us-east-2). Credentials via `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` or `~/.aws/credentials`. S3 client and presigner are created when `aws.s3.bucket` is set.
 
+- **Kubernetes:** Local **kind** + Helm (`k8s/helm/gulimall`) for P0 tracing stack; optional **Amazon EKS** in **us-west-2** (same region as RDS). See [docs/EKS.md](docs/EKS.md).
+
 ---
 
 ## Prerequisites

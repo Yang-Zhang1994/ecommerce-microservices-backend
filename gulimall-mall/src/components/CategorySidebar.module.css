@@ -1,0 +1,135 @@
+.wrapper {
+  position: relative;
+  height: 100%;
+  min-height: 420px;
+  display: flex;
+}
+
+.catalogLeft {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.catalogLeft > li {
+  padding: 0 12px 0 9px;
+  height: 30px;
+  line-height: 30px;
+  position: relative;
+  border-left: 3px solid transparent;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.catalogLeftLiActive {
+  background: rgb(255 255 255 / 10%);
+  border-left-color: var(--mall-brand, #c81623);
+}
+
+.catalogLeft > li:hover {
+  background: rgb(255 255 255 / 8%);
+  border-left-color: rgb(254 242 242 / 60%);
+}
+
+.catalogLeftA {
+  font-size: 14px;
+  color: #f4f4f5;
+  text-decoration: none;
+  display: block;
+}
+
+.catalogLeftA b {
+  font-weight: 400;
+}
+
+.catalogLeftA:hover {
+  color: #fef2f2;
+}
+
+.catalogLeftLiActive .catalogLeftA,
+.catalogLeftLiActive .catalogLeftA:hover {
+  color: #fff;
+  font-weight: 500;
+}
+
+.errorItem {
+  color: #fecaca !important;
+  font-size: 12px !important;
+}
+
+/* Flyout panel: spans the featured column to the right of the category list */
+.panel {
+  position: absolute;
+  left: 100%;
+  top: 0;
+  width: min(720px, calc(100vw - 260px));
+  height: 100%;
+  min-height: 420px;
+  background: #fff;
+  box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+  z-index: 30;
+  padding: 16px 24px;
+  overflow-y: auto;
+  box-sizing: border-box;
+  border: 1px solid #e4e4e7;
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+}
+
+.panelRow {
+  display: flex;
+  align-items: flex-start;
+  min-height: 32px;
+  margin-bottom: 10px;
+}
+
+.panelRow:last-child {
+  margin-bottom: 0;
+}
+
+.panelLevel2Col {
+  flex-shrink: 0;
+  width: 140px;
+}
+
+.panelLevel2 {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #18181b;
+  text-decoration: none;
+}
+
+.panelLevel2:hover {
+  color: var(--mall-brand, #c81623);
+}
+
+.panelLevel3Col {
+  flex: 1;
+  min-width: 0;
+}
+
+.panelLevel3Wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 2px;
+}
+
+.panelLevel3 {
+  font-size: 14px;
+  color: #52525b;
+  text-decoration: none;
+  padding: 0 6px;
+  border-left: 1px solid #e4e4e7;
+}
+
+.panelLevel3:first-child {
+  border-left: none;
+  padding-left: 0;
+}
+
+.panelLevel3:hover {
+  color: var(--mall-brand, #c81623);
+}

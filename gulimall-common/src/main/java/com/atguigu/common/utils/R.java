@@ -8,6 +8,7 @@
 
 package com.atguigu.common.utils;
 
+import com.atguigu.common.exception.BisCodeEnum;
 import org.apache.http.HttpStatus;
 
 import java.util.HashMap;
@@ -39,6 +40,10 @@ public class R extends HashMap<String, Object> {
 		r.put("code", code);
 		r.put("msg", msg);
 		return r;
+	}
+
+	public static R error(BisCodeEnum biz) {
+		return error(biz.getCode(), biz.getMessage());
 	}
 
 	public static R ok(String msg) {

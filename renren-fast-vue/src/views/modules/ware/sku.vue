@@ -11,6 +11,7 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">Query</el-button>
+        <el-button v-if="isAuth('ware:waresku:save')" type="warning" @click="syncFromProduct()">Sync SKU Names</el-button>
         <el-button v-if="isAuth('ware:waresku:save')" type="primary" @click="addOrUpdateHandle()">Add</el-button>
         <el-button
           v-if="isAuth('ware:waresku:delete')"
@@ -28,12 +29,16 @@
       style="width: 100%;"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <el-table-column prop="id" header-align="center" align="center" label="id"></el-table-column>
-      <el-table-column prop="skuId" header-align="center" align="center" label="sku_id"></el-table-column>
-      <el-table-column prop="wareId" header-align="center" align="center" label="Warehouse ID"></el-table-column>
-      <el-table-column prop="stock" header-align="center" align="center" label="Stock Quantity"></el-table-column>
-      <el-table-column prop="skuName" header-align="center" align="center" label="SKU Name"></el-table-column>
-      <el-table-column prop="stockLocked" header-align="center" align="center" label="Locked Stock"></el-table-column>
+      <el-table-column prop="id" header-align="center" align="center" min-width="72" label="id"></el-table-column>
+      <el-table-column prop="skuId" header-align="center" align="center" min-width="100" label="sku_id"></el-table-column>
+      <el-table-column prop="wareId" header-align="center" align="center" min-width="120" label="Warehouse ID"></el-table-column>
+      <el-table-column prop="stock" header-align="center" align="center" min-width="130" label="Stock Quantity"></el-table-column>
+      <el-table-column prop="skuName" header-align="center" align="center" min-width="180" show-overflow-tooltip label="SKU Name"></el-table-column>
+      <el-table-column prop="stockLocked" header-align="center" align="center" min-width="120" label="Locked Stock">
+        <template slot-scope="scope">
+          {{ scope.row.stockLocked == null ? 0 : scope.row.stockLocked }}
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="150" label="Actions">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">Edit</el-button>
@@ -78,14 +83,25 @@ export default {
     AddOrUpdate
   },
   activated() {
-    console.log("接收到", this.$route.query.skuId);
-    if (this.$route.query.skuId) {
-      this.dataForm.skuId = this.$route.query.skuId;
-    }
+    this.applyRouteSkuFilter();
     this.getWares();
     this.getDataList();
   },
+  watch: {
+    "$route.query.skuId"(val) {
+      if (val) {
+        this.dataForm.skuId = String(val);
+        this.getDataList();
+      }
+    }
+  },
   methods: {
+    applyRouteSkuFilter() {
+      const skuId = this.$route.query.skuId;
+      if (skuId) {
+        this.dataForm.skuId = String(skuId);
+      }
+    },
     getWares() {
       this.$http({
         url: this.$http.adornUrl("/ware/wareinfo/list"),
@@ -97,6 +113,25 @@ export default {
       }).then(({ data }) => {
         this.wareList = data.page.list;
       });
+    },
+    syncFromProduct() {
+      this.$http({
+        url: this.$http.adornUrl('/ware/waresku/syncFromProduct'),
+        method: 'post'
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          const stats = data.data || {}
+          this.$message({
+            message: `Synced: ${stats.updated || 0} updated of ${stats.total || 0} rows`,
+            type: 'success',
+            duration: 2000,
+            onClose: () => this.getDataList()
+          })
+          this.getDataList()
+        } else {
+          this.$message.error(data.msg || 'Sync failed')
+        }
+      })
     },
     // Get data list
     getDataList() {

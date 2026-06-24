@@ -1,25 +1,25 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-    <el-form-item label="sku_id" prop="skuId">
-      <el-input v-model="dataForm.skuId" placeholder="sku_id"></el-input>
+    <el-form-item label="SKU ID" prop="skuId">
+      <el-input v-model="dataForm.skuId" placeholder="SKU ID"></el-input>
     </el-form-item>
-    <el-form-item label="sku_name" prop="skuName">
-      <el-input v-model="dataForm.skuName" placeholder="sku_name"></el-input>
+    <el-form-item label="SKU Name" prop="skuName">
+      <el-input v-model="dataForm.skuName" placeholder="SKU Name"></el-input>
     </el-form-item>
-    <el-form-item label="购买个数" prop="skuNum">
-      <el-input v-model="dataForm.skuNum" placeholder="购买个数"></el-input>
+    <el-form-item label="Quantity" prop="skuNum">
+      <el-input v-model="dataForm.skuNum" placeholder="Quantity"></el-input>
     </el-form-item>
-    <el-form-item label="工作单id" prop="taskId">
-      <el-input v-model="dataForm.taskId" placeholder="工作单id"></el-input>
+    <el-form-item label="Task ID" prop="taskId">
+      <el-input v-model="dataForm.taskId" placeholder="Task ID"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -38,16 +38,16 @@
         },
         dataRule: {
           skuId: [
-            { required: true, message: 'sku_id不能为空', trigger: 'blur' }
+            { required: true, message: 'SKU ID is required', trigger: 'blur' }
           ],
           skuName: [
-            { required: true, message: 'sku_name不能为空', trigger: 'blur' }
+            { required: true, message: 'SKU Name is required', trigger: 'blur' }
           ],
           skuNum: [
-            { required: true, message: '购买个数不能为空', trigger: 'blur' }
+            { required: true, message: 'Quantity is required', trigger: 'blur' }
           ],
           taskId: [
-            { required: true, message: '工作单id不能为空', trigger: 'blur' }
+            { required: true, message: 'Task ID is required', trigger: 'blur' }
           ]
         }
       }
@@ -74,7 +74,7 @@
           }
         })
       },
-      // 表单提交
+      // form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
@@ -91,7 +91,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

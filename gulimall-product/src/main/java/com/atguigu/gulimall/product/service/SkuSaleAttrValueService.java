@@ -2,8 +2,10 @@ package com.atguigu.gulimall.product.service;
 
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.SkuSaleAttrValueEntity;
+import com.atguigu.gulimall.product.vo.SkuItemSaleAttrVo;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,5 +24,18 @@ public interface SkuSaleAttrValueService {
     void saveAll(Iterable<SkuSaleAttrValueEntity> entities);
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * Sale attributes for an SPU: merge rows from all SKUs under that SPU (same idea as getSaleAttrBySpuId in MyBatis samples).
+     */
+    List<SkuItemSaleAttrVo> getSaleAttrsBySpuId(Long spuId);
+
+    /**
+     * Flatten sale attrs for one SKU into strings like "Color:Black".
+     */
+    List<String> getSaleAttrStringsBySkuId(Long skuId);
+
+    /** All sale attr rows for the given SKU ids (ES indexing). */
+    List<SkuSaleAttrValueEntity> listBySkuIds(Collection<Long> skuIds);
 }
 

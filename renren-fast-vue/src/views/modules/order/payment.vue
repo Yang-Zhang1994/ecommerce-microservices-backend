@@ -11,6 +11,8 @@
       </el-form-item>
     </el-form>
     <el-table
+      class="admin-table-wide admin-table-ellipsis"
+      :fit="false"
       :data="dataList"
       border
       v-loading="dataListLoading"
@@ -32,7 +34,9 @@
         prop="orderSn"
         header-align="center"
         align="center"
-        label="Order Number (External Business Number)">
+        min-width="130"
+        show-overflow-tooltip
+        label="Order SN">
       </el-table-column>
       <el-table-column
         prop="orderId"
@@ -44,49 +48,70 @@
         prop="alipayTradeNo"
         header-align="center"
         align="center"
-        label="Alipay Transaction Flow Number">
+        min-width="140"
+        show-overflow-tooltip
+        label="Trade No.">
       </el-table-column>
       <el-table-column
         prop="totalAmount"
         header-align="center"
         align="center"
-        label="Total Payment Amount">
+        min-width="100"
+        show-overflow-tooltip
+        label="Total Paid">
       </el-table-column>
       <el-table-column
         prop="subject"
         header-align="center"
         align="center"
-        label="Transaction Content">
+        min-width="120"
+        show-overflow-tooltip
+        label="Subject">
       </el-table-column>
       <el-table-column
         prop="paymentStatus"
         header-align="center"
         align="center"
-        label="Payment Status">
+        min-width="140"
+        label="Status">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.paymentStatus" :type="paymentStatusTagType(scope.row.paymentStatus)" size="small">
+            {{ formatPaymentStatus(scope.row.paymentStatus) }}
+          </el-tag>
+          <span v-else>—</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
-        label="Creation Time">
+        min-width="100"
+        show-overflow-tooltip
+        label="Created">
       </el-table-column>
       <el-table-column
         prop="confirmTime"
         header-align="center"
         align="center"
-        label="Confirmation Time">
+        min-width="100"
+        show-overflow-tooltip
+        label="Confirmed">
       </el-table-column>
       <el-table-column
         prop="callbackContent"
         header-align="center"
         align="center"
+        min-width="160"
+        show-overflow-tooltip
         label="Callback Content">
       </el-table-column>
       <el-table-column
         prop="callbackTime"
         header-align="center"
         align="center"
-        label="Callback Time">
+        min-width="100"
+        show-overflow-tooltip
+        label="Callback At">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -116,6 +141,8 @@
 
 <script>
   import AddOrUpdate from './paymentinfo-add-or-update'
+  import { formatPaymentStatus, paymentStatusTagType } from './order-admin-meta'
+
   export default {
     data () {
       return {
@@ -138,6 +165,8 @@
       this.getDataList()
     },
     methods: {
+      formatPaymentStatus,
+      paymentStatusTagType,
       // Get data list
       getDataList () {
         this.dataListLoading = true

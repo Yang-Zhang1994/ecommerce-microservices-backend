@@ -10,8 +10,8 @@
             <el-input v-model="dataForm.key" placeholder="Keyword" clearable></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button @click="getDataList()">Query</el-button>
-            <el-button type="success" @click="getAllDataList()">Query All</el-button>
+            <el-button @click="getDataList()" title="Search in the selected category only">Query</el-button>
+            <el-button type="success" @click="getAllDataList()" title="Search across all categories (ignores tree selection)">Query All</el-button>
             <el-button
               v-if="isAuth('product:attr:save')"
               type="primary"
@@ -26,6 +26,7 @@
           </el-form-item>
         </el-form>
         <el-table
+          class="admin-word-table"
           :data="dataList"
           border
           v-loading="dataListLoading"
@@ -33,13 +34,15 @@
           style="width: 100%;"
         >
           <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-          <el-table-column prop="attrId" header-align="center" align="center" label="ID"></el-table-column>
-          <el-table-column prop="attrName" header-align="center" align="center" label="Attribute Name"></el-table-column>
+          <el-table-column prop="attrId" header-align="center" align="center" width="70" label="ID"></el-table-column>
+          <el-table-column prop="attrName" header-align="center" align="center" min-width="130" label="Attribute Name"></el-table-column>
           <el-table-column
             v-if="attrtype == 1"
             prop="searchType"
             header-align="center"
             align="center"
+            width="100"
+            class-name="table-cell--nowrap"
             label="Searchable"
           >
             <template slot-scope="scope">
@@ -47,14 +50,14 @@
               <i class="el-icon-error" v-else></i>
             </template>
           </el-table-column>
-          <el-table-column prop="valueType" header-align="center" align="center" label="Value Type">
+          <el-table-column prop="valueType" header-align="center" align="center" min-width="105" label="Value Type">
             <template slot-scope="scope">
               <el-tag type="success" v-if="scope.row.valueType==0">Single</el-tag>
               <el-tag v-else>Multiple</el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="icon" header-align="center" align="center" label="Icon"></el-table-column>
-          <el-table-column prop="valueSelect" header-align="center" align="center" label="Selectable Values">
+          <el-table-column prop="icon" header-align="center" align="center" width="70" label="Icon"></el-table-column>
+          <el-table-column prop="valueSelect" header-align="center" align="center" min-width="130" label="Selectable Values">
             <template slot-scope="scope">
               <el-tooltip placement="top">
                 <div slot="content">
@@ -64,21 +67,22 @@
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column prop="enable" header-align="center" align="center" label="Enable">
+          <el-table-column prop="enable" header-align="center" align="center" width="80" class-name="table-cell--nowrap" label="Enable">
             <template slot-scope="scope">
               <i class="el-icon-success" v-if="scope.row.enable==1"></i>
               <i class="el-icon-error" v-else></i>
             </template>
           </el-table-column>
-          <el-table-column prop="catelogName" header-align="center" align="center" label="Category"></el-table-column>
+          <el-table-column prop="catelogName" header-align="center" align="center" min-width="120" label="Category"></el-table-column>
           <el-table-column
             v-if="attrtype == 1"
             prop="groupName"
             header-align="center"
             align="center"
+            min-width="100"
             label="Group"
           ></el-table-column>
-          <el-table-column v-if="attrtype == 1" prop="showDesc" header-align="center" align="center" label="Quick Display">
+          <el-table-column v-if="attrtype == 1" prop="showDesc" header-align="center" align="center" width="110" class-name="table-cell--nowrap" label="Quick Display">
             <template slot-scope="scope">
               <i class="el-icon-success" v-if="scope.row.showDesc==1"></i>
               <i class="el-icon-error" v-else></i>
@@ -120,7 +124,7 @@
 
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
-//例如：import 《组件名称》 from '《组件路径》';
+//例如：import 《组件Name》 from '《组件路径》';
 import Category from "../common/category";
 import AddOrUpdate from "./attr-add-or-update";
 export default {
@@ -247,5 +251,5 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style scoped>
 </style>

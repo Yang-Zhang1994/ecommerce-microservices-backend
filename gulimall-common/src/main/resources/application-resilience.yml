@@ -1,0 +1,19 @@
+# Import in service application.yml: spring.config.import: optional:classpath:application-resilience.yml
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 30
+        minimumNumberOfCalls: 10
+        permittedNumberOfCallsInHalfOpenState: 5
+        waitDurationInOpenState: 20s
+        failureRateThreshold: 50
+        slowCallRateThreshold: 80
+        slowCallDurationThreshold: 3s
+    instances:
+      productApi:
+        baseConfig: default
+      memberApi:
+        baseConfig: default
+      wareApi:
+        baseConfig: default

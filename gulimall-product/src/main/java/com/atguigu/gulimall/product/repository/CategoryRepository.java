@@ -4,6 +4,7 @@ import com.atguigu.gulimall.product.entity.CategoryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,4 +24,12 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> 
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE pms_category SET show_status = 1 WHERE show_status IS NULL", nativeQuery = true)
     int fixShowStatusNull();
+
+    /** Level-3 categories whose name contains the given term (for search keyword → catalogId resolution). */
+    @Query(value = """
+            SELECT cat_id FROM pms_category
+            WHERE cat_level = 3 AND show_status = 1
+              AND LOWER(name) LIKE LOWER(CONCAT('%', :term, '%'))
+            """, nativeQuery = true)
+    List<Long> findLevel3IdsByNameContaining(@Param("term") String term);
 }

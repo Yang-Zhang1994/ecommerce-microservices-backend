@@ -1,5 +1,6 @@
 <template>
   <div class="mod-config">
+    <marketing-storefront-notice />
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
         <el-input v-model="dataForm.key" placeholder="Parameter Name" clearable></el-input>
@@ -36,6 +37,7 @@
         prop="addOther"
         header-align="center"
         align="center"
+        min-width="220"
         label="Can Stack with Other Promotions"
       >
         <template slot-scope="scope">
@@ -66,6 +68,7 @@
 
 <script>
 import AddOrUpdate from "./memberprice-add-or-update";
+import MarketingStorefrontNotice from "@/components/admin/MarketingStorefrontNotice";
 export default {
   data() {
     return {
@@ -82,7 +85,8 @@ export default {
     };
   },
   components: {
-    AddOrUpdate
+    AddOrUpdate,
+    MarketingStorefrontNotice
   },
   activated() {
     this.getDataList();

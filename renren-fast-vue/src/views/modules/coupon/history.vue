@@ -115,14 +115,14 @@ export default {
     selectionChangeHandle(val) {
       this.dataListSelections = val;
     },
-    // 新增 / 修改
+    // Add / Edit
     addOrUpdateHandle(id) {
       this.addOrUpdateVisible = true;
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(id);
       });
     },
-    // 删除
+    // Delete
     deleteHandle(id) {
       var ids = id
         ? [id]
@@ -130,11 +130,11 @@ export default {
             return item.id;
           });
       this.$confirm(
-        `确定对[id=${ids.join(",")}]进行[${id ? "删除" : "批量删除"}]操作?`,
-        "提示",
+        `Are you sure you want to [${id ? "delete" : "batch delete"}] [id=${ids.join(",")}]?`,
+        "Tip",
         {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
+          confirmButtonText: "Confirm",
+          cancelButtonText: "Cancel",
           type: "warning"
         }
       ).then(() => {
@@ -145,7 +145,7 @@ export default {
         }).then(({ data }) => {
           if (data && data.code === 0) {
             this.$message({
-              message: "操作成功",
+              message: "Operation successful",
               type: "success",
               duration: 1500,
               onClose: () => {

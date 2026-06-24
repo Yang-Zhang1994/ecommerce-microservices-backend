@@ -9,6 +9,8 @@ import Router from 'vue-router'
 import http from '@/utils/httpRequest'
 import { isURL } from '@/utils/validate'
 import { clearLoginInfo } from '@/utils'
+import { getToken } from '@/utils/authToken'
+import { filterHiddenAdminMenuTree } from '@/config/adminMenuVisibility'
 import { translateMenuName, translateMenuList } from '@/utils/menuTranslation'
 
 Vue.use(Router)
@@ -28,7 +30,7 @@ const mainRoutes = {
   component: _import('main'),
   name: 'main',
   redirect: { name: 'home' },
-  meta: { title: '主入口整体布局' },
+  meta: { title: 'GrainMart Admin' },
   children: [
     // 通过meta对象设置路由展示方式
     // 1. isTab: 是否通过tab展示内容, true: 是, false: 否
@@ -41,10 +43,11 @@ const mainRoutes = {
     { path: '/product-attrupdate', component: _import('modules/product/attrupdate'), name: 'attr-update', meta: { title: 'Specification Maintenance', isTab: true } }
   ],
   beforeEnter(to, from, next) {
-    let token = Vue.cookie.get('token')
+    let token = getToken()
     if (!token || !/\S/.test(token)) {
       clearLoginInfo()
-      next({ name: 'login' })
+      next({ name: 'login', replace: true })
+      return
     }
     next()
   }
@@ -63,95 +66,51 @@ router.beforeEach((to, from, next) => {
   // 2. 获取菜单列表, 添加并保存本地存储
   if (router.options.isAddDynamicMenuRoutes || fnCurrentRouteType(to, globalRoutes) === 'global') {
     next()
-  } else {
-    http({
-      url: http.adornUrl('/sys/menu/nav'),
-      method: 'get',
-      params: http.adornParams()
-    }).then(({ data }) => {
-      if (data && data.code === 0) {
-        // Translate menu names first
-        const translatedMenuList = translateMenuList(data.menuList)
-        // Then filter out unfinished menus (Order System, Content Management, etc.)
-        const filteredMenuList = filterUnfinishedMenus(translatedMenuList)
-        fnAddDynamicMenuRoutes(filteredMenuList)
-        router.options.isAddDynamicMenuRoutes = true
-        sessionStorage.setItem('menuList', JSON.stringify(filteredMenuList || '[]'))
-        sessionStorage.setItem('permissions', JSON.stringify(data.permissions || '[]'))
-        next({ ...to, replace: true })
-      } else {
-        sessionStorage.setItem('menuList', '[]')
-        sessionStorage.setItem('permissions', '[]')
-        next()
-      }
-    }).catch((e) => {
-      console.log(`%c${e} 请求菜单列表和权限失败，跳转至登录页！！`, 'color:blue')
-      router.push({ name: 'login' })
-    })
+    return
   }
+  const token = getToken()
+  if (!token || !/\S/.test(token)) {
+    clearLoginInfo()
+    next({ name: 'login', replace: true })
+    return
+  }
+  http({
+    url: http.adornUrl('/sys/menu/nav'),
+    method: 'get',
+    params: http.adornParams()
+  }).then(({ data }) => {
+    if (data && Number(data.code) === 0) {
+      // Translate menu names first
+      const translatedMenuList = translateMenuList(data.menuList)
+      // Then filter out unfinished menus (Order System, Content Management, etc.)
+      const filteredMenuList = filterUnfinishedMenus(translatedMenuList)
+      fnAddDynamicMenuRoutes(filteredMenuList)
+      router.options.isAddDynamicMenuRoutes = true
+      sessionStorage.setItem('menuList', JSON.stringify(filteredMenuList || '[]'))
+      sessionStorage.setItem('permissions', JSON.stringify(data.permissions || '[]'))
+      next({ ...to, replace: true })
+    } else if (data && Number(data.code) === 401) {
+      // 勿再 next() 进首页，否则与 token 失效矛盾；守卫必须显式结束本次导航
+      clearLoginInfo()
+      next({ name: 'login', replace: true })
+    } else {
+      sessionStorage.setItem('menuList', '[]')
+      sessionStorage.setItem('permissions', '[]')
+      next()
+    }
+  }).catch((e) => {
+    console.log(`%c${e} 请求菜单列表和权限失败，跳转至登录页！！`, 'color:blue')
+    clearLoginInfo()
+    next({ name: 'login', replace: true })
+  })
 })
 
 /**
- * Filter out unfinished menu items
+ * Hide menus not wired into GrainMart or broken in local Docker (see adminMenuVisibility.js).
  * @param {*} menuList Menu list from backend
  */
-function filterUnfinishedMenus(menuList) {
-  // System Management: only Admin List(2)
-  const hiddenMenuIds = [3, 4, 5, 6, 27, 29, 30]
-  // Marketing: hide these coupon routes (keep only spubounds and skufullreduction)
-  const hiddenCouponUrls = [
-    'coupon/coupon',
-    'coupon/history',
-    'coupon/couponhistory',
-    'coupon/subject',
-    'coupon/homesubject',
-    'coupon/seckill',
-    'coupon/seckillpromotion',
-    'coupon/seckillsession',
-    'coupon/seckillskurelation',
-    'coupon/seckillskunotice',
-    'coupon/memberprice',
-    'coupon/skuladder',
-    'coupon/couponspurelation',
-    'coupon/couponspucategoryrelation',
-    'coupon/homeadv',
-    'coupon/homesubjectspu'
-  ]
-  // Warehouse: hide Stock Task (库存工作单) - not yet implemented
-  const hiddenWareUrls = ['ware/task', 'ware/wareordertask']
-  // Order System: hide entire module - not yet implemented
-  const hiddenOrderUrls = ['order/']
-  // Content Management: hide entire module - not yet implemented
-  const hiddenContentUrls = ['content/']
-  // User System: keep only Member Level, hide the rest
-  const hiddenMemberUrls = [
-    'member/member',           // Member List
-    'member/growth',           // Growth
-    'member/growthchangehistory',
-    'member/integrationchangehistory', // Points Change
-    'member/statistics',       // Statistics
-    'member/memberstatisticsinfo'
-  ]
-  const allHiddenUrls = [...hiddenCouponUrls, ...hiddenWareUrls, ...hiddenOrderUrls, ...hiddenContentUrls, ...hiddenMemberUrls]
-
-  function shouldHideByUrl(url) {
-    if (!url || typeof url !== 'string') return false
-    const u = url.replace(/^\//, '').toLowerCase()
-    return allHiddenUrls.some(h => u.startsWith(h))
-  }
-
-  function filterMenu(menu) {
-    if (hiddenMenuIds.includes(menu.menuId)) return null
-    if (menu.url && shouldHideByUrl(menu.url)) return null
-    if (menu.list && menu.list.length > 0) {
-      menu.list = menu.list.map(filterMenu).filter(item => item !== null)
-      // Remove parent with no visible children (e.g. Order System after hiding all sub-items)
-      if (menu.list.length === 0) return null
-    }
-    return menu
-  }
-
-  return menuList.map(filterMenu).filter(item => item !== null)
+function filterUnfinishedMenus (menuList) {
+  return filterHiddenAdminMenuTree(menuList, 'list')
 }
 
 /**

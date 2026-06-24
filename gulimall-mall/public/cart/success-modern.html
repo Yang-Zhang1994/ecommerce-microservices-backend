@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Gulimall · Added to cart</title>
+    <!-- Modern shell; uses the same hooks as success.js (#result, successTitle, …). Open e.g.
+         /cart/success-modern.html?skuId=500&num=2 -->
+    <link rel="stylesheet" href="./css/success-modern.css"/>
+</head>
+<body class="cart-success-modern">
+
+<header class="csm-header">
+    <div class="csm-header-inner">
+        <div class="csm-brand">
+            <a href="/"><img src="./img/logo1.jpg" alt="Gulimall" height="44"/></a>
+        </div>
+        <nav class="csm-nav">
+            <a href="/">Home</a>
+            <a href="/cart/list">Cart</a>
+        </nav>
+    </div>
+</header>
+
+<main class="csm-main">
+    <div class="success-wrap">
+        <!-- success.js replaces #result.innerHTML on some errors -->
+        <div id="result" class="csm-result-shell">
+            <div class="m succeed-box">
+                <div class="mc success-cont">
+                    <div class="success-lcol">
+                        <div class="success-top">
+                            <b class="succ-icon"></b>
+                            <h3 class="ftx-02" id="successTitle">Item added to cart successfully</h3>
+                        </div>
+                        <div class="p-item">
+                            <div class="p-img">
+                                <a href="/javascript:;" target="_blank" rel="noopener">
+                                    <img id="successSkuImg" alt="" src="/img/shop1.jpg"/>
+                                </a>
+                            </div>
+                            <div class="p-info">
+                                <div class="p-name">
+                                    <a id="successSkuName" href="#">Product</a>
+                                </div>
+                                <div class="p-extra">
+                                    <span class="txt" id="successSkuNum">Quantity: 1</span>
+                                </div>
+                            </div>
+                            <div class="clr"></div>
+                        </div>
+                    </div>
+                    <div class="success-btns success-btns-new">
+                        <div class="clr"></div>
+                        <div class="bg_shop">
+                            <a class="btn-tobback" id="viewSkuDetailBtn" href="#">View item details</a>
+                            <a class="btn-addtocart" href="/cart/list" id="GotoShoppingCart"><b></b>Proceed to cart</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="./js/success.js"></script>
+</body>
+</html>

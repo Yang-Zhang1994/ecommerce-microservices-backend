@@ -10,6 +10,7 @@ import com.atguigu.gulimall.product.service.SkuInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,12 @@ public class SkuImagesServiceImpl implements SkuImagesService {
     @Override
     public List<SkuImagesEntity> listBySkuId(Long skuId) {
         return skuImagesRepository.findBySkuId(skuId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SkuImagesEntity> getImagesBySkuId(Long skuId) {
+        return listBySkuId(skuId);
     }
 
     @Override
@@ -92,8 +99,9 @@ public class SkuImagesServiceImpl implements SkuImagesService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageUtils queryPage(Map<String, Object> params) {
-        Pageable pageable = new Query<SkuImagesEntity>().getPageable(params);
+        Pageable pageable = new Query<SkuImagesEntity>().getPageable(params, Sort.by("id").ascending());
         Page<SkuImagesEntity> page = skuImagesRepository.findAll(pageable);
         return new PageUtils(page);
     }

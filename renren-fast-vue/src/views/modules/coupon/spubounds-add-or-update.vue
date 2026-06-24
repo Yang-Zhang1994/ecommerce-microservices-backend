@@ -1,26 +1,34 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    class="coupon-marketing-dialog"
+    width="560px"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
+    <el-form
+      class="coupon-marketing-form"
+      :model="dataForm"
+      :rules="dataRule"
+      ref="dataForm"
+      @keyup.enter.native="dataFormSubmit()"
+      label-width="200px">
     <el-form-item label="spuId" prop="spuId">
       <el-input v-model="dataForm.spuId" placeholder=""></el-input>
     </el-form-item>
-    <el-form-item label="成长积分" prop="growBounds">
-      <el-input v-model="dataForm.growBounds" placeholder="成长积分"></el-input>
+    <el-form-item label="Growth Points" prop="growBounds">
+      <el-input v-model="dataForm.growBounds" placeholder="Growth Points"></el-input>
     </el-form-item>
-    <el-form-item label="购物积分" prop="buyBounds">
-      <el-input v-model="dataForm.buyBounds" placeholder="购物积分"></el-input>
+    <el-form-item label="Shopping Points" prop="buyBounds">
+      <el-input v-model="dataForm.buyBounds" placeholder="Shopping Points"></el-input>
     </el-form-item>
-    <!-- [1111（四个状态位，从右到左）;0 - 无优惠，成长积分是否赠送;1 - 无优惠，购物积分是否赠送;2 - 有优惠，成长积分是否赠送;3 - 有优惠，购物积分是否赠送【状态位0：不赠送，1：赠送】] -->
-    <el-form-item label="优惠生效情况" prop="work">
-      <el-input v-model="dataForm.work" placeholder="优惠生效情况"></el-input>
+    <!-- [1111: four status bits, right to left; 0/1 no promo grow/shop points; 2/3 with promo; bit 0=off 1=on] -->
+    <el-form-item label="Promotion Status" prop="work">
+      <el-input v-model="dataForm.work" placeholder="Promotion Status"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -48,7 +56,7 @@
             { required: true, message: 'Shopping Points is required', trigger: 'blur' }
           ],
           work: [
-            { required: true, message: 'Discount Status is required', trigger: 'blur' }
+            { required: true, message: 'Promotion Status is required', trigger: 'blur' }
           ]
         }
       }
@@ -75,7 +83,7 @@
           }
         })
       },
-      // 表单提交
+      // form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {

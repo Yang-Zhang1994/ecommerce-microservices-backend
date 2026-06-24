@@ -92,7 +92,7 @@ export default {
         sort: [
           {
             validator: (rule, value, callback) => {
-              // 0 是有效值，不用 value == ""（在 JS 里 0 == "" 为 true）
+              // 0 Yes有效值，不用 value == ""（在 JS 里 0 == "" 为 true）
               if (value === "" || value === null || value === undefined) {
                 callback(new Error("Sort field is required"));
               } else if (!Number.isInteger(Number(value)) || Number(value) < 0) {

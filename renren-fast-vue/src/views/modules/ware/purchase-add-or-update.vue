@@ -34,31 +34,31 @@
         },
         dataRule: {
           assigneeId: [
-            { required: true, message: '采购人id不能为空', trigger: 'blur' }
+            { required: true, message: 'Purchaser ID is required', trigger: 'blur' }
           ],
           assigneeName: [
-            { required: true, message: '采购人名不能为空', trigger: 'blur' }
+            { required: true, message: 'Purchaser Name is required', trigger: 'blur' }
           ],
           phone: [
-            { required: true, message: '联系方式不能为空', trigger: 'blur' }
+            { required: true, message: 'Contact is required', trigger: 'blur' }
           ],
           priority: [
             { required: true, message: 'Priority is required', trigger: 'blur' }
           ],
           status: [
-            { required: true, message: '状态不能为空', trigger: 'blur' }
+            { required: true, message: 'Status is required', trigger: 'blur' }
           ],
           wareId: [
-            { required: true, message: '仓库id不能为空', trigger: 'blur' }
+            { required: true, message: 'Warehouse ID is required', trigger: 'blur' }
           ],
           amount: [
-            { required: true, message: '总金额不能为空', trigger: 'blur' }
+            { required: true, message: 'Total Amount is required', trigger: 'blur' }
           ],
           createTime: [
-            { required: true, message: '创建日期不能为空', trigger: 'blur' }
+            { required: true, message: 'Created Date is required', trigger: 'blur' }
           ],
           updateTime: [
-            { required: true, message: '更新日期不能为空', trigger: 'blur' }
+            { required: true, message: 'Updated Date is required', trigger: 'blur' }
           ]
         }
       }
@@ -90,7 +90,7 @@
           }
         })
       },
-      // 表单提交
+      // form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {

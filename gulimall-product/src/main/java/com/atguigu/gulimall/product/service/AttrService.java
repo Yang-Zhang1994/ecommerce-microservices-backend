@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.product.service;
 
+import com.atguigu.gulimall.product.vo.AttrFilterMetaVo;
 import com.atguigu.gulimall.product.vo.AttrGroupRelationVo;
 import com.atguigu.gulimall.product.vo.AttrRespVo;
 import com.atguigu.gulimall.product.vo.AttrVo;
@@ -50,5 +51,15 @@ public interface AttrService {
      * Get attributes that are not related to the current attribute group
      */
     PageUtils getNoRelationAttr(Map<String, Object> params, Long attrGroupId);
+
+    /**
+     * 在给定属性 id 中筛选出可被检索的属性 id（searchType=1）
+     */
+    List<Long> selectSearchAttrIds(List<Long> attrIds);
+
+    /**
+     * Searchable attribute definitions for facet UI (searchType=1, with value_select options).
+     */
+    List<AttrFilterMetaVo> listSearchFilterMeta(List<Long> attrIds);
 }
 

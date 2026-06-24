@@ -44,6 +44,14 @@ public class CategoryController {
 
 
     /**
+     * Level-3 category ids whose names match any search term (used by mall keyword search).
+     */
+    @RequestMapping("/match-ids")
+    public R matchIds(@RequestParam("terms") List<String> terms) {
+        return R.ok().put("data", categoryService.findLevel3IdsBySearchTerms(terms));
+    }
+
+    /**
      * 信息
      */
     @RequestMapping("/info/{catId}")

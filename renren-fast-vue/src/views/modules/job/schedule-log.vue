@@ -1,15 +1,15 @@
 <template>
   <el-dialog
-    title="日志列表"
+    title="Log List"
     :close-on-click-modal="false"
     :visible.sync="visible"
     width="75%">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.id" placeholder="任务ID" clearable></el-input>
+        <el-input v-model="dataForm.id" placeholder="Job ID" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询</el-button>
+        <el-button @click="getDataList()">Query</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -23,49 +23,49 @@
         header-align="center"
         align="center"
         width="80"
-        label="日志ID">
+        label="Log ID">
       </el-table-column>
       <el-table-column
         prop="jobId"
         header-align="center"
         align="center"
         width="80"
-        label="任务ID">
+        label="Job ID">
       </el-table-column>
       <el-table-column
         prop="beanName"
         header-align="center"
         align="center"
-        label="bean名称">
+        label="beanName">
       </el-table-column>
       <el-table-column
         prop="params"
         header-align="center"
         align="center"
-        label="参数">
+        label="Parameters">
       </el-table-column>
       <el-table-column
         prop="status"
         header-align="center"
         align="center"
-        label="状态">
+        label="Status">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status === 0" size="small">成功</el-tag>
-          <el-tag v-else @click.native="showErrorInfo(scope.row.logId)" size="small" type="danger" style="cursor: pointer;">失败</el-tag>
+          <el-tag v-if="scope.row.status === 0" size="small">Success</el-tag>
+          <el-tag v-else @click.native="showErrorInfo(scope.row.logId)" size="small" type="danger" style="cursor: pointer;">Failed</el-tag>
         </template>
       </el-table-column>
       <el-table-column
         prop="times"
         header-align="center"
         align="center"
-        label="耗时(单位: 毫秒)">
+        label="Duration (ms)">
       </el-table-column>
       <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
         width="180"
-        label="执行时间">
+        label="Executed at">
       </el-table-column>
     </el-table>
     <el-pagination
@@ -100,7 +100,7 @@
         this.visible = true
         this.getDataList()
       },
-      // 获取数据列表
+      // Load data list
       getDataList () {
         this.dataListLoading = true
         this.$http({
@@ -122,18 +122,18 @@
           this.dataListLoading = false
         })
       },
-      // 每页数
+      // Page size
       sizeChangeHandle (val) {
         this.pageSize = val
         this.pageIndex = 1
         this.getDataList()
       },
-      // 当前页
+      // Current page
       currentChangeHandle (val) {
         this.pageIndex = val
         this.getDataList()
       },
-      // 失败信息
+      // Failed信息
       showErrorInfo (id) {
         this.$http({
           url: this.$http.adornUrl(`/sys/scheduleLog/info/${id}`),

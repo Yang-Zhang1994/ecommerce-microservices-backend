@@ -1,0 +1,90 @@
+/* Admin image previews: scale proportionally inside fixed frames (no stretch). */
+
+.admin-img {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background: #f5f7fa;
+  border: 1px solid #ebeef5;
+  overflow: hidden;
+  vertical-align: middle;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+}
+
+.admin-img--sm {
+  width: 60px;
+  height: 60px;
+  padding: 2px;
+}
+
+.admin-img--md {
+  width: 80px;
+  height: 80px;
+  padding: 4px;
+}
+
+.admin-img--lg {
+  width: 160px;
+  height: 120px;
+  padding: 4px;
+}
+
+.admin-img--brand {
+  width: 100px;
+  height: 80px;
+  padding: 4px;
+}
+
+/* Element UI upload thumbnails */
+.el-upload-list--picture-card .el-upload-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f7fa;
+}
+
+.el-upload-list--picture-card .el-upload-list__item-thumbnail {
+  width: auto !important;
+  height: auto !important;
+  max-width: calc(100% - 8px);
+  max-height: calc(100% - 8px);
+  object-fit: contain !important;
+}
+
+.el-upload-list--picture .el-upload-list__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f7fa;
+}
+
+.el-upload-list--picture .el-upload-list__item-thumbnail {
+  object-fit: contain !important;
+  background: #f5f7fa;
+}
+
+.admin-image-preview-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  max-height: 70vh;
+  background: #f5f7fa;
+
+  img {
+    max-width: 100%;
+    max-height: 70vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+}

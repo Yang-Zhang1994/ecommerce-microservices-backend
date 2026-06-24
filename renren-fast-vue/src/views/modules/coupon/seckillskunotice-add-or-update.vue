@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible"
   >
@@ -14,28 +14,28 @@
       <el-form-item label="member_id" prop="memberId">
         <el-input v-model="dataForm.memberId" placeholder="member_id"></el-input>
       </el-form-item>
-      <el-form-item label="sku_id" prop="skuId">
-        <el-input v-model="dataForm.skuId" placeholder="sku_id"></el-input>
+      <el-form-item label="SKU ID" prop="skuId">
+        <el-input v-model="dataForm.skuId" placeholder="SKU ID"></el-input>
       </el-form-item>
-      <el-form-item label="活动场次id" prop="sessionId">
-        <el-input v-model="dataForm.sessionId" placeholder="活动场次id"></el-input>
+      <el-form-item label="Promotion session ID" prop="sessionId">
+        <el-input v-model="dataForm.sessionId" placeholder="Promotion session ID"></el-input>
       </el-form-item>
-      <el-form-item label="订阅时间" prop="subcribeTime">
-        <el-input v-model="dataForm.subcribeTime" placeholder="订阅时间"></el-input>
+      <el-form-item label="Subscribed at" prop="subcribeTime">
+        <el-input v-model="dataForm.subcribeTime" placeholder="Subscribed at"></el-input>
       </el-form-item>
-      <el-form-item label="发送时间" prop="sendTime">
-        <el-input v-model="dataForm.sendTime" placeholder="发送时间"></el-input>
+      <el-form-item label="Sent at" prop="sendTime">
+        <el-input v-model="dataForm.sendTime" placeholder="Sent at"></el-input>
       </el-form-item>
-      <el-form-item label="通知方式" prop="noticeType">
+      <el-form-item label="Notification method" prop="noticeType">
         <el-select v-model="dataForm.noticeType" placeholder="Select">
-          <el-option  label="短信" :value="0"></el-option>
-          <el-option  label="邮件" :value="1"></el-option>
+          <el-option  label="SMS" :value="0"></el-option>
+          <el-option  label="Email" :value="1"></el-option>
         </el-select>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -56,22 +56,22 @@ export default {
       },
       dataRule: {
         memberId: [
-          { required: true, message: "member_id不能为空", trigger: "blur" }
+          { required: true, message: 'Member id is required', trigger: "blur" }
         ],
-        skuId: [{ required: true, message: "sku_id不能为空", trigger: "blur" }],
+        skuId: [{ required: true, message: 'SKU ID is required', trigger: "blur" }],
         sessionId: [
-          { required: true, message: "活动场次id不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         subcribeTime: [
-          { required: true, message: "订阅时间不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         sendTime: [
-          { required: true, message: "发送时间不能为空", trigger: "blur" }
+          { required: true, message: 'This field is required', trigger: "blur" }
         ],
         noticeType: [
           {
             required: true,
-            message: "通知方式不能为空",
+            message: 'This field is required',
             trigger: "blur"
           }
         ]
@@ -104,7 +104,7 @@ export default {
         }
       });
     },
-    // 表单提交
+    // form submit
     dataFormSubmit() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
@@ -127,7 +127,7 @@ export default {
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
+                message: "Operation successful",
                 type: "success",
                 duration: 1500,
                 onClose: () => {

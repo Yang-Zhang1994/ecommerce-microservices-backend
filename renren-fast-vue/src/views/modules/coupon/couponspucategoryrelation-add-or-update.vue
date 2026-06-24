@@ -1,22 +1,22 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-    <el-form-item label="优惠券id" prop="couponId">
-      <el-input v-model="dataForm.couponId" placeholder="优惠券id"></el-input>
+    <el-form-item label="Coupon ID" prop="couponId">
+      <el-input v-model="dataForm.couponId" placeholder="Coupon ID"></el-input>
     </el-form-item>
-    <el-form-item label="产品分类id" prop="categoryId">
-      <el-input v-model="dataForm.categoryId" placeholder="产品分类id"></el-input>
+    <el-form-item label="Category ID" prop="categoryId">
+      <el-input v-model="dataForm.categoryId" placeholder="Category ID"></el-input>
     </el-form-item>
-    <el-form-item label="产品分类名称" prop="categoryName">
-      <el-input v-model="dataForm.categoryName" placeholder="产品分类名称"></el-input>
+    <el-form-item label="Category name" prop="categoryName">
+      <el-input v-model="dataForm.categoryName" placeholder="Category name"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -34,13 +34,13 @@
         },
         dataRule: {
           couponId: [
-            { required: true, message: '优惠券id不能为空', trigger: 'blur' }
+            { required: true, message: 'This field is required', trigger: 'blur' }
           ],
           categoryId: [
-            { required: true, message: '产品分类id不能为空', trigger: 'blur' }
+            { required: true, message: 'This field is required', trigger: 'blur' }
           ],
           categoryName: [
-            { required: true, message: '产品分类名称不能为空', trigger: 'blur' }
+            { required: true, message: 'This field is required', trigger: 'blur' }
           ]
         }
       }
@@ -66,7 +66,7 @@
           }
         })
       },
-      // 表单提交
+      // form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
@@ -82,7 +82,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

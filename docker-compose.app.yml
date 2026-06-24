@@ -3,8 +3,47 @@
 # 迁移到 Oregon 后：复制 .env.example 为 .env，填入 Oregon RDS 端点和账号，然后：
 #   docker compose -f docker-compose.app.yml up -d --build
 # 访问: http://localhost (前端)  API 经 Nginx 代理到 Gateway:88
+# 链路追踪: http://localhost:16686 (Jaeger UI)
+
+x-otel-environment: &otel-environment
+  OTEL_TRACES_EXPORTER: otlp
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
+  OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+  OTEL_INSTRUMENTATION_MESSAGING_EXPERIMENTAL_RECEIVE_TELEMETRY_ENABLED: "true"
+  OTEL_TRACES_SAMPLER: always_on
+  JAVA_TOOL_OPTIONS: -javaagent:/otel/opentelemetry-javaagent.jar
 
 services:
+  jaeger:
+    image: jaegertracing/all-in-one:1.57
+    container_name: gulimall-jaeger
+    ports:
+      - "16686:16686"   # UI
+      - "4317:4317"     # OTLP gRPC
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+  redis:
+    image: redis:7-alpine
+    container_name: gulimall-redis
+    ports:
+      - "6379:6379"
+
+  # Message broker for gulimall-ware (stock delay / release queues). Default guest/guest.
+  # If host port 5672 is already in use, stop that process or remap the ports below.
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: gulimall-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
   consul:
     image: hashicorp/consul:1.17
     container_name: gulimall-consul
@@ -27,14 +66,72 @@ services:
     depends_on:
       consul:
         condition: service_healthy
+      redis:
+        condition: service_started
+      jaeger:
+        condition: service_started
+    environment:
+      <<: *otel-environment
+      OTEL_SERVICE_NAME: gulimall-gateway
+      AWS_REGION: us-west-2
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: "8500"
+      SPRING_DATA_REDIS_HOST: redis
+      GATEWAY_RATELIMIT_API_REPLENISH: ${GATEWAY_RATELIMIT_API_REPLENISH:-100}
+      GATEWAY_RATELIMIT_API_BURST: ${GATEWAY_RATELIMIT_API_BURST:-200}
+      GATEWAY_RATELIMIT_ORDER_REPLENISH: ${GATEWAY_RATELIMIT_ORDER_REPLENISH:-80}
+      GATEWAY_RATELIMIT_ORDER_BURST: ${GATEWAY_RATELIMIT_ORDER_BURST:-160}
+      GATEWAY_RATELIMIT_AUTH_REPLENISH: ${GATEWAY_RATELIMIT_AUTH_REPLENISH:-120}
+      GATEWAY_RATELIMIT_AUTH_BURST: ${GATEWAY_RATELIMIT_AUTH_BURST:-240}
+      GATEWAY_RATELIMIT_LOGIN_REPLENISH: ${GATEWAY_RATELIMIT_LOGIN_REPLENISH:-15}
+      GATEWAY_RATELIMIT_LOGIN_BURST: ${GATEWAY_RATELIMIT_LOGIN_BURST:-30}
+      GATEWAY_RATELIMIT_PAY_REPLENISH: ${GATEWAY_RATELIMIT_PAY_REPLENISH:-30}
+      GATEWAY_RATELIMIT_PAY_BURST: ${GATEWAY_RATELIMIT_PAY_BURST:-60}
+      GATEWAY_RATELIMIT_SUBMIT_REPLENISH: ${GATEWAY_RATELIMIT_SUBMIT_REPLENISH:-20}
+      GATEWAY_RATELIMIT_SUBMIT_BURST: ${GATEWAY_RATELIMIT_SUBMIT_BURST:-40}
+      # 验证码/admin 路由使用宿主机地址（renren-fast 映射 8081），避免 Docker 网络 No route to host
+      RENREN_FAST_URI: http://host.docker.internal:8081
+      # 商品服务直连容器，保证 /api/product/** 一定打到 product（避免路由/order 未生效）
+      GULIMALL_PRODUCT_URI: http://gulimall-product:10000
+      # 搜索服务直连容器，保证 /api/search/** 打到 gulimall-search（避免 lb 解析失败走 admin 401）
+      GULIMALL_SEARCH_URI: http://gulimall-search:12001
+      # 购物车服务直连容器，保证 /api/cart/** 命中 gulimall-cart
+      GULIMALL_CART_URI: http://gulimall-cart:13000
+      # 订单服务直连容器，保证 /api/order/** 命中 gulimall-order
+      GULIMALL_ORDER_URI: http://gulimall-order:9000
+      # 认证：用 lb:// + Consul，便于 PreserveHostHeader 生效；勿写 http://gulimall-auth-server:20000
+      # （直连 URI 会把下游 Host 固定为 gulimall-auth-server，OAuth 失败会重定向到不可解析的域名）
+      GULIMALL_AUTH_URI: lb://gulimall-auth-server
+    ports:
+      - "88:88"
+
+  gulimall-auth-server:
+    build:
+      context: ./gulimall-auth-server
+      dockerfile: Dockerfile
+    image: gulimall-auth-server
+    container_name: gulimall-auth-server
+    depends_on:
+      consul:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    # 与 product 等一致：根目录 .env 中的 TWILIO_* 会注入容器，供 Spring 读验证码短信配置
+    env_file:
+      - .env
     environment:
       AWS_REGION: us-west-2
       SPRING_PROFILES_ACTIVE: dev
       SPRING_CLOUD_CONSUL_HOST: consul
       SPRING_CLOUD_CONSUL_PORT: "8500"
-      RENREN_FAST_URI: http://renren-fast:8080
+      SPRING_DATA_REDIS_HOST: redis
+      # Empty = host-only cookie (http://localhost Mall + gateway). Set in .env for prod, e.g. .yourdomain.com
+      GULIMALL_SESSION_COOKIE_DOMAIN: ${GULIMALL_SESSION_COOKIE_DOMAIN:-}
+      GULIMALL_SESSION_COOKIE_SECURE: "${GULIMALL_SESSION_COOKIE_SECURE:-false}"
+      GULIMALL_AUTH_SMS_PHONE_REGION: NANP
     ports:
-      - "88:88"
+      - "20000:20000"
 
   gulimall-product:
     build:
@@ -45,6 +142,8 @@ services:
     depends_on:
       consul:
         condition: service_healthy
+      redis:
+        condition: service_started
     env_file: .env
     environment:
       AWS_REGION: us-west-2
@@ -54,8 +153,9 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_pms?sslmode=require
       SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
-    expose:
-      - "10000"
+      SPRING_DATA_REDIS_HOST: redis
+    ports:
+      - "10000:10000"
 
   gulimall-member:
     build:
@@ -66,6 +166,8 @@ services:
     depends_on:
       consul:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     env_file: .env
     environment:
       AWS_REGION: us-west-2
@@ -75,6 +177,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_ums?sslmode=require
       SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: "5672"
+      SPRING_RABBITMQ_USERNAME: ${SPRING_RABBITMQ_USERNAME:-guest}
+      SPRING_RABBITMQ_PASSWORD: ${SPRING_RABBITMQ_PASSWORD:-guest}
     expose:
       - "8000"
 
@@ -87,8 +193,14 @@ services:
     depends_on:
       consul:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      jaeger:
+        condition: service_started
     env_file: .env
     environment:
+      <<: *otel-environment
+      OTEL_SERVICE_NAME: gulimall-ware
       AWS_REGION: us-west-2
       SPRING_PROFILES_ACTIVE: dev
       SPRING_CLOUD_CONSUL_HOST: consul
@@ -96,6 +208,11 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_wms?sslmode=require
       SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: "5672"
+      SPRING_RABBITMQ_USERNAME: ${SPRING_RABBITMQ_USERNAME:-guest}
+      SPRING_RABBITMQ_PASSWORD: ${SPRING_RABBITMQ_PASSWORD:-guest}
+      GULIMALL_STOCK_LOCK_DELAY_MINUTES: ${GULIMALL_STOCK_LOCK_DELAY_MINUTES:-50}
     expose:
       - "11000"
 
@@ -119,6 +236,33 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
     expose:
       - "12000"
+
+  gulimall-seckill:
+    build:
+      context: ./gulimall-seckill
+      dockerfile: Dockerfile
+    image: gulimall-seckill
+    container_name: gulimall-seckill
+    depends_on:
+      consul:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      AWS_REGION: us-west-2
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: "8500"
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: "5672"
+      SPRING_RABBITMQ_USERNAME: ${SPRING_RABBITMQ_USERNAME:-guest}
+      SPRING_RABBITMQ_PASSWORD: ${SPRING_RABBITMQ_PASSWORD:-guest}
+    expose:
+      - "14000"
 
   gulimall-third-party:
     build:
@@ -149,17 +293,54 @@ services:
     depends_on:
       consul:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      jaeger:
+        condition: service_started
+    env_file: .env
+    environment:
+      <<: *otel-environment
+      OTEL_SERVICE_NAME: gulimall-order
+      AWS_REGION: us-west-2
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: "8500"
+      SPRING_DATA_REDIS_HOST: redis
+      GULIMALL_SESSION_COOKIE_DOMAIN: ${GULIMALL_SESSION_COOKIE_DOMAIN:-}
+      GULIMALL_SESSION_COOKIE_SECURE: "${GULIMALL_SESSION_COOKIE_SECURE:-false}"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_oms?sslmode=require
+      SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: "5672"
+      SPRING_RABBITMQ_USERNAME: ${SPRING_RABBITMQ_USERNAME:-guest}
+      SPRING_RABBITMQ_PASSWORD: ${SPRING_RABBITMQ_PASSWORD:-guest}
+      GULIMALL_ORDER_PAY_TIMEOUT_MINUTES: ${GULIMALL_ORDER_PAY_TIMEOUT_MINUTES:-30}
+    expose:
+      - "9000"
+
+  gulimall-cart:
+    build:
+      context: ./gulimall-cart
+      dockerfile: Dockerfile
+    image: gulimall-cart
+    container_name: gulimall-cart
+    depends_on:
+      consul:
+        condition: service_healthy
+      redis:
+        condition: service_started
     env_file: .env
     environment:
       AWS_REGION: us-west-2
       SPRING_PROFILES_ACTIVE: dev
       SPRING_CLOUD_CONSUL_HOST: consul
       SPRING_CLOUD_CONSUL_PORT: "8500"
-      SPRING_DATASOURCE_URL: jdbc:postgresql://${RDS_ENDPOINT}:5432/ecommerce_oms?sslmode=require
-      SPRING_DATASOURCE_USERNAME: ${RDS_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${RDS_PASSWORD}
+      SPRING_DATA_REDIS_HOST: redis
+      GULIMALL_SESSION_COOKIE_DOMAIN: ${GULIMALL_SESSION_COOKIE_DOMAIN:-}
+      GULIMALL_SESSION_COOKIE_SECURE: "${GULIMALL_SESSION_COOKIE_SECURE:-false}"
     expose:
-      - "9000"
+      - "13000"
 
   renren-fast:
     build:
@@ -167,6 +348,7 @@ services:
       dockerfile: Dockerfile
     image: renren-fast
     container_name: renren-fast
+    hostname: renren-fast
     depends_on:
       consul:
         condition: service_healthy
@@ -176,6 +358,8 @@ services:
       SPRING_PROFILES_ACTIVE: dev
       SPRING_CLOUD_CONSUL_HOST: consul
       SPRING_CLOUD_CONSUL_PORT: "8500"
+      SPRING_CLOUD_CONSUL_DISCOVERY_HOSTNAME: renren-fast
+      SPRING_CLOUD_CONSUL_DISCOVERY_PREFER_IP_ADDRESS: "false"
       SERVER_PORT: "8080"
       # 排除 Quartz 自动配置，避免启动时因连不上 DB 而失败（验证码等仍可用）
       SPRING_AUTOCONFIGURE_EXCLUDE: org.apache.shiro.spring.config.web.autoconfigure.ShiroWebAutoConfiguration,org.apache.shiro.spring.boot.autoconfigure.ShiroAutoConfiguration,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration
@@ -186,8 +370,8 @@ services:
       SPRING_DATASOURCE_DRUID_INITIAL_SIZE: "0"
       # 禁用 Wall 过滤器，避免 JPA 生成的 WHERE 1=1 被误判为 SQL 注入
       SPRING_DATASOURCE_DRUID_FILTERS: stat
-    expose:
-      - "8080"
+    ports:
+      - "8081:8080"
 
   gulimall-frontend:
     build:
@@ -195,10 +379,49 @@ services:
       dockerfile: Dockerfile
     image: gulimall-frontend
     container_name: gulimall-frontend
-    depends_on:
-      - gulimall-gateway
+    # 网关可在 compose 内，也可在宿主机 :88（start-all.sh）；勿依赖镜像内 default.conf 的 gulimall-gateway
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "80:80"
+    # 镜像内 default.conf 会在启动时解析 gulimall-gateway 导致 exit 1；只用 ecommerce 域名配置
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        rm -f /etc/nginx/conf.d/default.conf
+        exec nginx -g 'daemon off;'
     # 挂载宿主机目录后，GitHub Actions 用 rsync 更新该目录即可生效，无需重建镜像/重启容器
+    # 动静分离：商城静态资源由 Nginx 直接返回（需先在 gulimall-mall 执行 npm run build）
     volumes:
-      - /mydata/nginx/html:/usr/share/nginx/html:ro
+      - /Users/samuelcoe/mydata/nginx/html:/usr/share/nginx/html:ro
+      - ./docs/nginx-ecommerce-domain.conf:/etc/nginx/conf.d/nginx-ecommerce-domain.conf:ro
+      - ./gulimall-mall/.next/static:/usr/share/nginx/ecommerce-next-static:ro
+      - ./gulimall-mall/public/static:/usr/share/nginx/ecommerce-public-static:ro
+      # 登录/注册等 public 下资源（含 public/auth），Nginx 动静分离直出
+      - ./gulimall-mall/public:/usr/share/nginx/gulimall-mall-public:ro
+
+
+  gulimall-search:
+    build:
+      context: ./gulimall-search
+      dockerfile: Dockerfile
+    image: gulimall-search
+    container_name: gulimall-search
+    depends_on:
+      consul:
+        condition: service_healthy
+      # 如果希望 ES 先起来，可以再依赖 elasticsearch（前提是同时使用 es.yml 启动）
+      # elasticsearch:
+      #   condition: service_started
+    environment:
+      AWS_REGION: us-west-2
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: "8500"
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: "9200"
+    expose:
+      - "12001"
+    ports:
+      - "12001:12001"

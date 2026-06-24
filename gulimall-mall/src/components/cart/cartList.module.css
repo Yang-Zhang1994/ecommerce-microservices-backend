@@ -1,0 +1,284 @@
+.shell {
+  min-height: 60vh;
+  padding: 24px 16px 80px;
+  background: linear-gradient(165deg, #f8fafc 0%, #eef2ff 45%, #f8fafc 100%);
+}
+
+.card {
+  max-width: 1060px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.head {
+  padding: 24px 28px 16px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.table th,
+.table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  text-align: left;
+  vertical-align: top;
+}
+
+.table th {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+  background: #fafafa;
+}
+
+.skuCell {
+  display: flex;
+  gap: 12px;
+}
+
+.skuImg {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  object-fit: contain;
+  background: #fff;
+}
+
+.skuImgPlaceholder {
+  width: 72px;
+  height: 72px;
+  border-radius: 10px;
+  background: #f4f4f5;
+  border: 1px solid #e4e4e7;
+}
+
+.skuTitle {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.skuTitle a {
+  color: #1e293b;
+  text-decoration: none;
+}
+
+.skuTitle a:hover {
+  color: #dc2626;
+}
+
+.skuAttrs {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.checkCell input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: #16a34a;
+  cursor: pointer;
+}
+
+.actionGroup {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.actionBtn {
+  border: 1px solid #d0d7e2;
+  background: #fff;
+  color: #1f2937;
+  min-width: 34px;
+  height: 30px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.actionBtn:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.actionBtnDanger {
+  border: 1px solid #fecaca;
+  background: #fff5f5;
+  color: #b91c1c;
+  padding: 0 10px;
+  min-width: 62px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.actionBtnDanger:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+.actionBtnDanger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px 24px;
+  background: #fafafa;
+}
+
+.summaryLeft {
+  display: flex;
+  gap: 16px;
+  color: #334155;
+}
+
+.summaryRight {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.summaryAmount {
+  text-align: right;
+}
+
+.summaryLabel {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.summaryTotal {
+  margin-top: 4px;
+  font-size: 26px;
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.summarySave {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #15803d;
+  font-weight: 600;
+}
+
+.checkoutBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background: #dc2626;
+  color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 700;
+  border: 1px solid #dc2626;
+  transition: all 0.15s ease;
+}
+
+.checkoutBtn:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+.checkoutWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.checkoutWarn {
+  margin: 0;
+  max-width: 320px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #b91c1c;
+  text-align: right;
+}
+
+.checkoutBtnDisabled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 10px;
+  background: #a1a1aa;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  border: 1px solid #a1a1aa;
+  cursor: not-allowed;
+}
+
+.stockIn {
+  margin: 4px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #15803d;
+}
+
+.stockOut {
+  margin: 4px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #b91c1c;
+}
+
+.loading {
+  padding: 48px 24px;
+  text-align: center;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.empty {
+  padding: 42px 20px;
+  text-align: center;
+  color: #475569;
+}
+
+.empty a {
+  color: #dc2626;
+  text-decoration: none;
+}
+
+.empty a:hover {
+  text-decoration: underline;
+}

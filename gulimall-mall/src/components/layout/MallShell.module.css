@@ -1,0 +1,149 @@
+.shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--mall-bg, #f4f4f5);
+  color: var(--mall-text, #18181b);
+}
+
+.topBar {
+  background: #3f3f46;
+  color: #fafafa;
+  font-size: 12px;
+}
+
+.topBarInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 6px 16px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+
+.topBar a {
+  color: #fafafa;
+}
+
+.topBar a:hover {
+  text-decoration: underline;
+}
+
+.topSep {
+  opacity: 0.5;
+}
+
+.signOutBtn {
+  background: none;
+  border: none;
+  color: #fafafa;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+}
+
+.signOutBtn:hover {
+  text-decoration: underline;
+}
+
+.header {
+  background: #fff;
+  border-bottom: 1px solid #e4e4e7;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.headerInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--mall-brand, #c81623);
+}
+
+.logoMark {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e1251b, #c81623);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.searchForm {
+  display: flex;
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.searchInput {
+  flex: 1;
+  border: 2px solid var(--mall-brand, #c81623);
+  border-right: none;
+  border-radius: 8px 0 0 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  outline: none;
+}
+
+.searchBtn {
+  border: none;
+  background: var(--mall-brand, #c81623);
+  color: #fff;
+  padding: 0 20px;
+  border-radius: 0 8px 8px 0;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.searchBtn:hover {
+  background: #a6121c;
+}
+
+.cartLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.cartLink:hover {
+  border-color: var(--mall-brand, #c81623);
+  color: var(--mall-brand, #c81623);
+}
+
+.main {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+
+.footer {
+  background: #fff;
+  border-top: 1px solid #e4e4e7;
+  padding: 20px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: #71717a;
+}

@@ -1,31 +1,31 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-    <el-form-item label="秒杀订单超时关闭时间(分)" prop="flashOrderOvertime">
-      <el-input v-model="dataForm.flashOrderOvertime" placeholder="秒杀订单超时关闭时间(分)"></el-input>
+    <el-form-item label="Flash Sale Timeout (min)" prop="flashOrderOvertime">
+      <el-input v-model="dataForm.flashOrderOvertime" placeholder="Flash Sale Timeout (min)"></el-input>
     </el-form-item>
-    <el-form-item label="正常订单超时时间(分)" prop="normalOrderOvertime">
-      <el-input v-model="dataForm.normalOrderOvertime" placeholder="正常订单超时时间(分)"></el-input>
+    <el-form-item label="Normal Order Timeout (min)" prop="normalOrderOvertime">
+      <el-input v-model="dataForm.normalOrderOvertime" placeholder="Normal Order Timeout (min)"></el-input>
     </el-form-item>
-    <el-form-item label="发货后自动确认收货时间（天）" prop="confirmOvertime">
-      <el-input v-model="dataForm.confirmOvertime" placeholder="发货后自动确认收货时间（天）"></el-input>
+    <el-form-item label="Auto Confirm After Ship (days)" prop="confirmOvertime">
+      <el-input v-model="dataForm.confirmOvertime" placeholder="Auto Confirm After Ship (days)"></el-input>
     </el-form-item>
-    <el-form-item label="自动完成交易时间，不能申请退货（天）" prop="finishOvertime">
-      <el-input v-model="dataForm.finishOvertime" placeholder="自动完成交易时间，不能申请退货（天）"></el-input>
+    <el-form-item label="Auto Finish / No Returns (days)" prop="finishOvertime">
+      <el-input v-model="dataForm.finishOvertime" placeholder="Auto Finish / No Returns (days)"></el-input>
     </el-form-item>
-    <el-form-item label="订单完成后自动好评时间（天）" prop="commentOvertime">
-      <el-input v-model="dataForm.commentOvertime" placeholder="订单完成后自动好评时间（天）"></el-input>
+    <el-form-item label="Auto Review After Complete (days)" prop="commentOvertime">
+      <el-input v-model="dataForm.commentOvertime" placeholder="Auto Review After Complete (days)"></el-input>
     </el-form-item>
-    <el-form-item label="会员等级【0-不限会员等级，全部通用；其他-对应的其他会员等级】" prop="memberLevel">
-      <el-input v-model="dataForm.memberLevel" placeholder="会员等级【0-不限会员等级，全部通用；其他-对应的其他会员等级】"></el-input>
+    <el-form-item label="Member Level [0-All]" prop="memberLevel">
+      <el-input v-model="dataForm.memberLevel" placeholder="Member Level [0-All]"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -46,22 +46,22 @@
         },
         dataRule: {
           flashOrderOvertime: [
-            { required: true, message: '秒杀订单超时关闭时间(分)不能为空', trigger: 'blur' }
+            { required: true, message: 'Flash Sale Timeout (min) is required', trigger: 'blur' }
           ],
           normalOrderOvertime: [
-            { required: true, message: '正常订单超时时间(分)不能为空', trigger: 'blur' }
+            { required: true, message: 'Normal Order Timeout (min) is required', trigger: 'blur' }
           ],
           confirmOvertime: [
-            { required: true, message: '发货后自动确认收货时间（天）不能为空', trigger: 'blur' }
+            { required: true, message: 'Auto Confirm After Ship (days) is required', trigger: 'blur' }
           ],
           finishOvertime: [
-            { required: true, message: '自动完成交易时间，不能申请退货（天）不能为空', trigger: 'blur' }
+            { required: true, message: 'Auto Finish / No Returns (days) is required', trigger: 'blur' }
           ],
           commentOvertime: [
-            { required: true, message: '订单完成后自动好评时间（天）不能为空', trigger: 'blur' }
+            { required: true, message: 'Auto Review After Complete (days) is required', trigger: 'blur' }
           ],
           memberLevel: [
-            { required: true, message: '会员等级【0-不限会员等级，全部通用；其他-对应的其他会员等级】不能为空', trigger: 'blur' }
+            { required: true, message: 'Member Level [0-All] is required', trigger: 'blur' }
           ]
         }
       }
@@ -90,7 +90,7 @@
           }
         })
       },
-      // 表单提交
+      // Form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
@@ -109,7 +109,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

@@ -1,0 +1,16 @@
+# kind overlay: single-node Docker — enable search (ES) + admin (renren-fast); seckill stays off (RAM).
+# Prerequisites: Docker Desktop 8GB+ recommended; stop Compose before deploy.
+infra:
+  elasticsearch:
+    enabled: true
+    javaOpts: "-Xms128m -Xmx192m"
+
+global:
+  jvmOpts: "-Xms96m -Xmx256m"
+  deploymentStrategy: Recreate
+
+apps:
+  seckill:
+    enabled: false
+  renren-fast:
+    enabled: true

@@ -1,0 +1,34 @@
+{
+    "LoadBalancers": [
+        {
+            "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-west-2:466297333400:loadbalancer/app/ecommerce-prod-alb/b205eff04a246026",
+            "DNSName": "ecommerce-prod-alb-1794368425.us-west-2.elb.amazonaws.com",
+            "CanonicalHostedZoneId": "Z1H1FL5HABSF5",
+            "CreatedTime": "2026-05-16T20:34:38.082000+00:00",
+            "LoadBalancerName": "ecommerce-prod-alb",
+            "Scheme": "internet-facing",
+            "VpcId": "vpc-014eddd3289d3be1d",
+            "State": {
+                "Code": "active"
+            },
+            "Type": "application",
+            "AvailabilityZones": [
+                {
+                    "ZoneName": "us-west-2b",
+                    "SubnetId": "subnet-01ab2b35b0835c874",
+                    "LoadBalancerAddresses": []
+                },
+                {
+                    "ZoneName": "us-west-2a",
+                    "SubnetId": "subnet-069bc46fb157dce5c",
+                    "LoadBalancerAddresses": []
+                }
+            ],
+            "SecurityGroups": [
+                "sg-01bcc71a8b21860d1"
+            ],
+            "IpAddressType": "ipv4",
+            "EnablePrefixForIpv6SourceNat": "off"
+        }
+    ]
+}

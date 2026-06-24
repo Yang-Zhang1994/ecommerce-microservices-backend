@@ -1,0 +1,31 @@
+# Copy to terraform.tfvars and fill from AWS Console (EC2 / ELB / WAF).
+# Do not commit terraform.tfvars.
+
+aws_region  = "us-west-2"
+account_id  = "REPLACE_ACCOUNT_ID"
+environment = "dev"
+
+vpc_id             = "vpc-REPLACE"
+public_subnet_ids  = ["subnet-REPLACE-a", "subnet-REPLACE-b"]
+
+# Must match existing resource names (import path)
+alb_name            = "REPLACE-alb-name"
+target_group_name   = "ecommerce-gateway-tg"
+waf_web_acl_name    = "REPLACE-web-acl-name"
+
+# Existing ALB security group(s) — from ALB → Security
+create_security_groups = false
+alb_security_group_ids = ["sg-REPLACE-alb"]
+
+# HTTPS: ACM cert in same region as ALB; leave "" if you only use HTTP:80 today
+certificate_arn = ""
+
+# Optional: register EC2 with TG (omit if already registered in console)
+# target_instance_ids = ["i-REPLACE"]
+
+rate_limit_api_auth = 1000
+waf_associate_alb   = true
+
+tags = {
+  Owner = "gulimall"
+}

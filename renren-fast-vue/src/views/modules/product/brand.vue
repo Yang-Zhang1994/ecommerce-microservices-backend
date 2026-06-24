@@ -35,7 +35,7 @@
               style="width: 100px; height: 80px"
               :src="scope.row.logo"
           fit="fill"></el-image>-->
-          <img :src="scope.row.logo" style="width: 100px; height: 80px" />
+          <span class="admin-img admin-img--brand"><img :src="scope.row.logo" alt="" /></span>
         </template>
       </el-table-column>
       <el-table-column prop="descript" header-align="center" align="center" label="Description"></el-table-column>
@@ -73,7 +73,12 @@
     <!-- Dialog, Add / Edit -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
 
-    <el-dialog title="Link Category" :visible.sync="cateRelationDialogVisible" width="30%">
+    <el-dialog
+      title="Link Category"
+      :visible.sync="cateRelationDialogVisible"
+      width="520px"
+      custom-class="brand-cate-link-dialog"
+    >
       <el-popover placement="right-end" v-model="popCatelogSelectVisible">
         <category-cascader :catelogPath.sync="catelogPath"></category-cascader>
         <div style="text-align: right; margin: 0">
@@ -82,10 +87,10 @@
         </div>
         <el-button slot="reference">Add Link</el-button>
       </el-popover>
-      <el-table :data="cateRelationTableData" style="width: 100%">
-        <el-table-column prop="id" label="#"></el-table-column>
-        <el-table-column prop="brandName" label="Brand Name"></el-table-column>
-        <el-table-column prop="catelogName" label="Category Name"></el-table-column>
+      <el-table :data="cateRelationTableData" class="brand-cate-link-table" style="width: 100%">
+        <el-table-column prop="id" label="#" width="56"></el-table-column>
+        <el-table-column prop="brandName" label="Brand Name" min-width="100"></el-table-column>
+        <el-table-column prop="catelogName" label="Category Name" min-width="160"></el-table-column>
         <el-table-column fixed="right" header-align="center" align="center" label="Operations">
           <template slot-scope="scope">
             <el-button
@@ -171,7 +176,7 @@ export default {
         this.cateRelationTableData = data.data;
       });
     },
-    // 获取数据列表
+    // Load data list
     getDataList() {
       this.dataListLoading = true;
       this.$http({
@@ -196,7 +201,7 @@ export default {
     updateBrandStatus(data) {
       console.log("最新信息", data);
       let { brandId, showStatus } = data;
-      //发送请求修改状态
+      //发送请求EditStatus
       this.$http({
         url: this.$http.adornUrl("/product/brand/update/status"),
         method: "post",
@@ -268,3 +273,17 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+/* Link Category dialog: wrap at spaces only, never split words (e.g. Conditioning). */
+.brand-cate-link-dialog .brand-cate-link-table {
+  th > .cell,
+  td > .cell {
+    word-break: normal;
+    overflow-wrap: normal;
+    word-wrap: normal;
+    white-space: normal;
+    line-height: 1.45;
+  }
+}
+</style>

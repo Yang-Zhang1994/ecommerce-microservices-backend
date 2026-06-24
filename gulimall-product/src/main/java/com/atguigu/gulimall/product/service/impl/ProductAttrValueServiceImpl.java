@@ -2,12 +2,14 @@ package com.atguigu.gulimall.product.service.impl;
 
 import com.atguigu.common.utils.PageUtils;
 import com.atguigu.common.utils.Query;
+import com.atguigu.gulimall.product.cache.ProductCacheEvictor;
 import com.atguigu.gulimall.product.entity.ProductAttrValueEntity;
 import com.atguigu.gulimall.product.repository.ProductAttrValueRepository;
 import com.atguigu.gulimall.product.service.ProductAttrValueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,8 @@ public class ProductAttrValueServiceImpl implements ProductAttrValueService {
 
     @Autowired
     private ProductAttrValueRepository productAttrValueRepository;
+    @Autowired
+    private ProductCacheEvictor productCacheEvictor;
 
     @Override
     public ProductAttrValueEntity getById(Long id) {
@@ -41,8 +45,9 @@ public class ProductAttrValueServiceImpl implements ProductAttrValueService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageUtils queryPage(Map<String, Object> params) {
-        Pageable pageable = new Query<ProductAttrValueEntity>().getPageable(params);
+        Pageable pageable = new Query<ProductAttrValueEntity>().getPageable(params, Sort.by("id").ascending());
         Page<ProductAttrValueEntity> page = productAttrValueRepository.findAll(pageable);
         return new PageUtils(page);
     }
@@ -63,5 +68,6 @@ public class ProductAttrValueServiceImpl implements ProductAttrValueService {
         productAttrValueRepository.deleteBySpuId(spuId);
         entities.forEach(entity -> entity.setSpuId(spuId));
         productAttrValueRepository.saveAll(entities);
+        productCacheEvictor.evictItemsBySpuId(spuId);
     }
 }

@@ -11,15 +11,19 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    // 代理列表, 是否开启代理通过[./dev.env.js]配置
-    proxyTable: devEnv.OPEN_PROXY === false ? {} : {
-      '/proxyApi': {
-        target: 'http://demo.renren.io/renren-fast/',
-        changeOrigin: true,
-        pathRewrite: {
-          '^/proxyApi': '/'
+    // 代理：/api 转发到本地后端 88；可选 /proxyApi 到远程 demo
+    proxyTable: {
+      '/api': {
+        target: JSON.parse(devEnv.GATEWAY_PROXY_TARGET || '"http://localhost:88"'),
+        changeOrigin: true
+      },
+      ...(devEnv.OPEN_PROXY ? {
+        '/proxyApi': {
+          target: 'http://demo.renren.io/renren-fast/',
+          changeOrigin: true,
+          pathRewrite: { '^/proxyApi': '/' }
         }
-      }
+      } : {})
     },
 
     // Various Dev Server settings

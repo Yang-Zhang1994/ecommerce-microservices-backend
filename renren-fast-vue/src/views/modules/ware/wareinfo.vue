@@ -32,18 +32,21 @@
         prop="name"
         header-align="center"
         align="center"
+        min-width="140"
         label="Warehouse Name">
       </el-table-column>
       <el-table-column
         prop="address"
         header-align="center"
         align="center"
+        min-width="180"
         label="Warehouse Address">
       </el-table-column>
       <el-table-column
         prop="areacode"
         header-align="center"
         align="center"
+        min-width="110"
         label="Area Code">
       </el-table-column>
       <el-table-column

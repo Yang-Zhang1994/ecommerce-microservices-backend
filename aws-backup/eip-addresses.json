@@ -1,0 +1,52 @@
+{
+    "Addresses": [
+        {
+            "AllocationId": "eipalloc-0d9e098bebc5ad96b",
+            "AssociationId": "eipassoc-0b573d0009d5ae7de",
+            "Domain": "vpc",
+            "NetworkInterfaceId": "eni-07e015788a0aea47d",
+            "NetworkInterfaceOwnerId": "466297333400",
+            "PrivateIpAddress": "172.31.21.228",
+            "PublicIpv4Pool": "amazon",
+            "NetworkBorderGroup": "us-west-2",
+            "ServiceManaged": "alb",
+            "PublicIp": "184.34.187.151"
+        },
+        {
+            "AllocationId": "eipalloc-0d8b0dd47dd34dde7",
+            "AssociationId": "eipassoc-01b9b7e464393c168",
+            "Domain": "vpc",
+            "NetworkInterfaceId": "eni-04903da850eb31d82",
+            "NetworkInterfaceOwnerId": "466297333400",
+            "PrivateIpAddress": "172.31.33.76",
+            "PublicIpv4Pool": "amazon",
+            "NetworkBorderGroup": "us-west-2",
+            "ServiceManaged": "alb",
+            "PublicIp": "35.81.235.220"
+        },
+        {
+            "AllocationId": "eipalloc-00362b39674fe269c",
+            "AssociationId": "eipassoc-06c1502bd731d9b9b",
+            "Domain": "vpc",
+            "NetworkInterfaceId": "eni-0a062faf9a144715c",
+            "NetworkInterfaceOwnerId": "466297333400",
+            "PrivateIpAddress": "172.31.48.251",
+            "PublicIpv4Pool": "amazon",
+            "NetworkBorderGroup": "us-west-2",
+            "ServiceManaged": "rds",
+            "PublicIp": "44.253.109.12"
+        },
+        {
+            "AllocationId": "eipalloc-0b546895fa5f3079c",
+            "AssociationId": "eipassoc-0946d514cca03a48a",
+            "Domain": "vpc",
+            "NetworkInterfaceId": "eni-0cfc698bb3efb50a2",
+            "NetworkInterfaceOwnerId": "466297333400",
+            "PrivateIpAddress": "172.31.31.31",
+            "PublicIpv4Pool": "amazon",
+            "NetworkBorderGroup": "us-west-2",
+            "InstanceId": "i-05b954f202863481b",
+            "PublicIp": "52.41.173.63"
+        }
+    ]
+}

@@ -6,21 +6,30 @@ spring:
     name: gulimall-search
   cloud:
     consul:
-      host: localhost
+      host: consul
       port: 8500
       discovery:
         enabled: true
-        hostname: host.docker.internal
+        hostname: gulimall-search
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
+  elasticsearch:
+    uris: http://elasticsearch:9200
 
-# Elasticsearch 配置
+# Elasticsearch connection config (local Docker uses localhost; override via environment variables in other environments)
 elasticsearch:
-  host: 192.168.56.10  # 虚拟机中的 Elasticsearch 地址
-  port: 9200
+  host: ${ELASTICSEARCH_HOST:localhost}
+  port: ${ELASTICSEARCH_PORT:9200}
   scheme: http
 
 logging:
   level:
     com.atguigu.gulimall.search: debug
+
+management:
+  health:
+    redis:
+      enabled: false
+    elasticsearch:
+      enabled: false
 

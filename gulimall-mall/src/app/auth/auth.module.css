@@ -1,0 +1,188 @@
+.wrap {
+  display: flex;
+  justify-content: center;
+  padding: 24px 0 48px;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  padding: 32px 28px;
+  box-shadow: 0 4px 24px rgb(0 0 0 / 6%);
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  color: #71717a;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #3f3f46;
+}
+
+.label input {
+  border: 1px solid #d4d4d8;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 15px;
+}
+
+.label input:focus {
+  outline: 2px solid var(--mall-brand, #c81623);
+  outline-offset: 0;
+  border-color: transparent;
+}
+
+.primaryBtn {
+  margin-top: 4px;
+  border: none;
+  background: var(--mall-brand, #c81623);
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.primaryBtn:hover:not(:disabled) {
+  background: #a6121c;
+}
+
+.primaryBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #b91c1c;
+  font-size: 14px;
+  margin: 0;
+}
+
+.divider {
+  text-align: center;
+  color: #a1a1aa;
+  font-size: 13px;
+  margin: 20px 0;
+}
+
+.oauthBtn {
+  display: block;
+  text-align: center;
+  border: 1px solid #d4d4d8;
+  border-radius: 8px;
+  padding: 12px;
+  font-weight: 500;
+}
+
+.oauthBtn:hover {
+  border-color: var(--mall-brand, #c81623);
+  color: var(--mall-brand, #c81623);
+}
+
+.footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #52525b;
+}
+
+.footer a {
+  color: var(--mall-brand, #c81623);
+  font-weight: 600;
+}
+
+.smsRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.smsCodeField {
+  flex: 1;
+  min-width: 140px;
+}
+
+.phoneRow {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.phoneCountry {
+  flex: 0 0 auto;
+  border: 1px solid #d4d4d8;
+  border-radius: 8px;
+  padding: 10px 8px;
+  font-size: 14px;
+  background: #fafafa;
+}
+
+.phoneInput {
+  flex: 1;
+  min-width: 0;
+}
+
+.smsSendBtn {
+  flex: 0 0 auto;
+  border: 1px solid var(--mall-brand, #c81623);
+  background: #fff;
+  color: var(--mall-brand, #c81623);
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.smsSendBtn:hover:not(:disabled) {
+  background: #fef2f2;
+}
+
+.smsSendBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  border-color: #d4d4d8;
+  color: #71717a;
+}
+
+.smsHint {
+  font-size: 12px;
+  color: #71717a;
+  margin: -8px 0 0;
+}
+
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: #52525b;
+}
+
+.checkbox input {
+  margin-top: 3px;
+}

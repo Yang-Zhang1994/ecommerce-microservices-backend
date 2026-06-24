@@ -17,4 +17,6 @@ public interface AttrAttrgroupRelationRepository extends JpaRepository<AttrAttrg
     List<AttrAttrgroupRelationEntity> findByAttrGroupIdIn(List<Long> attrGroupIds);
 
     java.util.Optional<AttrAttrgroupRelationEntity> findByAttrIdAndAttrGroupId(Long attrId, Long attrGroupId);
+
+    void deleteByAttrIdAndAttrGroupId(Long attrId, Long attrGroupId);
 }

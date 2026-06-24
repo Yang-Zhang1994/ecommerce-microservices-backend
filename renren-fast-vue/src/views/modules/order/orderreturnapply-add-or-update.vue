@@ -1,94 +1,94 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
     <el-form-item label="order_id" prop="orderId">
       <el-input v-model="dataForm.orderId" placeholder="order_id"></el-input>
     </el-form-item>
-    <el-form-item label="退货商品id" prop="skuId">
-      <el-input v-model="dataForm.skuId" placeholder="退货商品id"></el-input>
+    <el-form-item label="Return SKU ID" prop="skuId">
+      <el-input v-model="dataForm.skuId" placeholder="Return SKU ID"></el-input>
     </el-form-item>
-    <el-form-item label="订单编号" prop="orderSn">
-      <el-input v-model="dataForm.orderSn" placeholder="订单编号"></el-input>
+    <el-form-item label="Order SN" prop="orderSn">
+      <el-input v-model="dataForm.orderSn" placeholder="Order SN"></el-input>
     </el-form-item>
-    <el-form-item label="申请时间" prop="createTime">
-      <el-input v-model="dataForm.createTime" placeholder="申请时间"></el-input>
+    <el-form-item label="Apply Time" prop="createTime">
+      <el-input v-model="dataForm.createTime" placeholder="Apply Time"></el-input>
     </el-form-item>
-    <el-form-item label="会员用户名" prop="memberUsername">
-      <el-input v-model="dataForm.memberUsername" placeholder="会员用户名"></el-input>
+    <el-form-item label="Member Username" prop="memberUsername">
+      <el-input v-model="dataForm.memberUsername" placeholder="Member Username"></el-input>
     </el-form-item>
-    <el-form-item label="退款金额" prop="returnAmount">
-      <el-input v-model="dataForm.returnAmount" placeholder="退款金额"></el-input>
+    <el-form-item label="Refund Amount" prop="returnAmount">
+      <el-input v-model="dataForm.returnAmount" placeholder="Refund Amount"></el-input>
     </el-form-item>
-    <el-form-item label="退货人姓名" prop="returnName">
-      <el-input v-model="dataForm.returnName" placeholder="退货人姓名"></el-input>
+    <el-form-item label="Returner Name" prop="returnName">
+      <el-input v-model="dataForm.returnName" placeholder="Returner Name"></el-input>
     </el-form-item>
-    <el-form-item label="退货人电话" prop="returnPhone">
-      <el-input v-model="dataForm.returnPhone" placeholder="退货人电话"></el-input>
+    <el-form-item label="Returner Phone" prop="returnPhone">
+      <el-input v-model="dataForm.returnPhone" placeholder="Returner Phone"></el-input>
     </el-form-item>
-    <el-form-item label="申请状态[0->待处理；1->退货中；2->已完成；3->已拒绝]" prop="status">
-      <el-input v-model="dataForm.status" placeholder="申请状态[0->待处理；1->退货中；2->已完成；3->已拒绝]"></el-input>
+    <el-form-item label="Status [0-Pending 1-Returning 2-Done 3-Rejected]" prop="status">
+      <el-input v-model="dataForm.status" placeholder="Status [0-Pending 1-Returning 2-Done 3-Rejected]"></el-input>
     </el-form-item>
-    <el-form-item label="处理时间" prop="handleTime">
-      <el-input v-model="dataForm.handleTime" placeholder="处理时间"></el-input>
+    <el-form-item label="Handle Time" prop="handleTime">
+      <el-input v-model="dataForm.handleTime" placeholder="Handle Time"></el-input>
     </el-form-item>
-    <el-form-item label="商品图片" prop="skuImg">
-      <el-input v-model="dataForm.skuImg" placeholder="商品图片"></el-input>
+    <el-form-item label="Product Image" prop="skuImg">
+      <el-input v-model="dataForm.skuImg" placeholder="Product Image"></el-input>
     </el-form-item>
-    <el-form-item label="商品名称" prop="skuName">
-      <el-input v-model="dataForm.skuName" placeholder="商品名称"></el-input>
+    <el-form-item label="Product Name" prop="skuName">
+      <el-input v-model="dataForm.skuName" placeholder="Product Name"></el-input>
     </el-form-item>
-    <el-form-item label="商品品牌" prop="skuBrand">
-      <el-input v-model="dataForm.skuBrand" placeholder="商品品牌"></el-input>
+    <el-form-item label="Product Brand" prop="skuBrand">
+      <el-input v-model="dataForm.skuBrand" placeholder="Product Brand"></el-input>
     </el-form-item>
-    <el-form-item label="商品销售属性(JSON)" prop="skuAttrsVals">
-      <el-input v-model="dataForm.skuAttrsVals" placeholder="商品销售属性(JSON)"></el-input>
+    <el-form-item label="Sale Attributes (JSON)" prop="skuAttrsVals">
+      <el-input v-model="dataForm.skuAttrsVals" placeholder="Sale Attributes (JSON)"></el-input>
     </el-form-item>
-    <el-form-item label="退货数量" prop="skuCount">
-      <el-input v-model="dataForm.skuCount" placeholder="退货数量"></el-input>
+    <el-form-item label="Return Qty" prop="skuCount">
+      <el-input v-model="dataForm.skuCount" placeholder="Return Qty"></el-input>
     </el-form-item>
-    <el-form-item label="商品单价" prop="skuPrice">
-      <el-input v-model="dataForm.skuPrice" placeholder="商品单价"></el-input>
+    <el-form-item label="Unit Price" prop="skuPrice">
+      <el-input v-model="dataForm.skuPrice" placeholder="Unit Price"></el-input>
     </el-form-item>
-    <el-form-item label="商品实际支付单价" prop="skuRealPrice">
-      <el-input v-model="dataForm.skuRealPrice" placeholder="商品实际支付单价"></el-input>
+    <el-form-item label="Paid Unit Price" prop="skuRealPrice">
+      <el-input v-model="dataForm.skuRealPrice" placeholder="Paid Unit Price"></el-input>
     </el-form-item>
-    <el-form-item label="原因" prop="reason">
-      <el-input v-model="dataForm.reason" placeholder="原因"></el-input>
+    <el-form-item label="Reason" prop="reason">
+      <el-input v-model="dataForm.reason" placeholder="Reason"></el-input>
     </el-form-item>
-    <el-form-item label="描述" prop="description述">
-      <el-input v-model="dataForm.description述" placeholder="描述"></el-input>
+    <el-form-item label="Description" prop="description">
+      <el-input v-model="dataForm.description" placeholder="Description"></el-input>
     </el-form-item>
-    <el-form-item label="凭证图片，以逗号隔开" prop="descPics">
-      <el-input v-model="dataForm.descPics" placeholder="凭证图片，以逗号隔开"></el-input>
+    <el-form-item label="Proof Images (comma-separated)" prop="descPics">
+      <el-input v-model="dataForm.descPics" placeholder="Proof Images (comma-separated)"></el-input>
     </el-form-item>
-    <el-form-item label="处理备注" prop="handleNote">
-      <el-input v-model="dataForm.handleNote" placeholder="处理备注"></el-input>
+    <el-form-item label="Handle Note" prop="handleNote">
+      <el-input v-model="dataForm.handleNote" placeholder="Handle Note"></el-input>
     </el-form-item>
-    <el-form-item label="处理人员" prop="handleMan">
-      <el-input v-model="dataForm.handleMan" placeholder="处理人员"></el-input>
+    <el-form-item label="Handler" prop="handleMan">
+      <el-input v-model="dataForm.handleMan" placeholder="Handler"></el-input>
     </el-form-item>
-    <el-form-item label="收货人" prop="receiveMan">
-      <el-input v-model="dataForm.receiveMan" placeholder="收货人"></el-input>
+    <el-form-item label="Receiver" prop="receiveMan">
+      <el-input v-model="dataForm.receiveMan" placeholder="Receiver"></el-input>
     </el-form-item>
-    <el-form-item label="收货时间" prop="receiveTime">
-      <el-input v-model="dataForm.receiveTime" placeholder="收货时间"></el-input>
+    <el-form-item label="Receive Time" prop="receiveTime">
+      <el-input v-model="dataForm.receiveTime" placeholder="Receive Time"></el-input>
     </el-form-item>
-    <el-form-item label="收货备注" prop="receiveNote">
-      <el-input v-model="dataForm.receiveNote" placeholder="收货备注"></el-input>
+    <el-form-item label="Receive Note" prop="receiveNote">
+      <el-input v-model="dataForm.receiveNote" placeholder="Receive Note"></el-input>
     </el-form-item>
-    <el-form-item label="收货电话" prop="receivePhone">
-      <el-input v-model="dataForm.receivePhone" placeholder="收货电话"></el-input>
+    <el-form-item label="Receive Phone" prop="receivePhone">
+      <el-input v-model="dataForm.receivePhone" placeholder="Receive Phone"></el-input>
     </el-form-item>
-    <el-form-item label="公司收货地址" prop="companyAddress">
-      <el-input v-model="dataForm.companyAddress" placeholder="公司收货地址"></el-input>
+    <el-form-item label="Company Address" prop="companyAddress">
+      <el-input v-model="dataForm.companyAddress" placeholder="Company Address"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -118,7 +118,7 @@
           skuPrice: '',
           skuRealPrice: '',
           reason: '',
-          description述: '',
+          description: '',
           descPics: '',
           handleNote: '',
           handleMan: '',
@@ -130,85 +130,85 @@
         },
         dataRule: {
           orderId: [
-            { required: true, message: 'order_id不能为空', trigger: 'blur' }
+            { required: true, message: 'order_id is required', trigger: 'blur' }
           ],
           skuId: [
-            { required: true, message: '退货商品id不能为空', trigger: 'blur' }
+            { required: true, message: 'Return SKU ID is required', trigger: 'blur' }
           ],
           orderSn: [
-            { required: true, message: '订单编号不能为空', trigger: 'blur' }
+            { required: true, message: 'Order SN is required', trigger: 'blur' }
           ],
           createTime: [
-            { required: true, message: '申请时间不能为空', trigger: 'blur' }
+            { required: true, message: 'Apply Time is required', trigger: 'blur' }
           ],
           memberUsername: [
-            { required: true, message: '会员用户名不能为空', trigger: 'blur' }
+            { required: true, message: 'Member Username is required', trigger: 'blur' }
           ],
           returnAmount: [
-            { required: true, message: '退款金额不能为空', trigger: 'blur' }
+            { required: true, message: 'Refund Amount is required', trigger: 'blur' }
           ],
           returnName: [
-            { required: true, message: '退货人姓名不能为空', trigger: 'blur' }
+            { required: true, message: 'Returner Name is required', trigger: 'blur' }
           ],
           returnPhone: [
-            { required: true, message: '退货人电话不能为空', trigger: 'blur' }
+            { required: true, message: 'Returner Phone is required', trigger: 'blur' }
           ],
           status: [
-            { required: true, message: '申请状态[0->待处理；1->退货中；2->已完成；3->已拒绝]不能为空', trigger: 'blur' }
+            { required: true, message: 'Status [0-Pending 1-Returning 2-Done 3-Rejected] is required', trigger: 'blur' }
           ],
           handleTime: [
-            { required: true, message: '处理时间不能为空', trigger: 'blur' }
+            { required: true, message: 'Handle Time is required', trigger: 'blur' }
           ],
           skuImg: [
-            { required: true, message: '商品图片不能为空', trigger: 'blur' }
+            { required: true, message: 'Product Image is required', trigger: 'blur' }
           ],
           skuName: [
-            { required: true, message: '商品名称不能为空', trigger: 'blur' }
+            { required: true, message: 'Product Name is required', trigger: 'blur' }
           ],
           skuBrand: [
-            { required: true, message: '商品品牌不能为空', trigger: 'blur' }
+            { required: true, message: 'Product Brand is required', trigger: 'blur' }
           ],
           skuAttrsVals: [
-            { required: true, message: '商品销售属性(JSON)不能为空', trigger: 'blur' }
+            { required: true, message: 'Sale Attributes (JSON) is required', trigger: 'blur' }
           ],
           skuCount: [
-            { required: true, message: '退货数量不能为空', trigger: 'blur' }
+            { required: true, message: 'Return Qty is required', trigger: 'blur' }
           ],
           skuPrice: [
-            { required: true, message: '商品单价不能为空', trigger: 'blur' }
+            { required: true, message: 'Unit Price is required', trigger: 'blur' }
           ],
           skuRealPrice: [
-            { required: true, message: '商品实际支付单价不能为空', trigger: 'blur' }
+            { required: true, message: 'Paid Unit Price is required', trigger: 'blur' }
           ],
           reason: [
-            { required: true, message: '原因不能为空', trigger: 'blur' }
+            { required: true, message: 'Reason is required', trigger: 'blur' }
           ],
-          description述: [
-            { required: true, message: '描述不能为空', trigger: 'blur' }
+          description: [
+            { required: true, message: 'Description is required', trigger: 'blur' }
           ],
           descPics: [
-            { required: true, message: '凭证图片，以逗号隔开不能为空', trigger: 'blur' }
+            { required: true, message: 'Proof Images (comma-separated) is required', trigger: 'blur' }
           ],
           handleNote: [
-            { required: true, message: '处理备注不能为空', trigger: 'blur' }
+            { required: true, message: 'Handle Note is required', trigger: 'blur' }
           ],
           handleMan: [
-            { required: true, message: '处理人员不能为空', trigger: 'blur' }
+            { required: true, message: 'Handler is required', trigger: 'blur' }
           ],
           receiveMan: [
-            { required: true, message: '收货人不能为空', trigger: 'blur' }
+            { required: true, message: 'Receiver is required', trigger: 'blur' }
           ],
           receiveTime: [
-            { required: true, message: '收货时间不能为空', trigger: 'blur' }
+            { required: true, message: 'Receive Time is required', trigger: 'blur' }
           ],
           receiveNote: [
-            { required: true, message: '收货备注不能为空', trigger: 'blur' }
+            { required: true, message: 'Receive Note is required', trigger: 'blur' }
           ],
           receivePhone: [
-            { required: true, message: '收货电话不能为空', trigger: 'blur' }
+            { required: true, message: 'Receive Phone is required', trigger: 'blur' }
           ],
           companyAddress: [
-            { required: true, message: '公司收货地址不能为空', trigger: 'blur' }
+            { required: true, message: 'Company Address is required', trigger: 'blur' }
           ]
         }
       }
@@ -244,7 +244,7 @@
                 this.dataForm.skuPrice = data.orderReturnApply.skuPrice
                 this.dataForm.skuRealPrice = data.orderReturnApply.skuRealPrice
                 this.dataForm.reason = data.orderReturnApply.reason
-                this.dataForm.description述 = data.orderReturnApply.description述
+                this.dataForm.description = data.orderReturnApply.description
                 this.dataForm.descPics = data.orderReturnApply.descPics
                 this.dataForm.handleNote = data.orderReturnApply.handleNote
                 this.dataForm.handleMan = data.orderReturnApply.handleMan
@@ -258,7 +258,7 @@
           }
         })
       },
-      // 表单提交
+      // Form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
@@ -285,7 +285,7 @@
                 'skuPrice': this.dataForm.skuPrice,
                 'skuRealPrice': this.dataForm.skuRealPrice,
                 'reason': this.dataForm.reason,
-                'description述': this.dataForm.description述,
+                'description': this.dataForm.description,
                 'descPics': this.dataForm.descPics,
                 'handleNote': this.dataForm.handleNote,
                 'handleMan': this.dataForm.handleMan,
@@ -298,7 +298,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

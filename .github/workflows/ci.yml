@@ -1,0 +1,40 @@
+name: CI — unit tests
+
+on:
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'gulimall-*/**'
+      - 'gulimall-common/**'
+      - 'renren-fast/**'
+      - 'pom.xml'
+      - '.github/workflows/ci.yml'
+  push:
+    branches: [main, master]
+    paths:
+      - 'gulimall-*/**'
+      - 'gulimall-common/**'
+      - 'renren-fast/**'
+      - 'pom.xml'
+      - '.github/workflows/ci.yml'
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Run targeted unit tests
+        run: |
+          mvn -pl gulimall-common,gulimall-order -am test \
+            -Dtest=ProtectedCacheTest,IdempotencyServiceTest,OrderWorkflowServiceImplTest,StripePaymentServiceImplTest \
+            -Dsurefire.failIfNoSpecifiedTests=false

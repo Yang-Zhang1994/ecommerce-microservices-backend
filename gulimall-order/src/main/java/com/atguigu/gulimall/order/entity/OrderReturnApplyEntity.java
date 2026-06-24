@@ -96,9 +96,9 @@ public class OrderReturnApplyEntity implements Serializable {
     @Column(name = "reason")
     private String reason;
 
-    /** 描述 (DB column name preserved) */
-    @Column(name = "description述")
-    private String description述;
+    /** 描述 */
+    @Column(name = "description")
+    private String description;
 
     /** 凭证图片，以逗号隔开 */
     @Column(name = "desc_pics")

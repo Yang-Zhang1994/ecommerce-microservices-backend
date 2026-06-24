@@ -21,6 +21,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="searchSpuInfo">Query</el-button>
+            <el-button @click="queryAllSpuInfo">Query All</el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -33,7 +34,7 @@
 
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
-//例如：import 《组件名称》 from '《组件路径》';
+//例如：import 《组件Name》 from '《组件路径》';
 import CategoryCascader from "../common/category-cascader";
 import BrandSelect from "../common/brand-select";
 import Spuinfo from "./spuinfo";
@@ -64,8 +65,19 @@ export default {
   //方法集合
   methods: {
     searchSpuInfo() {
-      console.log("Search criteria", this.dataForm);
-      this.PubSub.publish("dataForm",this.dataForm);
+      this.PubSub.publish("dataForm", this.dataForm);
+    },
+    queryAllSpuInfo() {
+      this.catelogPath = [];
+      this.PubSub.publish("catPath", []);
+      this.PubSub.publish("brandId", 0);
+      this.dataForm = {
+        status: "",
+        key: "",
+        brandId: 0,
+        catelogId: 0
+      };
+      this.PubSub.publish("dataForm", this.dataForm);
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）

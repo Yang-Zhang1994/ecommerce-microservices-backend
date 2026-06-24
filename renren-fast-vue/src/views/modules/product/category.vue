@@ -1,9 +1,12 @@
 <template>
   <div>
-    <el-switch v-model="draggable" active-text="Enable Drag" inactive-text="Disable Drag"></el-switch>
-    <el-button v-if="draggable" @click="batchSave">Batch Save</el-button>
-    <el-button type="danger" @click="batchDelete">Batch Delete</el-button>
+    <div class="category-toolbar">
+      <el-switch v-model="draggable" active-text="Enable Drag" inactive-text="Disable Drag"></el-switch>
+      <el-button v-if="draggable" @click="batchSave">Batch Save</el-button>
+      <el-button type="danger" @click="batchDelete">Batch Delete</el-button>
+    </div>
     <el-tree
+      class="category-tree"
       :data="menus"
       :props="defaultProps"
       :expand-on-click-node="false"
@@ -16,7 +19,7 @@
       ref="menuTree"
     >
       <span class="custom-tree-node" slot-scope="{ node, data }">
-        <span>{{ (node.label || data.name || '').trim() || '(未命名)' }}</span>
+        <span>{{ (node.label || data.name || '').trim() || '(Unnamed)' }}</span>
         <span>
           <el-button
             v-if="node.level <=2"
@@ -62,7 +65,7 @@
 
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
-//例如：import 《组件名称》 from '《组件路径》';
+//例如：import 《组件Name》 from '《组件路径》';
 
 export default {
   //import引入的组件需要注入到对象中才能使用
@@ -107,7 +110,7 @@ export default {
         url: this.$http.adornUrl("/product/category/list/tree"),
         method: "get"
       }).then(({ data }) => {
-        console.log("成功获取到菜单数据...", data.data);
+        console.log("Success获取到菜单数据...", data.data);
         this.menus = data.data;
       });
     },
@@ -178,12 +181,12 @@ export default {
       //2、当前拖拽节点的最新顺序，
       for (let i = 0; i < siblings.length; i++) {
         if (siblings[i].data.catId == draggingNode.data.catId) {
-          //如果遍历的是当前正在拖拽的节点
+          //如果遍历的Yes当前正在拖拽的节点
           let catLevel = draggingNode.level;
           if (siblings[i].level != draggingNode.level) {
             //当前节点的层级发生变化
             catLevel = siblings[i].level;
-            //修改他子节点的层级
+            //Edit他子节点的层级
             this.updateChildNodeLevel(siblings[i]);
           }
           this.updateNodes.push({
@@ -212,7 +215,7 @@ export default {
         }
       }
     },
-    // 递归计算子树高度（局部逻辑，不影响全局状态）
+    // 递归计算子树高度（局部逻辑，不影响全局Status）
     calculateHeight(node) {
       let maxHeight = 1;
       if (node.children && node.children.length > 0) {
@@ -241,7 +244,7 @@ export default {
       return targetLevel + subTreeHeight <= 3;
     },
     edit(data) {
-      console.log("要修改的数据", data);
+      console.log("要Edit的数据", data);
       this.dialogType = "edit";
       this.title = "Edit Category";
       this.dialogVisible = true;
@@ -251,7 +254,7 @@ export default {
         url: this.$http.adornUrl(`/product/category/info/${data.catId}`),
         method: "get"
       }).then(({ data }) => {
-        //请求成功
+        //请求Success
         console.log("要回显的数据", data);
         this.category.name = data.data.name;
         this.category.catId = data.data.catId;
@@ -292,7 +295,7 @@ export default {
         this.editCategory();
       }
     },
-    //修改三级分类数据
+    //Edit三级分类数据
     editCategory() {
       var { catId, name, icon, productUnit } = this.category;
       this.$http({
@@ -314,7 +317,7 @@ export default {
     },
     //添加三级分类
     addCategory() {
-      console.log("提交的三级分类数据", this.category);
+      console.log("Submit的三级分类数据", this.category);
       this.$http({
         url: this.$http.adornUrl("/product/category/save"),
         method: "post",
@@ -376,5 +379,20 @@ export default {
   activated() {} //如果页面有keep-alive缓存功能，这个函数会触发
 };
 </script>
-<style scoped>
+<style scoped>
+.category-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.category-toolbar >>> .el-switch {
+  margin-right: 28px;
+}
+.category-toolbar .el-button + .el-button {
+  margin-left: 12px;
+}
+.category-tree {
+  margin-top: 4px;
+}
 </style>

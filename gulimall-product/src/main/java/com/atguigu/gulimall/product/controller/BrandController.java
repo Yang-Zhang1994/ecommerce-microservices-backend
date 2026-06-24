@@ -2,6 +2,7 @@ package com.atguigu.gulimall.product.controller;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.atguigu.common.valid.AddGroup;
@@ -58,6 +59,16 @@ public class BrandController {
 		BrandEntity brand = brandService.getById(brandId);
 
         return R.ok().put("brand", brand);
+    }
+
+    /**
+     * 批量查询品牌信息
+     * /product/brand/infos?brandIds=1&brandIds=2
+     */
+    @RequestMapping("/infos")
+    public R infos(@RequestParam("brandIds") List<Long> brandIds){
+        List<BrandEntity> brands = brandService.getBrandByIds(brandIds);
+        return R.ok().put("brands", brands);
     }
 
     /**

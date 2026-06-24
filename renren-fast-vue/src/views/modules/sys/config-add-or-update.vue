@@ -1,22 +1,22 @@
 <template>
   <el-dialog
-    :title="!dataForm.id ? '新增' : '修改'"
+    :title="!dataForm.id ? 'Add' : 'Edit'"
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-      <el-form-item label="参数名" prop="paramKey">
-        <el-input v-model="dataForm.paramKey" placeholder="参数名"></el-input>
+      <el-form-item label="Param Key" prop="paramKey">
+        <el-input v-model="dataForm.paramKey" placeholder="Param Key"></el-input>
       </el-form-item>
-      <el-form-item label="参数值" prop="paramValue">
-        <el-input v-model="dataForm.paramValue" placeholder="参数值"></el-input>
+      <el-form-item label="Param Value" prop="paramValue">
+        <el-input v-model="dataForm.paramValue" placeholder="Param Value"></el-input>
       </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
+      <el-form-item label="Remark" prop="remark">
+        <el-input v-model="dataForm.remark" placeholder="Remark"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button @click="visible = false">Cancel</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
     </span>
   </el-dialog>
 </template>
@@ -34,10 +34,10 @@
         },
         dataRule: {
           paramKey: [
-            { required: true, message: '参数名不能为空', trigger: 'blur' }
+            { required: true, message: 'Param Key is required', trigger: 'blur' }
           ],
           paramValue: [
-            { required: true, message: '参数值不能为空', trigger: 'blur' }
+            { required: true, message: 'Param Value is required', trigger: 'blur' }
           ]
         }
       }
@@ -63,7 +63,7 @@
           }
         })
       },
-      // 表单提交
+      // form submit
       dataFormSubmit () {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
@@ -79,7 +79,7 @@
             }).then(({data}) => {
               if (data && data.code === 0) {
                 this.$message({
-                  message: '操作成功',
+                  message: 'Operation successful',
                   type: 'success',
                   duration: 1500,
                   onClose: () => {

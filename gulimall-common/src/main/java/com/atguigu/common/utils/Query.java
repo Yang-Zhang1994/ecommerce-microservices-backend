@@ -31,6 +31,16 @@ public class Query<T> {
     }
 
     public Pageable getPageable(Map<String, Object> params, String defaultOrderField, boolean isAsc) {
+        Sort defaultSort = StringUtils.isNotEmpty(defaultOrderField)
+                ? (isAsc ? Sort.by(defaultOrderField).ascending() : Sort.by(defaultOrderField).descending())
+                : null;
+        return getPageable(params, defaultSort);
+    }
+
+    /**
+     * Stable list order when the client does not pass sidx/order (e.g. keep SPU row position after edit).
+     */
+    public Pageable getPageable(Map<String, Object> params, Sort defaultSort) {
         int page = 1;
         int limit = 10;
         if (params.get(Constant.PAGE) != null) {
@@ -45,9 +55,8 @@ public class Query<T> {
             Sort sort = Constant.ASC.equalsIgnoreCase(order) ? Sort.by(orderField).ascending() : Sort.by(orderField).descending();
             return PageRequest.of(page - 1, limit, sort);
         }
-        if (StringUtils.isNotEmpty(defaultOrderField)) {
-            Sort sort = isAsc ? Sort.by(defaultOrderField).ascending() : Sort.by(defaultOrderField).descending();
-            return PageRequest.of(page - 1, limit, sort);
+        if (defaultSort != null) {
+            return PageRequest.of(page - 1, limit, defaultSort);
         }
         return PageRequest.of(page - 1, limit);
     }

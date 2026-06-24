@@ -1,0 +1,12 @@
+# Copy to backend.tf and replace ACCOUNT_ID, or use:
+#   terraform init -backend-config="bucket=..." -backend-config="key=..."
+#
+terraform {
+  backend "s3" {
+    bucket         = "gulimall-terraform-state-REPLACE_ACCOUNT_ID"
+    key            = "environments/dev/alb-waf/terraform.tfstate"
+    region         = "us-west-2"
+    dynamodb_table = "terraform-locks"
+    encrypt        = true
+  }
+}

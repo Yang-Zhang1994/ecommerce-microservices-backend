@@ -1,0 +1,57 @@
+{{- if .Values.infra.jaeger.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger
+  labels:
+    app: jaeger
+    {{- include "gulimall.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaeger
+  template:
+    metadata:
+      labels:
+        app: jaeger
+    spec:
+      containers:
+        - name: jaeger
+          image: {{ .Values.infra.jaeger.image }}
+          env:
+            - name: COLLECTOR_OTLP_ENABLED
+              value: "true"
+          ports:
+            - name: ui
+              containerPort: 16686
+            - name: otlp-grpc
+              containerPort: 4317
+          readinessProbe:
+            httpGet:
+              path: /
+              port: ui
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger
+  labels:
+    app: jaeger
+spec:
+  type: {{ if .Values.kind.enabled }}NodePort{{ else }}ClusterIP{{ end }}
+  selector:
+    app: jaeger
+  ports:
+    - name: ui
+      port: 16686
+      targetPort: ui
+      {{- if and .Values.kind.enabled .Values.kind.jaegerUiNodePort }}
+      nodePort: {{ .Values.kind.jaegerUiNodePort }}
+      {{- end }}
+    - name: otlp-grpc
+      port: 4317
+      targetPort: otlp-grpc
+{{- end }}

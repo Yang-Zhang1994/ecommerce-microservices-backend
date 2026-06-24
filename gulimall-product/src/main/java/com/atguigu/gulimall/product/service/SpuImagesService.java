@@ -26,5 +26,9 @@ public interface SpuImagesService {
     PageUtils queryPage(Map<String, Object> params);
 
     void saveImages(Long id, List<Images> images);
+
+    List<SpuImagesEntity> listBySpuId(Long spuId);
+
+    void saveBatchForSpu(Long spuId, List<SpuImagesEntity> images);
 }
 

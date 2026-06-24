@@ -1,0 +1,45 @@
+# Copy to import.tf for one-time import (Terraform >= 1.5).
+# Fill IDs from console, then: terraform plan -generate-config-out=generated.tf (optional)
+#   terraform apply
+#
+# Remove or comment import blocks after resources are in state and plan is clean.
+
+import {
+  to = module.alb.aws_lb.this
+  id = "arn:aws:elasticloadbalancing:us-west-2:ACCOUNT_ID:loadbalancer/app/ALB_NAME/ALB_ID_SUFFIX"
+}
+
+import {
+  to = module.alb.aws_lb_target_group.gateway
+  id = "arn:aws:elasticloadbalancing:us-west-2:ACCOUNT_ID:targetgroup/ecommerce-gateway-tg/TG_ID_SUFFIX"
+}
+
+# HTTPS listener (if exists) — get ARN from ALB → Listeners
+import {
+  to = module.alb.aws_lb_listener.https[0]
+  id = "arn:aws:elasticloadbalancing:us-west-2:ACCOUNT_ID:listener/app/ALB_NAME/ALB_ID_SUFFIX/LISTENER_ID_SUFFIX"
+}
+
+# HTTP redirect or forward listener — adjust index [0] to match module (https vs http_forward vs http_redirect)
+# import {
+#   to = module.alb.aws_lb_listener.http_redirect[0]
+#   id = "arn:aws:elasticloadbalancing:us-west-2:ACCOUNT_ID:listener/app/..."
+# }
+
+# WAF Web ACL: id format is NAME/ID/REGIONAL (from WAF console → Web ACL → top)
+import {
+  to = module.waf.aws_wafv2_web_acl.this
+  id = "REPLACE_WEB_ACL_NAME/REPLACE_WEB_ACL_ID/REGIONAL"
+}
+
+# Association: import id is "WEB_ACL_ARN,ALB_ARN"
+import {
+  to = module.waf.aws_wafv2_web_acl_association.alb
+  id = "arn:aws:wafv2:us-west-2:ACCOUNT_ID:regional/webacl/REPLACE/REPLACE,arn:aws:elasticloadbalancing:us-west-2:ACCOUNT_ID:loadbalancer/app/..."
+}
+
+# Per-instance TG attachment (repeat or use terraform import CLI)
+# import {
+#   to = module.alb.aws_lb_target_group_attachment.gateway["i-INSTANCE_ID"]
+#   id = "arn:aws:elasticloadbalancing:...:targetgroup/ecommerce-gateway-tg/.../i-INSTANCE_ID"
+# }

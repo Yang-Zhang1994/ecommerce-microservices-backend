@@ -11,6 +11,8 @@
       </el-form-item>
     </el-form>
     <el-table
+      class="admin-table-wide admin-word-table"
+      :fit="false"
       :data="dataList"
       border
       v-loading="dataListLoading"
@@ -26,88 +28,110 @@
         prop="id"
         header-align="center"
         align="center"
+        min-width="72"
         label="id">
       </el-table-column>
       <el-table-column
         prop="orderId"
         header-align="center"
         align="center"
+        min-width="100"
         label="order_id">
       </el-table-column>
       <el-table-column
         prop="orderSn"
         header-align="center"
         align="center"
+        min-width="120"
         label="order_sn">
       </el-table-column>
       <el-table-column
         prop="consignee"
         header-align="center"
         align="center"
+        min-width="110"
         label="Consignee">
       </el-table-column>
       <el-table-column
         prop="consigneeTel"
         header-align="center"
         align="center"
+        min-width="140"
         label="Consignee Phone">
       </el-table-column>
       <el-table-column
         prop="deliveryAddress"
         header-align="center"
         align="center"
+        min-width="150"
         label="Delivery Address">
       </el-table-column>
       <el-table-column
         prop="orderComment"
         header-align="center"
         align="center"
+        min-width="130"
         label="Order Remarks">
       </el-table-column>
       <el-table-column
         prop="paymentWay"
         header-align="center"
         align="center"
+        min-width="150"
         label="Payment Method">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.payment==1">Online Payment</el-tag>
-          <el-tag v-if="scope.row.payment==2">Cash on Delivery</el-tag>
+          <el-tag v-if="scope.row.paymentWay === 1" type="success">Online Payment</el-tag>
+          <el-tag v-else-if="scope.row.paymentWay === 2" type="warning">Cash on Delivery</el-tag>
+          <span v-else-if="scope.row.paymentWay == null || scope.row.paymentWay === ''">—</span>
+          <el-tag v-else type="info">{{ formatPaymentWay(scope.row.paymentWay) }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column
         prop="taskStatus"
         header-align="center"
         align="center"
+        min-width="185"
         label="Task Status">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.taskStatus != null && scope.row.taskStatus !== ''" :type="taskStatusTagType(scope.row.taskStatus)">
+            {{ formatTaskStatus(scope.row.taskStatus) }}
+          </el-tag>
+          <span v-else>—</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="orderBody"
         header-align="center"
         align="center"
+        min-width="150"
         label="Order Description">
       </el-table-column>
       <el-table-column
         prop="trackingNo"
         header-align="center"
         align="center"
+        min-width="140"
         label="Tracking Number">
       </el-table-column>
       <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
+        min-width="168"
         label="create_time">
       </el-table-column>
       <el-table-column
         prop="wareId"
         header-align="center"
         align="center"
+        min-width="120"
         label="Warehouse ID">
       </el-table-column>
       <el-table-column
         prop="taskComment"
         header-align="center"
         align="center"
+        min-width="130"
         label="Task Remarks">
       </el-table-column>
       <el-table-column
@@ -138,6 +162,7 @@
 
 <script>
   import AddOrUpdate from './wareordertask-add-or-update'
+  import { formatPaymentWay, formatTaskStatus, taskStatusTagType } from './ware-order-task-meta'
   export default {
     data () {
       return {
@@ -160,6 +185,9 @@
       this.getDataList()
     },
     methods: {
+      formatPaymentWay,
+      formatTaskStatus,
+      taskStatusTagType,
       // Get data list
       getDataList () {
         this.dataListLoading = true

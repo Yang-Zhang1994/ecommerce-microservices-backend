@@ -1,34 +1,37 @@
 <template>
   <div class="mod-config">
     <el-dialog
-      :title="!dataForm.id ? '新增' : '修改'"
+      class="coupon-marketing-dialog"
+      width="600px"
+      :title="!dataForm.id ? 'Add' : 'Edit'"
       :close-on-click-modal="false"
       :visible.sync="visible"
       :append-to-body="true"
     >
       <el-form
+        class="coupon-marketing-form"
         :model="dataForm"
         :rules="dataRule"
         ref="dataForm"
         @keyup.enter.native="dataFormSubmit()"
-        label-width="120px"
+        label-width="260px"
       >
         <el-form-item label="spu_id" prop="skuId">
           <el-input v-model="dataForm.skuId" placeholder="spu_id"></el-input>
         </el-form-item>
-        <el-form-item label="满多少" prop="fullPrice">
-          <el-input v-model="dataForm.fullPrice" placeholder="满多少"></el-input>
+        <el-form-item label="Full Amount" prop="fullPrice">
+          <el-input v-model="dataForm.fullPrice" placeholder="Full Amount"></el-input>
         </el-form-item>
-        <el-form-item label="减多少" prop="reducePrice">
-          <el-input v-model="dataForm.reducePrice" placeholder="减多少"></el-input>
+        <el-form-item label="Reduce Amount" prop="reducePrice">
+          <el-input v-model="dataForm.reducePrice" placeholder="Reduce Amount"></el-input>
         </el-form-item>
-        <el-form-item label="是否参与其他优惠" prop="addOther">
-          <el-input v-model="dataForm.addOther" placeholder="是否参与其他优惠"></el-input>
+        <el-form-item label="Other Promotions" prop="addOther">
+          <el-input v-model="dataForm.addOther" placeholder="0 = no, 1 = yes"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+        <el-button @click="visible = false">Cancel</el-button>
+        <el-button type="primary" @click="dataFormSubmit()">Confirm</el-button>
       </span>
     </el-dialog>
   </div>
@@ -47,17 +50,17 @@ export default {
         addOther: ""
       },
       dataRule: {
-        skuId: [{ required: true, message: "spu_id不能为空", trigger: "blur" }],
+        skuId: [{ required: true, message: 'SPU ID is required', trigger: "blur" }],
         fullPrice: [
-          { required: true, message: "满多少不能为空", trigger: "blur" }
+          { required: true, message: 'Full Amount is required', trigger: "blur" }
         ],
         reducePrice: [
-          { required: true, message: "减多少不能为空", trigger: "blur" }
+          { required: true, message: 'Reduce Amount is required', trigger: "blur" }
         ],
         addOther: [
           {
             required: true,
-            message: "是否参与其他优惠不能为空",
+            message: 'Other Promotions is required',
             trigger: "blur"
           }
         ]
@@ -88,7 +91,7 @@ export default {
         }
       });
     },
-    // 表单提交
+    // form submit
     dataFormSubmit() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
@@ -109,7 +112,7 @@ export default {
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
+                message: "Operation successful",
                 type: "success",
                 duration: 1500,
                 onClose: () => {

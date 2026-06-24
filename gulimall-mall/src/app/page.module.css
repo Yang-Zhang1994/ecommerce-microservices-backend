@@ -1,0 +1,127 @@
+.heroStrip {
+  background: linear-gradient(135deg, #fff 0%, #fef2f2 100%);
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+}
+
+.heroStrip h1 {
+  font-size: 24px;
+  margin-bottom: 6px;
+  color: #18181b;
+}
+
+.heroStrip p {
+  color: #52525b;
+  margin-bottom: 16px;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.primaryBtn {
+  background: var(--mall-brand, #c81623);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.primaryBtn:hover {
+  background: #a6121c;
+}
+
+.secondaryBtn {
+  border: 1px solid #d4d4d8;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.secondaryBtn:hover {
+  border-color: var(--mall-brand, #c81623);
+  color: var(--mall-brand, #c81623);
+}
+
+/* Category column + featured products */
+.mainRow {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+  align-items: start;
+  position: relative;
+  z-index: 1;
+}
+
+.categoryAside {
+  background: linear-gradient(180deg, #52525b 0%, #3f3f46 100%);
+  border-radius: 12px;
+  position: relative;
+  z-index: 5;
+  min-height: 420px;
+  border: 1px solid #71717a;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
+}
+
+.featuredMain {
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.bottomSection {
+  margin-top: 24px;
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .mainRow {
+    grid-template-columns: 1fr;
+  }
+
+  .categoryAside {
+    min-height: 320px;
+  }
+}
+
+.sectionHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+
+.sectionHead h2 {
+  font-size: 20px;
+}
+
+.sectionHead a {
+  font-size: 14px;
+  color: var(--mall-brand, #c81623);
+}
+
+.grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.error {
+  color: #b91c1c;
+  margin-bottom: 16px;
+}
+
+.empty {
+  color: #71717a;
+  padding: 24px;
+  text-align: center;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e4e4e7;
+}

@@ -33,18 +33,24 @@
         prop="username"
         header-align="center"
         align="center"
+        min-width="120"
+        show-overflow-tooltip
         label="Username">
       </el-table-column>
       <el-table-column
         prop="email"
         header-align="center"
         align="center"
+        min-width="200"
+        show-overflow-tooltip
         label="Email">
       </el-table-column>
       <el-table-column
         prop="mobile"
         header-align="center"
         align="center"
+        min-width="130"
+        show-overflow-tooltip
         label="Phone">
       </el-table-column>
       <el-table-column
@@ -114,7 +120,7 @@
       this.getDataList()
     },
     methods: {
-      // 获取数据列表
+      // Load data list
       getDataList () {
         this.dataListLoading = true
         this.$http({
@@ -140,29 +146,29 @@
           this.dataListLoading = false
         })
       },
-      // 每页数
+      // Page size
       sizeChangeHandle (val) {
         this.pageSize = val
         this.pageIndex = 1
         this.getDataList()
       },
-      // 当前页
+      // Current page
       currentChangeHandle (val) {
         this.pageIndex = val
         this.getDataList()
       },
-      // 多选
+      // Multi-select
       selectionChangeHandle (val) {
         this.dataListSelections = val
       },
-      // 新增 / 修改
+      // Add / Edit
       addOrUpdateHandle (id) {
         this.addOrUpdateVisible = true
         this.$nextTick(() => {
           this.$refs.addOrUpdate.init(id)
         })
       },
-      // 删除
+      // Delete
       deleteHandle (id) {
         var userIds = id ? [id] : this.dataListSelections.map(item => {
           return item.userId

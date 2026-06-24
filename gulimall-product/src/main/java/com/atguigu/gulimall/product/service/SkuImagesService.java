@@ -30,6 +30,11 @@ public interface SkuImagesService {
     List<SkuImagesEntity> listBySkuId(Long skuId);
 
     /**
+     * Same as {@link #listBySkuId(Long)}; name aligned with typical course / MyBatis naming (getImagesBySkuId).
+     */
+    List<SkuImagesEntity> getImagesBySkuId(Long skuId);
+
+    /**
      * Replace all images of a SKU with the given list.
      */
     void saveBatchForSku(Long skuId, List<SkuImagesEntity> images);

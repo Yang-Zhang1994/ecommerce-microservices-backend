@@ -3,8 +3,8 @@
     <div class="site-content__wrapper">
       <div class="site-content">
         <div class="brand-info">
-          <h2 class="brand-info__text">Backend Management System</h2>
-          <p class="brand-info__intro">E-commerce backend with Spring Cloud and Vue.js — product, order, member, and inventory in one place.</p>
+          <h2 class="brand-info__text">{{ adminBrand }} Admin</h2>
+          <p class="brand-info__intro">Manage products, orders, members, and inventory for the GrainMart storefront.</p>
         </div>
         <div class="login-main">
           <h3 class="login-title">Admin Login</h3>
@@ -22,7 +22,7 @@
                   </el-input>
                 </el-col>
                 <el-col :span="10" class="login-captcha">
-                  <img :src="captchaPath" @click="getCaptcha()" alt="">
+                  <img :key="captchaPath" :src="captchaPath" @click="getCaptcha()" alt="" title="Click to refresh">
                 </el-col>
               </el-row>
             </el-form-item>
@@ -38,9 +38,12 @@
 
 <script>
   import { getUUID } from '@/utils'
+  import { setToken } from '@/utils/authToken'
+  import { ADMIN_BRAND } from '@/constants/brand'
   export default {
     data () {
       return {
+        adminBrand: ADMIN_BRAND,
         dataForm: {
           userName: '',
           password: '',
@@ -78,22 +81,31 @@
                 'uuid': this.dataForm.uuid,
                 'captcha': this.dataForm.captcha
               })
-            }).then(({data}) => {
-              if (data && data.code === 0) {
-                this.$cookie.set('token', data.token)
-                this.$router.replace({ name: 'home' })
+            }).then(({ data }) => {
+              const ok = data && Number(data.code) === 0
+              const token = (data && (data.token || (data.data && data.data.token))) || ''
+              if (ok && token) {
+                setToken(token)
+                // 等存储写入后再进需鉴权路由，避免守卫里读不到 token 被立即打回登录页
+                this.$nextTick(() => {
+                  this.$router.replace({ name: 'home' }).catch(() => {})
+                })
               } else {
                 this.getCaptcha()
-                this.$message.error(data.msg)
+                this.$message.error((data && data.msg) || (ok ? 'Login succeeded but no token returned; check gateway/backend' : 'Login failed'))
               }
+            }).catch(() => {
+              this.getCaptcha()
+              this.$message.error('Network error. Please try again later.')
             })
           }
         })
       },
-      // get captcha
+      // 与登录等接口一致走 /api（devServer 代理到网关）；勿硬编码 88，kind 本地网关为 3088
       getCaptcha () {
         this.dataForm.uuid = getUUID()
-        this.captchaPath = this.$http.adornUrl(`/captcha.jpg?uuid=${this.dataForm.uuid}`)
+        const q = `uuid=${this.dataForm.uuid}&_t=${Date.now()}`
+        this.captchaPath = this.$http.adornUrl(`/captcha.jpg?${q}`)
       }
     }
   }

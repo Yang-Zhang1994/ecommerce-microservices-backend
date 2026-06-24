@@ -1,0 +1,13 @@
+# 1) 本机浏览器访问：解析到回环
+#    macOS/Linux 追加 hosts（需管理员密码）：
+#    sudo sh -c 'grep -q "auth.ecommerce.com" /etc/hosts || echo "127.0.0.1 auth.ecommerce.com" >> /etc/hosts'
+#
+# 2) 手机/局域网其它设备访问：把 127.0.0.1 换成你电脑的局域网 IP，例如：
+#    192.168.1.10 auth.ecommerce.com
+#
+# 3) 仅 Next：npm run dev 后访问 http://auth.ecommerce.com:3001/login
+# 4) Nginx 动静分离（docker gulimall-frontend 映射 80）：hosts 指向本机后访问
+#    http://auth.ecommerce.com/login  或  http://ecommerce.com/login
+#    静态 /auth/** 由 Nginx 直出；/api/** 反代网关（需 compose 挂载 gulimall-mall/public）
+
+127.0.0.1 ecommerce.com www.ecommerce.com auth.ecommerce.com

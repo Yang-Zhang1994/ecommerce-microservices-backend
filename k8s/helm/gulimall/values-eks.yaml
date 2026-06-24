@@ -1,0 +1,111 @@
+# EKS overrides — full mall stack (us-west-2).
+hpa:
+  enabled: true
+
+global:
+  imagePullPolicy: IfNotPresent
+  imageRegistry: "466297333400.dkr.ecr.us-west-2.amazonaws.com"
+  springProfilesActive: prod
+  jvmOpts: "-Xms256m -Xmx512m"
+  deploymentStrategy: RollingUpdate
+
+kind:
+  enabled: false
+
+infra:
+  elasticsearch:
+    enabled: true
+    javaOpts: "-Xms128m -Xmx256m"
+
+ingress:
+  enabled: true
+  className: alb
+  host: www.yangzhangtech.online
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /actuator/health
+    alb.ingress.kubernetes.io/healthcheck-port: "88"
+    # Set at deploy time from terraform output certificate_arn_in_use (see eks-up.sh)
+    alb.ingress.kubernetes.io/certificate-arn: ""
+
+images:
+  gateway:
+    tag: latest
+  auth-server:
+    tag: latest
+  product:
+    tag: latest
+  member:
+    tag: latest
+  cart:
+    tag: latest
+  order:
+    tag: latest
+  ware:
+    tag: latest
+  coupon:
+    tag: latest
+  search:
+    tag: latest
+  seckill:
+    tag: latest
+  third-party:
+    tag: latest
+  renren-fast:
+    tag: latest
+
+apps:
+  gateway:
+    replicas: 2
+    probeDelay: 90
+    resources:
+      requests:
+        cpu: 300m
+        memory: 640Mi
+      limits:
+        cpu: "1"
+        memory: 1024Mi
+    hpa:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 70
+    extraEnv:
+      GULIMALL_PRODUCT_URI: http://gulimall-product:10000
+      GULIMALL_SEARCH_URI: http://gulimall-search:12001
+      GULIMALL_CART_URI: http://gulimall-cart:13000
+      GULIMALL_ORDER_URI: http://gulimall-order:9000
+      GULIMALL_AUTH_URI: lb://gulimall-auth-server
+      RENREN_FAST_URI: http://renren-fast:8080
+  product:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: "1"
+        memory: 896Mi
+    hpa:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 70
+  auth-server:
+    googleOAuth: true
+    extraEnv:
+      GULIMALL_AUTH_SMS_PHONE_REGION: NANP
+      GULIMALL_GOOGLE_REDIRECT_URI: https://www.yangzhangtech.online/api/auth/login/oauth2/code/{registrationId}
+      GULIMALL_OAUTH2_SUCCESS_URL: https://mall.yangzhangtech.online/
+      GULIMALL_OAUTH2_FAILURE_URL: https://mall.yangzhangtech.online/login?error
+  # Flash sale needs extra RAM; enable when node pool is 3+ large instances
+  seckill:
+    enabled: false
+  renren-fast:
+    enabled: true
+
+secrets:
+  gulimallMallPublicOrigin: https://mall.yangzhangtech.online
+  gulimallSessionCookieDomain: .yangzhangtech.online
+  gulimallSessionCookieSecure: "true"

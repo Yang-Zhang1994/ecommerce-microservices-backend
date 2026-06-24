@@ -216,7 +216,7 @@
                       v-for="(img,index) in spu.images"
                       :key="index"
                     >
-                      <img :src="img" style="width:160px;height:120px" />
+                      <span class="admin-img admin-img--lg" style="width:100%;height:120px;"><img :src="img" alt="" /></span>
                       <div style="padding: 14px;">
                         <el-row>
                           <el-col :span="12">
@@ -345,7 +345,7 @@
 
 <script>
 //这里可以导入其他文件（比如：组件，工具js，第三方插件js，json文件，图片文件等等）
-//例如：import 《组件名称》 from '《组件路径》';
+//例如：import 《组件Name》 from '《组件路径》';
 import CategoryCascader from "../common/category-cascader";
 import BrandSelect from "../common/brand-select";
 import MultiUpload from "@/components/upload/multiUpload";
@@ -580,13 +580,13 @@ export default {
           };
           attrArray.push(saleAttrItem);
         });
-        //先初始化几个images，后面的上传还要加
+        //先初始化几个images，后面的Upload还要加
         let imgs = [];
         this.spu.images.forEach((img, idx) => {
           imgs.push({ imgUrl: "", defaultImg: 0 });
         });
 
-        //会员价，也必须在循环里面生成，否则会导致数据绑定问题
+        //会员价，也必须在循环里面生成，No则会导致数据绑定问题
         let memberPrices = [];
         if (this.dataResp.memberLevels.length > 0) {
           for (let i = 0; i < this.dataResp.memberLevels.length; i++) {
@@ -625,7 +625,7 @@ export default {
       this.spu.skus = skus;
       console.log("结果!!!", this.spu.skus, this.dataResp.tableAttrColumn);
     },
-    //判断如果包含之前的sku的descar组合，就返回这个sku的详细信息；
+    //判断如果包含之前的sku的descar组合，就Back这个sku的详细信息；
     hasAndReturnSku(skus, descar) {
       let res = null;
       if (skus.length > 0) {
@@ -647,11 +647,15 @@ export default {
           method: "get",
           params: this.$http.adornParams({
             page: 1,
-            limit: 500
+            limit: 500,
+            enable: 1
           })
         }).then(({ data }) => {
-          this.dataResp.saleAttrs = data.page.list;
-          data.page.list.forEach(item => {
+          const enabled = (data.page.list || []).filter(
+            (item) => item.enable === 1 || item.enable === "1"
+          );
+          this.dataResp.saleAttrs = enabled;
+          enabled.forEach(item => {
             this.dataResp.tempSaleAttrs.push({
               attrId: item.attrId,
               attrValues: [],
@@ -717,7 +721,7 @@ export default {
             } else {
               this.$message({
                 type: "error",
-                message: "保存失败，原因【" + data.msg + "】"
+                message: "Save failed: " + (data.msg || "Unknown error")
               });
             }
           });
@@ -726,7 +730,7 @@ export default {
           console.log(e);
           this.$message({
             type: "info",
-            message: "已取消"
+            message: "Cancelled"
           });
         });
     },
@@ -740,7 +744,7 @@ export default {
       var tempCount = 0;
       var temp = [];
 
-      //根据参数列生成指针对象
+      //根据Parameters列生成指针对象
       for (var index in list) {
         if (typeof list[index] == "object") {
           point[index] = { parent: pIndex, count: 0 };
@@ -748,7 +752,7 @@ export default {
         }
       }
 
-      //单维度数据结构直接返回
+      //单维度数据结构直接Back
       if (pIndex == null) {
         return list;
       }

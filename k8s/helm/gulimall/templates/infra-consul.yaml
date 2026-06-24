@@ -1,0 +1,50 @@
+{{- if .Values.infra.consul.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: consul
+  labels:
+    app: consul
+    {{- include "gulimall.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: consul
+  template:
+    metadata:
+      labels:
+        app: consul
+    spec:
+      containers:
+        - name: consul
+          image: {{ .Values.infra.consul.image }}
+          args:
+            - agent
+            - -server
+            - -ui
+            - -bootstrap-expect=1
+            - -client=0.0.0.0
+          ports:
+            - name: http
+              containerPort: 8500
+          readinessProbe:
+            exec:
+              command: ["consul", "members"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consul
+  labels:
+    app: consul
+spec:
+  selector:
+    app: consul
+  ports:
+    - name: http
+      port: 8500
+      targetPort: 8500
+{{- end }}

@@ -1,0 +1,39 @@
+/* Overrides shop.css fixed width/height on .probox img and thumbs */
+.root :global(.probox) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  box-sizing: border-box;
+}
+
+.root :global(.probox) :global(.img1) {
+  max-width: calc(100% - 8px);
+  max-height: calc(100% - 8px);
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain;
+}
+
+.thumbBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.thumbImg {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.root :global(.boxx-one) {
+  display: none;
+}

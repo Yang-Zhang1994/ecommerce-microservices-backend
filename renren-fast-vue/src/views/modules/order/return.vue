@@ -11,6 +11,7 @@
       </el-form-item>
     </el-form>
     <el-table
+      class="admin-table-ellipsis"
       :data="dataList"
       border
       v-loading="dataListLoading"
@@ -110,6 +111,8 @@
         prop="skuAttrsVals"
         header-align="center"
         align="center"
+        min-width="140"
+        show-overflow-tooltip
         label="Product Sales Attributes (JSON)">
       </el-table-column>
       <el-table-column
@@ -137,15 +140,19 @@
         label="Reason">
       </el-table-column>
       <el-table-column
-        prop="description述"
+        prop="description"
         header-align="center"
         align="center"
+        min-width="120"
+        show-overflow-tooltip
         label="Description">
       </el-table-column>
       <el-table-column
         prop="descPics"
         header-align="center"
         align="center"
+        min-width="140"
+        show-overflow-tooltip
         label="Evidence Images (comma separated)">
       </el-table-column>
       <el-table-column

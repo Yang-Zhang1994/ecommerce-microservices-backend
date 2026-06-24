@@ -1,0 +1,6 @@
+apiVersion: v2
+name: gulimall
+description: Gulimall P0 stack for kind and EKS (gateway, order, ware, tracing)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

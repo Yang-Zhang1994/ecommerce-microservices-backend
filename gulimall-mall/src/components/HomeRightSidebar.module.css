@@ -1,0 +1,192 @@
+.homeRightSidebar {
+  width: 190px;
+  min-width: 120px;
+  flex-shrink: 0;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.userBox {
+  padding: 0 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.userInfo {
+  padding: 15px 0 4px 54px;
+  position: relative;
+}
+
+.userAvatar {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  width: 44px;
+  height: 44px;
+}
+
+.userAvatar img {
+  display: block;
+  width: 44px;
+  height: 44px;
+}
+
+.userText p {
+  color: #666;
+  font-size: 12px;
+  margin: 0;
+  margin-top: 4px;
+}
+
+.userText p a {
+  color: #666;
+  margin-right: 8px;
+}
+
+.userText p a:hover {
+  color: #e01222;
+}
+
+.userLinks {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.userLinks a {
+  display: inline-block;
+  padding: 0 8px;
+  height: 24px;
+  line-height: 22px;
+  border: 2px solid #e01222;
+  font-size: 12px;
+  text-align: center;
+  color: #e01222;
+}
+
+.userLinks a:hover {
+  background: #e01222;
+  color: #fff;
+}
+
+.promoBox {
+  padding: 0 15px;
+  padding-bottom: 12px;
+}
+
+.promoTabs {
+  border-bottom: 1px solid #e6e6e6;
+  line-height: 23px;
+  height: 23px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.promoTabs p {
+  margin: 0;
+  font-size: 12px;
+  padding: 0 10px;
+  border-right: 1px solid #dfe0e1;
+}
+
+.promoTabs p:last-of-type {
+  border-right: 0;
+}
+
+.promoTabs p a {
+  color: #000;
+}
+
+.promoTabs p.active {
+  padding-bottom: 2px;
+  border-bottom: 2px solid #c81623;
+}
+
+.promoTabs .more {
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: #000;
+  font-size: 12px;
+}
+
+.promoTabs .more:hover {
+  color: #c81623;
+}
+
+.promoList {
+  padding: 12px 0 0;
+}
+
+.promoList ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.promoList li {
+  line-height: 24px;
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.promoList li a {
+  color: #666;
+  font-size: 12px;
+}
+
+.promoList li a:hover {
+  color: #f10215;
+}
+
+.serviceIcons {
+  padding: 15px 0;
+  border-top: 1px solid #e7e7e7;
+}
+
+.serviceIcons ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  margin: -1px 0 0 -1px;
+}
+
+.serviceIcons li {
+  width: 47px;
+  height: 69px;
+  padding-top: 15px;
+  border-top: 1px solid #e7e7e7;
+  border-left: 1px solid #e7e7e7;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.serviceIcons li a {
+  display: block;
+  padding-top: 8px;
+  color: #666;
+  font-size: 12px;
+}
+
+.serviceIcons li a img {
+  width: 24px;
+  height: 24px;
+  display: block;
+  margin: 0 auto 6px;
+}
+
+.serviceIcons li a span {
+  display: block;
+  line-height: 22px;
+}
+
+.serviceIcons li a:hover span {
+  color: #e01222;
+}

@@ -362,3 +362,68 @@ img {
   vertical-align: middle;
   margin-right: 5px;
 }
+
+// Admin tables: wrap headers so labels are not clipped; body wraps at word boundaries.
+.mod-config .el-table,
+.mod-user .el-table {
+  th > .cell {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: 1.35;
+    padding: 8px 10px;
+  }
+
+  td > .cell {
+    word-break: normal;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    white-space: normal;
+    line-height: 1.45;
+    padding: 8px 12px;
+  }
+
+  th.table-cell--nowrap > .cell,
+  td.table-cell--nowrap > .cell {
+    white-space: nowrap;
+  }
+}
+
+// Wide tables (many columns): content-based width + horizontal scroll, no center gap.
+.mod-config .admin-table-wide.el-table,
+.admin-word-table.el-table {
+  overflow-x: auto;
+
+  th > .cell {
+    overflow: visible;
+    text-overflow: clip;
+  }
+}
+
+// Order/payment admin lists: wrap long headers; ellipsis body cells; horizontal scroll.
+.mod-config .admin-table-ellipsis.el-table {
+  overflow-x: auto;
+
+  th > .cell {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.35;
+    padding: 8px 10px;
+  }
+
+  td > .cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: normal;
+    overflow-wrap: normal;
+    max-width: 280px;
+  }
+}

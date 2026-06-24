@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.criteria.Predicate;
 import java.util.List;
@@ -60,8 +62,9 @@ public class CategoryBrandRelationServiceImpl implements CategoryBrandRelationSe
     }
 
     @Override
+    @Transactional(readOnly = true)
     public PageUtils queryPage(Map<String, Object> params) {
-        Pageable pageable = new Query<CategoryBrandRelationEntity>().getPageable(params);
+        Pageable pageable = new Query<CategoryBrandRelationEntity>().getPageable(params, Sort.by("id").ascending());
         Page<CategoryBrandRelationEntity> page = relationRepository.findAll(pageable);
         return new PageUtils(page);
     }

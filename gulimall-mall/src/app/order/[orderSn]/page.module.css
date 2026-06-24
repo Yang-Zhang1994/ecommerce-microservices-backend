@@ -1,0 +1,202 @@
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  max-width: 1060px;
+  margin: 0 auto;
+}
+
+.head {
+  padding: 18px 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  color: #0f172a;
+}
+
+.subtitle {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.metaRow {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+  color: #475569;
+}
+
+.orderSn {
+  font-family: ui-monospace, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  color: #0369a1;
+  font-weight: 700;
+}
+
+.statusPaid,
+.statusPending,
+.statusClosed {
+  font-weight: 700;
+}
+
+.statusPaid {
+  color: #16a34a;
+}
+
+.statusPending {
+  color: #d97706;
+}
+
+.statusClosed {
+  color: #64748b;
+}
+
+.block {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.block h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
+  color: #0f172a;
+}
+
+.address {
+  margin: 0;
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.itemsTable {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.itemsHead,
+.itemRow {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 70px 110px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.itemsHead {
+  font-size: 12px;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 8px;
+}
+
+.itemRow {
+  border-bottom: 1px solid #f8fafc;
+}
+
+.itemRow:last-child {
+  border-bottom: none;
+}
+
+.itemMain {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.itemMain img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  flex-shrink: 0;
+}
+
+.itemImgPlaceholder {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #f4f4f5;
+  flex-shrink: 0;
+}
+
+.itemMain p {
+  margin: 0;
+  font-size: 14px;
+  color: #0f172a;
+}
+
+.itemMain small {
+  display: block;
+  margin-top: 4px;
+  color: #64748b;
+}
+
+.amountGrid {
+  display: grid;
+  gap: 8px;
+  max-width: 360px;
+  font-size: 14px;
+  color: #334155;
+}
+
+.amountRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.amountRow strong {
+  color: #0f172a;
+}
+
+.payTotal {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  padding-top: 8px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.paymentLine {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: #334155;
+}
+
+.actions {
+  padding: 16px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn {
+  display: inline-block;
+  text-decoration: none;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  border-radius: 8px;
+  font-size: 14px;
+  padding: 8px 14px;
+  background: #fff;
+}
+
+.btnPrimary {
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+.empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: #64748b;
+}

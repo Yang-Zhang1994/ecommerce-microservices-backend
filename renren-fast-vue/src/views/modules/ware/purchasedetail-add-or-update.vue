@@ -22,14 +22,14 @@
           <el-option :label="w.name" :value="w.id" v-for="w in wareList" :key="w.id"></el-option>
         </el-select>
       </el-form-item>
-      <!-- [0新建，1已分配，2正在采购，3已完成，4采购失败] -->
-      <!-- <el-form-item label="状态" prop="status">
+      <!-- [0New，1Assigned，2In progress，3Completed，4Purchase failed] -->
+      <!-- <el-form-item label="Status" prop="status">
         <el-select v-model="dataForm.status" placeholder="Select status" clearable>
-          <el-option label="新建" :value="0"></el-option>
-          <el-option label="已分配" :value="1"></el-option>
-          <el-option label="正在采购" :value="2"></el-option>
-          <el-option label="已完成" :value="3"></el-option>
-          <el-option label="采购失败" :value="4"></el-option>
+          <el-option label="New" :value="0"></el-option>
+          <el-option label="Assigned" :value="1"></el-option>
+          <el-option label="In progress" :value="2"></el-option>
+          <el-option label="Completed" :value="3"></el-option>
+          <el-option label="Purchase failed" :value="4"></el-option>
         </el-select>
       </el-form-item>-->
     </el-form>
@@ -57,12 +57,12 @@ export default {
       },
       dataRule: {
         skuId: [
-          { required: true, message: "Purchase Product ID is required", trigger: "blur" }
+          { required: true, message: 'Purchase Product ID is required', trigger: "blur" }
         ],
         skuNum: [
-          { required: true, message: "Purchase quantity is required", trigger: "blur" }
+          { required: true, message: 'Purchase quantity is required', trigger: "blur" }
         ],
-        wareId: [{ required: true, message: "Warehouse is required", trigger: "blur" }]
+        wareId: [{ required: true, message: 'Warehouse is required', trigger: "blur" }]
       }
     };
   },
@@ -107,7 +107,7 @@ export default {
         }
       });
     },
-    // 表单提交
+    // form submit
     dataFormSubmit() {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
