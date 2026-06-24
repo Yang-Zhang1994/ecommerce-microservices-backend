@@ -8,6 +8,8 @@ Live HTTPS storefront, admin console, and Stripe checkout — Spring Cloud Gatew
 
 **Live:** [mall.yangzhangtech.online](https://mall.yangzhangtech.online) · [admin.yangzhangtech.online](https://admin.yangzhangtech.online) · API gateway [www.yangzhangtech.online](https://www.yangzhangtech.online)
 
+Demo environments may be **scaled down when idle** to control AWS cost. Use the credentials below when the stack is up, or open an issue to request a demo window.
+
 ### Live demo access
 
 | Surface | URL | Username | Password |
