@@ -1,10 +1,10 @@
-# E-Commerce Microservices Backend
+# E-Commerce Microservices Backend (GrainMart)
 
-E-commerce backend and admin system built as a **microservices** suite: Spring Boot 3 + Spring Cloud, with a Vue.js admin frontend. Services are discovered via Consul and exposed through an API gateway.
+Production-style **e-commerce platform**: 12 Spring Boot microservices, Next.js storefront, Vue admin console, deployed on **AWS EKS** with Terraform, Helm, and GitHub Actions CI/CD.
 
-**Repository:** [https://github.com/Yang-Zhang1994/ecommerce-microservices-backend](https://github.com/Yang-Zhang1994/ecommerce-microservices-backend)
+**Repository:** [github.com/Yang-Zhang1994/ecommerce-microservices-backend](https://github.com/Yang-Zhang1994/ecommerce-microservices-backend)
 
-**Live:** [mall.yangzhangtech.online](https://mall.yangzhangtech.online) | [admin.yangzhangtech.online](https://admin.yangzhangtech.online) (demo login below)
+**Live:** [mall.yangzhangtech.online](https://mall.yangzhangtech.online) · [admin.yangzhangtech.online](https://admin.yangzhangtech.online) · API gateway [www.yangzhangtech.online](https://www.yangzhangtech.online)
 
 ### Demo access (for reviewers)
 
@@ -13,115 +13,182 @@ E-commerce backend and admin system built as a **microservices** suite: Spring B
 | Storefront | https://mall.yangzhangtech.online | Google OAuth or register | — |
 | Admin console | https://admin.yangzhangtech.online | `demo` | `Demo2025!` (read-only) |
 
-The `demo` account can browse product, order, member, coupon, and warehouse screens but cannot change system settings, users, or roles. Do not use the `admin` account in production.
+The `demo` account can browse product, order, member, coupon, and warehouse screens but cannot change system settings, users, or roles. Do not use the default `admin/admin` credentials in production.
 
-To recreate the DB user: `./scripts/apply-admin-demo-user.sh` (requires RDS `ecommerce_admin` and `.env` with `RDS_*`).
+To recreate the demo user on RDS: `./scripts/apply-admin-demo-user.sh` (requires `ecommerce_admin` and `.env` with `RDS_*`).
 
 ---
 
 ## Overview
 
-- **Microservices:** Product, Member, Order, Coupon, Ware (inventory), Third-party (e.g. S3), Search
-- **API Gateway:** Single entry point (port 88), path-based routing to backend services
-- **Service discovery:** Consul (Docker Compose); health checks use `prefer-ip-address` for reliable registration
-- **Admin:** Renren-fast (Spring Boot) for auth, captcha, and admin APIs; Renren-fast-vue (Vue 2 + Element UI) for product, order, member, coupon, and warehouse management
-- **Inter-service calls:** HTTP Interface (RestClient) + Consul; e.g. Product → Coupon for SPU bounds / SKU reduction
-- **AWS:** Database (RDS PostgreSQL), config center (Secrets Manager + Parameter Store), object storage (S3 presigned URL upload)
+| Layer | Components |
+|-------|------------|
+| **Storefront** | `gulimall-mall` — Next.js 14, Stripe Checkout, Google OAuth2 |
+| **Admin** | `renren-fast` (Spring Boot API) + `renren-fast-vue` (Vue 2 + Element UI) |
+| **Gateway** | `gulimall-gateway` — Spring Cloud Gateway, single HTTPS entry (port 88) |
+| **Business services** | auth, product, member, cart, order, ware, coupon, search, seckill, third-party |
+| **Discovery** | Consul |
+| **Data** | PostgreSQL on **AWS RDS** (database-per-service), Redis cache-aside, Elasticsearch (catalog search) |
+| **Messaging** | RabbitMQ (async order / inventory flows) |
+| **Object storage** | AWS S3 presigned uploads via `gulimall-third-party` |
+| **Observability** | OpenTelemetry Java agent → Jaeger (local Compose / kind; optional on EKS) |
+| **Cloud** | EKS, ECR, ALB + ACM, Route53, Terraform (`infra/terraform`) |
+
+**Inter-service calls:** Spring 6 HTTP Interface (`@HttpExchange`) + load-balanced `RestClient` via Consul.
 
 ---
 
-## Tech Stack
+## Tech stack
 
 | Layer | Technology |
 |-------|------------|
 | Backend | Java 17, Spring Boot 3.2, Spring Cloud 2023 |
-| Service discovery | Consul |
-| Gateway | Spring Cloud Gateway |
-| Inter-service calls | **HTTP Interface** (Spring 6 `@HttpExchange`), **RestClient** (load-balanced via Consul) |
-| Data | PostgreSQL (**AWS RDS** per-service) |
-| Config | **AWS Secrets Manager**, **AWS Systems Manager Parameter Store** |
-| Object storage | **AWS S3** (presigned URL upload via gulimall-third-party) |
-| Frontend | Vue 2, Element UI, Vuex, Vue Router, Axios |
+| Gateway & discovery | Spring Cloud Gateway, Consul |
+| Storefront | Next.js 14, React 18, TypeScript, Playwright E2E |
+| Admin UI | Vue 2, Element UI, Vuex |
+| Data | PostgreSQL (RDS), Redis, Elasticsearch, MongoDB (admin captcha fallback) |
+| Payments & auth | Stripe Checkout + webhooks, Google OAuth2, JWT |
+| Infra | Docker, Kubernetes, Helm, Terraform, AWS (EKS, ECR, ALB, S3, RDS) |
+| CI/CD | GitHub Actions (JUnit gate → ECR → Helm deploy with OIDC) |
+| Load testing | k6 (Gateway / Product HPA scenarios) |
 
 ---
 
-## Project Structure
+## Project structure
 
 ```
-gulimall/
-├── gulimall-common       # Shared utils, DTOs, CouponApi (HTTP client)
-├── gulimall-gateway      # API Gateway (port 88)
-├── gulimall-product      # Product service (port 10000)
-├── gulimall-member       # Member service (port 8000)
-├── gulimall-coupon       # Coupon service (port 12000)
-├── gulimall-ware         # Warehouse service
-├── gulimall-order        # Order service
-├── gulimall-third-party  # Third-party e.g. S3 presign (port 30000)
-├── gulimall-search       # Search service
-├── renren-fast           # Admin backend (port 8080, context-path /api)
-├── renren-fast-vue       # Admin frontend (port 8001)
-└── docker-compose.yml    # Consul for local dev
+├── gulimall-common          # Shared DTOs, cache helpers, HTTP clients
+├── gulimall-gateway         # API gateway (:88)
+├── gulimall-auth-server     # OAuth2 / social login
+├── gulimall-product         # Catalog, categories, SKUs
+├── gulimall-member          # Users, addresses, levels
+├── gulimall-cart            # Shopping cart
+├── gulimall-order           # Orders, Stripe payment, idempotency
+├── gulimall-ware            # Inventory, stock locks (RabbitMQ)
+├── gulimall-coupon          # Promotions
+├── gulimall-search          # Elasticsearch product search
+├── gulimall-seckill         # Flash sale
+├── gulimall-third-party     # S3 presigned URL upload
+├── gulimall-mall            # Next.js storefront
+├── renren-fast              # Admin backend (Spring Boot)
+├── renren-fast-vue          # Admin frontend (Vue)
+├── k8s/helm/gulimall        # Umbrella Helm chart (kind + EKS values)
+├── infra/terraform          # VPC, EKS, ECR, ALB, OIDC for GitHub Actions
+├── docker-compose.app.yml   # Full local stack (Consul, Redis, RabbitMQ, Jaeger, all services)
+└── docs/                    # EKS, CD, load test, domain setup
 ```
 
+---
 
+## Quick start (local)
 
+### Prerequisites
+
+- JDK 17, Maven 3.8+, Docker & Docker Compose
+- PostgreSQL (local or RDS endpoint in `.env`)
+- Node.js 18+ (storefront / admin UI)
+
+### Option A — Docker Compose (recommended)
+
+```bash
+cp .env.example .env          # set RDS_* or local DB credentials
+mvn clean package -DskipTests
+docker compose -f docker-compose.app.yml up -d --build
+```
+
+- Storefront + Nginx: http://localhost  
+- Gateway API: http://localhost:88 (or via Nginx `/api`)  
+- Jaeger UI: http://localhost:16686  
+- Consul: http://localhost:8500  
+
+Elasticsearch (optional, for search): `docker compose -f docker-compose.es.yml up -d`
+
+### Option B — kind + Helm
+
+```bash
+./k8s/scripts/kind-up.sh
+./k8s/scripts/k8s-create-secrets.sh
+./k8s/scripts/kind-deploy.sh
+```
+
+Gateway: http://localhost:3088 — see [docs/EKS.md](docs/EKS.md).
+
+### Option C — IDE / manual
+
+1. `docker compose up -d` (Consul only)  
+2. `mvn clean install -DskipTests`  
+3. Start gateway → services → `renren-fast`  
+4. Admin UI: `cd renren-fast-vue && npm install && npm run dev`  
+5. Mall: `cd gulimall-mall && npm install && npm run dev` (set `NEXT_PUBLIC_API_BASE`)
 
 ---
 
-## AWS / Cloud
+## Production (AWS EKS)
 
-The project supports **AWS** for production-style deployment:
+| Step | Command / doc |
+|------|----------------|
+| Provision cluster | `infra/terraform` with `enable_eks=true` — [docs/EKS.md](docs/EKS.md) |
+| Push images | `./k8s/scripts/ecr-push-all.sh` (12 services + renren-fast) |
+| Deploy | `./k8s/scripts/eks-up.sh` or Helm `values-eks.yaml` |
+| CI/CD | Push to `main` → [docs/CD.md](docs/CD.md) |
+| Scale down overnight | `./k8s/scripts/eks-down.sh` |
 
-- **Database (AWS RDS):** With profile `dev`, services can connect to **Amazon RDS for PostgreSQL** (one RDS instance, multiple databases per service: e.g. `ecommerce_pms`, `ecommerce_sms`, `ecommerce_ums`, `ecommerce_oms`, `ecommerce_wms`, `ecommerce_admin`). Each module has `application-dev.yml` with the RDS endpoint; credentials via config or IAM.
+Domains (Route53 + ACM):
 
-- **Config center:** **AWS Secrets Manager** and **AWS Systems Manager Parameter Store** are used as optional config sources. For example:
-  - **Gateway:** `optional:aws-secretsmanager:gulimall/gateway/config`, `optional:aws-parameterstore:/gulimall/gateway/`
-  - **Member:** `optional:aws-secretsmanager:gulimall/member/datasource`, `optional:aws-parameterstore:/gulimall/member/`  
-  Spring Cloud AWS loads these when available; services still start without AWS (e.g. local).
-
-- **Object storage (AWS S3):** **gulimall-third-party** exposes presigned URL upload so the frontend can upload files directly to **Amazon S3** (e.g. bucket in us-east-2). Credentials via `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` or `~/.aws/credentials`. S3 client and presigner are created when `aws.s3.bucket` is set.
-
-- **Kubernetes:** Local **kind** + Helm (`k8s/helm/gulimall`) for P0 tracing stack; optional **Amazon EKS** in **us-west-2** (same region as RDS). See [docs/EKS.md](docs/EKS.md).
-
----
-
-## Prerequisites
-
-- JDK 17, Maven 3.6+, PostgreSQL, Node.js 12+, Docker (for Consul)
+| Host | Purpose |
+|------|---------|
+| `www.yangzhangtech.online` | API gateway (ALB Ingress) |
+| `mall.yangzhangtech.online` | Next.js storefront |
+| `admin.yangzhangtech.online` | Vue admin console |
 
 ---
 
-## Quick Start
+## Testing
 
-**1. Consul (start first)**  
-`docker compose up -d` — UI: http://localhost:8500
+| Type | Where | Notes |
+|------|-------|-------|
+| Unit tests (9) | `gulimall-common`, `gulimall-order` | CI gate on PR / push — `.github/workflows/ci.yml` |
+| Playwright E2E | `gulimall-mall/e2e/` | Stripe checkout smoke |
+| API purchase flow | `k8s/scripts/e2e-order-a1234.sh` | 10-step order validation |
+| Load test | `k8s/scripts/load-test/` | k6 ~36 RPS on search path — [docs/load-test.md](docs/load-test.md) |
 
-**2. Build**  
-`mvn clean install -DskipTests`
-
-**3. Backend**  
-Start after Consul: Gateway (88) → renren-fast (8080) → gulimall-product (10000) → gulimall-member (8000) → gulimall-coupon (12000). Optionally gulimall-third-party (30000), gulimall-ware, gulimall-order, gulimall-search.
-
-**Gateway routes:** `/api/product/**`, `/api/member/**`, `/api/coupon/**`, `/api/ware/**`, `/api/third-party/**`, `/api/**` (admin → renren-fast). Captcha: `/api/captcha.jpg`.
-
-**4. Frontend**  
-`cd renren-fast-vue && npm install && npm run dev` — open the URL (e.g. http://localhost:8001); set API base to `http://localhost:88/api`.
-
-**Database:** Create PostgreSQL DBs per service (e.g. `gulimall_pms`, `ecommerce_sms`); run SQL under `renren-fast/db/` as needed.
+```bash
+mvn -pl gulimall-common,gulimall-order -am test \
+  -Dtest=ProtectedCacheTest,IdempotencyServiceTest,OrderWorkflowServiceImplTest,StripePaymentServiceImplTest
+```
 
 ---
 
 ## Configuration
 
-Each module has `application.yml` (and often `application-dev.yml`). **Database credentials are not in the repo**; set environment variables for your environment:
-- `SPRING_DATASOURCE_URL` (e.g. `jdbc:postgresql://localhost:5432/your_db`)
-- `SPRING_DATASOURCE_USERNAME`
-- `SPRING_DATASOURCE_PASSWORD`
+Credentials are **not** committed. Copy `.env.example` → `.env` for local / deploy scripts.
 
-Defaults in config are localhost URL and empty password. **Local dev:** set `SPRING_DATASOURCE_PASSWORD` in your environment or in an IDE run configuration so the app can connect (e.g. `SPRING_DATASOURCE_PASSWORD=your_local_password`). Optionally use a local-only file `application-local.yml` with your password and run with profile `local`; add `**/application-local.yml` to `.gitignore` (already ignored). For **AWS**: use `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, or IAM roles; do not commit secrets.
+| Variable | Purpose |
+|----------|---------|
+| `SPRING_DATASOURCE_*` | Per-service PostgreSQL |
+| `RDS_*` | Shared RDS host (scripts, admin demo user) |
+| `ORDER_STRIPE_*` | Stripe secret + webhook |
+| `GOOGLE_CLIENT_ID` / `SECRET` | OAuth2 login |
+| `AWS_ACCESS_KEY_ID` / `SECRET` | S3 uploads (or use IAM role on EKS) |
+
+Optional AWS config sources: Secrets Manager and SSM Parameter Store (`optional:aws-secretsmanager:…` in service YAML). Services start without AWS for local dev.
+
+`application-local.yml` is gitignored — use profile `local` for machine-specific overrides.
+
+---
+
+## Documentation
+
+| Doc | Topic |
+|-----|--------|
+| [docs/EKS.md](docs/EKS.md) | kind + EKS deploy, secrets, domains |
+| [docs/CD.md](docs/CD.md) | GitHub Actions → ECR → Helm, OIDC setup |
+| [docs/load-test.md](docs/load-test.md) | k6 scenarios, HPA, baseline results |
+| [docs/DOMAIN_ACCESS_SETUP.md](docs/DOMAIN_ACCESS_SETUP.md) | Multi-domain routing |
+| [docs/MALL_HOMEPAGE_NEXTJS.md](docs/MALL_HOMEPAGE_NEXTJS.md) | Storefront setup |
 
 ---
 
 ## License
 
-Apache-2.0 (see [LICENSE](LICENSE)).
+Apache-2.0 — see [LICENSE](LICENSE).
