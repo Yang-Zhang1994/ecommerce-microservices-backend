@@ -25,7 +25,7 @@ The `demo` account can browse product, order, member, coupon, and warehouse scre
 |-------|------------|
 | **Storefront** | `gulimall-mall` — Next.js 14, Stripe Checkout, Google OAuth2 |
 | **Admin** | `renren-fast` (Spring Boot API) + `renren-fast-vue` (Vue 2 + Element UI) |
-| **Gateway** | `gulimall-gateway` — Spring Cloud Gateway, single HTTPS entry (port 88) |
+| **Gateway** | `gulimall-gateway` — Spring Cloud Gateway, single public API entry (ALB + HTTPS) |
 | **Business services** | auth, product, member, cart, order, ware, coupon, search, seckill, third-party |
 | **Discovery** | Consul |
 | **Data** | PostgreSQL on **AWS RDS** (database-per-service), Redis cache-aside, Elasticsearch (catalog search) |
@@ -58,7 +58,7 @@ The `demo` account can browse product, order, member, coupon, and warehouse scre
 
 ```
 ├── gulimall-common          # Shared DTOs, cache helpers, HTTP clients
-├── gulimall-gateway         # API gateway (:88)
+├── gulimall-gateway         # API gateway
 ├── gulimall-auth-server     # OAuth2 / social login
 ├── gulimall-product         # Catalog, categories, SKUs
 ├── gulimall-member          # Users, addresses, levels
