@@ -45,6 +45,10 @@ Thumbs.db
 deploy/
 docs/test-captcha-image-ec2.sh
 
+# Local AWS infra snapshots and SSH snippets (may contain account IDs / host IPs)
+aws-backup/
+deploy/ssh-config-snippet.txt
+
 # k6 JSON summaries (paste RPS into docs/load-test.md)
 k8s/scripts/load-test/results/
 ~$*.docx
