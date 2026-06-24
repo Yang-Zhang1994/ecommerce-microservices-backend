@@ -4,6 +4,19 @@ E-commerce backend and admin system built as a **microservices** suite: Spring B
 
 **Repository:** [https://github.com/Yang-Zhang1994/ecommerce-microservices-backend](https://github.com/Yang-Zhang1994/ecommerce-microservices-backend)
 
+**Live:** [mall.yangzhangtech.online](https://mall.yangzhangtech.online) | [admin.yangzhangtech.online](https://admin.yangzhangtech.online) (demo login below)
+
+### Demo access (for reviewers)
+
+| Surface | URL | Username | Password |
+|---------|-----|----------|----------|
+| Storefront | https://mall.yangzhangtech.online | Google OAuth or register | — |
+| Admin console | https://admin.yangzhangtech.online | `demo` | `Demo2025!` (read-only) |
+
+The `demo` account can browse product, order, member, coupon, and warehouse screens but cannot change system settings, users, or roles. Do not use the `admin` account in production.
+
+To recreate the DB user: `./scripts/apply-admin-demo-user.sh` (requires RDS `ecommerce_admin` and `.env` with `RDS_*`).
+
 ---
 
 ## Overview

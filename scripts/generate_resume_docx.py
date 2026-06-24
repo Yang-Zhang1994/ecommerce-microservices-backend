@@ -118,49 +118,69 @@ def build_resume() -> Document:
     add_section_title(doc, "Professional Summary")
     add_compact_line(
         doc,
-        "MSCS candidate (GPA 4.0) building production-style distributed systems. Shipped a "
-        "12-service e-commerce platform on AWS EKS with live HTTPS storefront, admin portal, "
-        "and Stripe checkout; 9 backend unit tests and E2E checkout validation. Strong in "
-        "Java/Spring, React/Next.js, PostgreSQL, and Kubernetes/Terraform. Background in "
-        "neuroscience research and K-12 stakeholder collaboration. Bilingual: English and Mandarin.",
+        "MSCS candidate (GPA 4.0/4.0) specializing in enterprise-grade distributed systems and "
+        "cloud CI/CD. Shipped a 12-service e-commerce platform on AWS EKS with a live HTTPS "
+        "storefront, admin portal, and Stripe checkout. Proficient in Java/Spring Boot "
+        "microservices, React/Next.js, PostgreSQL, and Kubernetes delivery (Terraform, Helm, "
+        "GitHub Actions). Background in data-driven neuroscience research and cross-functional "
+        "stakeholder collaboration. Bilingual: English and Mandarin.",
     )
 
     add_section_title(doc, "Technical Skills")
     add_compact_line(
         doc,
-        "Java, Python, TypeScript, JavaScript, SQL, C  |  Spring Boot 3, Spring Cloud Gateway, "
-        "Node.js, Express, Prisma  |  React, Next.js, Vue  |  PostgreSQL, Redis, Elasticsearch, "
-        "MongoDB  |  AWS (EKS, ECR, ALB, S3, RDS), Terraform, Helm, Docker, K8s, Git, JUnit, "
-        "Mockito, Playwright, Vitest  |  Microservices, RabbitMQ, JWT, OAuth2, Stripe",
+        "Languages: Java, Python, TypeScript, JavaScript, SQL, C",
+    )
+    add_compact_line(
+        doc,
+        "Backend & Microservices: Spring Boot 3, Spring Cloud Gateway, Consul, Node.js, Express, "
+        "Prisma, RESTful APIs",
+    )
+    add_compact_line(doc, "Frontend: React 19, Next.js, Vue, HTML5/CSS3")
+    add_compact_line(
+        doc,
+        "Databases & Caching: PostgreSQL, Redis (multi-level caching), Elasticsearch, MongoDB, "
+        "Amazon RDS",
+    )
+    add_compact_line(
+        doc,
+        "Cloud & DevOps: AWS (EKS, ECR, ALB, S3, RDS), Terraform (IaC), Helm, Kubernetes, Docker, "
+        "GitHub Actions, Linux",
+    )
+    add_compact_line(
+        doc,
+        "Testing & Tools: JUnit, Mockito, Playwright, Vitest, k6 (load testing), Git, Postman, "
+        "Stripe API",
+        space_after=0,
     )
 
     add_section_title(doc, "Software Engineering Projects")
 
     add_project_header(
         doc,
-        "GrainMart — E-Commerce Platform (Microservices)",
-        "Full-Stack Developer  |  2024 – Present",
+        "GrainMart — Distributed E-Commerce Platform (Microservices)",
+        "Lead Full-Stack Developer  |  2025 – Present",
     )
     add_bullets(
         doc,
         [
-            "Architected 12 Spring Boot microservices (database-per-service on AWS RDS PostgreSQL) "
-            "with Consul discovery and Spring Cloud Gateway; offloaded product search to Elasticsearch; "
-            "Redis cache-aside with penetration/breakdown/avalanche guards; idempotent orders and "
-            "unique constraints on order numbers and Stripe webhook events.",
-            "Delivered Next.js customer mall and Vue admin portal; Stripe Checkout, Google OAuth2, "
-            "RabbitMQ async orders, and S3 presigned uploads.",
-            "Deployed 12+ microservices on AWS EKS (Terraform, Helm, ALB + ACM HTTPS) across "
-            "3 public domains; GitHub Actions CD (unit tests → ECR → Helm atomic deploy); "
-            "load-tested product search at ~36 RPS (k6, Gateway/Product HPA); "
-            "9 JUnit/Mockito unit tests plus 2 Playwright E2E suites and 10-step API purchase "
-            "validation.",
+            "Architected 12 Spring Boot microservices with database-per-service on AWS RDS "
+            "PostgreSQL, Consul service discovery, and Spring Cloud Gateway routing.",
+            "Offloaded product search to Elasticsearch; built Redis cache-aside with guards "
+            "against cache penetration, breakdown, and avalanche on read-heavy catalog paths.",
+            "Delivered Next.js storefront and Vue admin console with Stripe Checkout, Google "
+            "OAuth2, RabbitMQ async orders, and S3 presigned uploads; idempotent orders via "
+            "unique constraints and Stripe webhook signature verification.",
+            "Deployed on AWS EKS (Terraform, Helm, ALB + ACM HTTPS) across 3 domains; GitHub "
+            "Actions CI/CD with OIDC (9 JUnit gate, SHA-tagged ECR images, Helm deploy, GitHub "
+            "Secrets); Gateway/Product CPU HPA; k6 load test ~36 RPS on product search; 2 "
+            "Playwright E2E suites and 10-step API purchase validation.",
         ],
     )
     add_compact_line(
         doc,
         "Repository: github.com/Yang-Zhang1994/ecommerce-microservices-backend  |  "
-        "Live: mall.yangzhangtech.online",
+        "Live: mall.yangzhangtech.online  |  Admin: admin.yangzhangtech.online (demo login in README)",
         space_after=0,
     )
 
@@ -172,8 +192,8 @@ def build_resume() -> Document:
     add_bullets(
         doc,
         [
-            "Built React 19 + Node/Express + Prisma/PostgreSQL app with ingredient-match search, "
-            "role-based access, and seeded catalog (60+ ingredients, 30 recipes); 8 Vitest "
+            "Built React 19 + Node/Express + Prisma/PostgreSQL app with ingredient-matching search "
+            "and role-based access; seeded catalog (60+ ingredients, 30 recipes); 8 Vitest "
             "component tests.",
             "Deployed on Vercel + Render with bcrypt auth and HTTP-only JWT cookies "
             "(final-project-kangaroo.vercel.app).",
@@ -182,15 +202,15 @@ def build_resume() -> Document:
 
     add_project_header(
         doc,
-        "BC PhysEd Educational Tool (EdTech)",
+        "BC PhysEd Educational Tool (EdTech Platform)",
         "Backend Developer  |  2025",
     )
     add_bullets(
         doc,
         [
-            "Designed REST APIs and a teacher reporting portal for Grades 4–7 LMS; reward-scaling "
-            "algorithm driven by real-time student performance (github.com/Yang-Zhang1994/"
-            "bc-physed-digital-learning-tool).",
+            "Designed REST APIs and a teacher reporting portal for a Grades 4–7 LMS.",
+            "Built a reward-scaling algorithm driven by real-time student performance analytics "
+            "(github.com/Yang-Zhang1994/bc-physed-digital-learning-tool).",
         ],
     )
 
@@ -204,9 +224,9 @@ def build_resume() -> Document:
     add_bullets(
         doc,
         [
-            "Translated neuroscience research into software requirements with K-12 teachers; "
-            "managed IRB protocols and coordinated national workshops — experience directly "
-            "applied to user-centred API design in EdTech projects.",
+            "Translated neuroscience research into software requirements with K-12 educators; "
+            "managed IRB protocols and coordinated national workshops to inform user-centred "
+            "EdTech API design.",
             "Led 4 experimental studies; analyzed behavioural datasets with statistical methods "
             "to inform product and learning-design decisions.",
         ],
@@ -215,9 +235,15 @@ def build_resume() -> Document:
     add_section_title(doc, "Education")
     add_compact_line(
         doc,
-        "Northeastern University — M.S. Computer Science (GPA: 4.0/4.0), 2024 – Present  |  "
-        "East China Normal University — M.Ed. Applied Psychology (GPA: 3.61/4.0), 2018 – 2021  |  "
-        "Central China Normal University — B.Sc. Chemistry, 2013 – 2017",
+        "Northeastern University — M.S. in Computer Science (GPA: 4.0/4.0)  |  2024 – Present",
+    )
+    add_compact_line(
+        doc,
+        "East China Normal University — M.Ed. in Applied Psychology (GPA: 3.61/4.0)  |  2018 – 2021",
+    )
+    add_compact_line(
+        doc,
+        "Central China Normal University — B.Sc. in Chemistry  |  2013 – 2017",
         space_after=0,
     )
 
