@@ -132,7 +132,7 @@ jobs:
       (needs.build-push.result == 'success' || needs.build-push.result == 'skipped') &&
       (needs.sync-secrets.result == 'success' || needs.sync-secrets.result == 'skipped')
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
 
