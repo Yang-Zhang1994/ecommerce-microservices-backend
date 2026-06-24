@@ -129,6 +129,14 @@ curl -s https://www.yangzhangtech.online/actuator/health
 
 Do **not** run `scale` while you are actively using the cluster.
 
+## Admin demo account (maintainers)
+
+To provision or reset the read-only `demo` reviewer account on RDS (`ecommerce_admin`):
+
+```bash
+./scripts/apply-admin-demo-user.sh   # requires .env with RDS_*
+```
+
 ---
 
 ## Related

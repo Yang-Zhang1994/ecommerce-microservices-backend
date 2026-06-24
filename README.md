@@ -6,16 +6,14 @@ Production-style **e-commerce platform**: 12 Spring Boot microservices, Next.js 
 
 **Live:** [mall.yangzhangtech.online](https://mall.yangzhangtech.online) · [admin.yangzhangtech.online](https://admin.yangzhangtech.online) · API gateway [www.yangzhangtech.online](https://www.yangzhangtech.online)
 
-### Demo access (for reviewers)
+### Live demo access
 
 | Surface | URL | Username | Password |
 |---------|-----|----------|----------|
 | Storefront | https://mall.yangzhangtech.online | Google OAuth or register | — |
 | Admin console | https://admin.yangzhangtech.online | `demo` | `Demo2025!` (read-only) |
 
-The `demo` account can browse product, order, member, coupon, and warehouse screens but cannot change system settings, users, or roles. Do not use the default `admin/admin` credentials in production.
-
-To recreate the demo user on RDS: `./scripts/apply-admin-demo-user.sh` (requires `ecommerce_admin` and `.env` with `RDS_*`).
+The `demo` account can browse product, order, member, coupon, and warehouse screens. It cannot change system settings, users, or roles.
 
 ---
 
@@ -131,7 +129,7 @@ Gateway: http://localhost:3088 — see [docs/EKS.md](docs/EKS.md).
 | Push images | `./k8s/scripts/ecr-push-all.sh` (12 services + renren-fast) |
 | Deploy | `./k8s/scripts/eks-up.sh` or Helm `values-eks.yaml` |
 | CI/CD | Push to `main` → [docs/CD.md](docs/CD.md) |
-| Scale down overnight | `./k8s/scripts/eks-down.sh` |
+| Scale idle nodes | `./k8s/scripts/eks-down.sh` — [docs/EKS.md](docs/EKS.md) |
 
 Domains (Route53 + ACM):
 

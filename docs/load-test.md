@@ -109,11 +109,11 @@ Raw logs: `k8s/scripts/load-test/results/20260623-163906-search-summary.json` (g
 - Error rate exceeded the 2% k6 threshold — likely combination of cold ES index, node replacement during the session, and 2× `t3.large` CPU/RAM limits. Re-run after `./k8s/scripts/eks-up.sh` + full pod Ready + ES reindex for cleaner numbers.
 - **Do not** run 50 VU against a cold or recovering cluster; start with `k6-smoke.js`, then ramp.
 
-**Resume line (from search row):**
+**Summary (search scenario):**
 
 > Load-tested public product search at **~36 RPS** on AWS EKS (2× t3.large, Gateway/Product HPA, k6).
 
-Optional if interviewer asks latency: median **242 ms**, p95 **3.5 s** at peak 50 VU (portfolio demo tier, not production SLA).
+Peak-load latency on the same run: median **242 ms**, p95 **3.5 s** at 50 VU (portfolio-scale environment, not a production SLA).
 
 ## Cost note
 
