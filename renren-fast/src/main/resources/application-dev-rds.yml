@@ -1,0 +1,10 @@
+# 本地运行但连 RDS 时使用。先设置环境变量（或 source .env），再加 profile：dev-rds
+# 数据库名与 docker-compose 一致用 ecommerce_admin；若 RDS 上是 renren_fast 则设 RDS_DATABASE=renren_fast
+spring:
+  datasource:
+    druid:
+      url: jdbc:postgresql://${RDS_ENDPOINT}:5432/${RDS_DATABASE:ecommerce_admin}?sslmode=require
+      username: ${RDS_USERNAME}
+      password: ${RDS_PASSWORD}
+      initial-size: 2
+      max-active: 20
