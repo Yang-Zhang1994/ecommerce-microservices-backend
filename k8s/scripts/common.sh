@@ -98,6 +98,9 @@ helm_deploy_eks() {
     -f "${HELM_CHART}/values-eks.yaml"
     --namespace "${HELM_NAMESPACE}"
     --create-namespace
+    --rollback-on-failure
+    --server-side=false
+    --take-ownership
     --wait --timeout 45m
   )
   if [[ -n "${cert_arn}" ]]; then

@@ -12,7 +12,9 @@ metadata:
     app: {{ $app.name }}
     {{- include "gulimall.labels" $ | nindent 4 }}
 spec:
+  {{- if not (and $.Values.hpa.enabled $app.hpa $app.hpa.enabled) }}
   replicas: {{ default 1 $app.replicas }}
+  {{- end }}
   revisionHistoryLimit: 1
   {{- if eq $.Values.global.deploymentStrategy "Recreate" }}
   strategy:

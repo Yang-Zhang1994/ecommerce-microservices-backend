@@ -32,7 +32,8 @@ helm_args=(
 )
 
 if [[ "${ATOMIC}" == "true" ]]; then
-  helm_args+=(--atomic)
+  # Helm 4: --atomic deprecated; client-side apply avoids SSA conflicts with HPA / kubectl patch.
+  helm_args+=(--rollback-on-failure --server-side=false --take-ownership)
 fi
 
 if [[ -n "${HELM_CERTIFICATE_ARN}" ]]; then
