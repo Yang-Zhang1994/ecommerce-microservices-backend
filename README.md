@@ -1,6 +1,8 @@
-# E-Commerce Microservices Backend (GrainMart)
+# GrainMart — Distributed E-Commerce Platform
 
-Production-style **e-commerce platform**: 12 Spring Boot microservices, Next.js storefront, Vue admin console, deployed on **AWS EKS** with Terraform, Helm, and GitHub Actions CI/CD.
+**12 Spring Boot microservices** · Next.js storefront · Vue admin · **AWS EKS** (Terraform, Helm, GitHub Actions CI/CD)
+
+Live HTTPS storefront, admin console, and Stripe checkout — Spring Cloud Gateway, Consul, PostgreSQL RDS, Redis, Elasticsearch, and RabbitMQ.
 
 **Repository:** [github.com/Yang-Zhang1994/ecommerce-microservices-backend](https://github.com/Yang-Zhang1994/ecommerce-microservices-backend)
 
