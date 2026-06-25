@@ -20,11 +20,11 @@ Screenshots below are from a **local kind + Next.js / Vue dev** run against the 
 
 | Search | Cart |
 | --- | --- |
-| <img src="docs/images/storefront-search.png" width="420" alt="Search" /> | ![Cart](docs/images/storefront-cart.png) |
+| ![Search](docs/images/storefront-search.png) | ![Cart](docs/images/storefront-cart.png) |
 
 | Confirm order | Payment · Stripe cashier |
 | --- | --- |
-| ![Confirm order](docs/images/storefront-order-confirm.png) | <img src="docs/images/storefront-payment.png" width="420" alt="Payment · Stripe cashier" /> |
+| ![Confirm order](docs/images/storefront-order-confirm.png) | ![Payment](docs/images/storefront-payment.png) |
 
 ### Admin console (Vue + renren-fast)
 
