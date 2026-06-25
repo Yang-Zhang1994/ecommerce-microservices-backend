@@ -20,7 +20,7 @@ Screenshots below are from a **local kind + Next.js / Vue dev** run against the 
 
 | Search | |
 | --- | --- |
-| ![Search](docs/images/storefront-search.png) | |
+| <img src="docs/images/storefront-search.png" width="420" alt="Search" /> | |
 
 | Cart | Confirm order |
 | --- | --- |
@@ -28,13 +28,13 @@ Screenshots below are from a **local kind + Next.js / Vue dev** run against the 
 
 | Payment · Stripe cashier | |
 | --- | --- |
-| ![Payment](docs/images/storefront-payment.png) | |
+| <img src="docs/images/storefront-payment.png" width="420" alt="Payment · Stripe cashier" /> | |
 
 ### Admin console (Vue + renren-fast)
 
-| Product catalog | Orders |
+| SPU Management | Orders |
 | --- | --- |
-| ![Admin products](docs/images/admin-products.png) | ![Admin orders](docs/images/admin-orders.png) |
+| ![Admin SPU management](docs/images/admin-products.png) | ![Admin orders](docs/images/admin-orders.png) |
 
 | Base attributes | Product manager |
 | --- | --- |
