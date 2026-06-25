@@ -57,19 +57,27 @@ await shot(page, "storefront-home.png", "http://localhost:3001/", {
   waitMs: 2500,
   fullPage: true,
 });
-await shot(page, "storefront-product-detail.png", `http://localhost:3001/item/${SKU_ID}`, {
-  waitMs: 2500,
+await page.goto(`http://localhost:3001/item/${SKU_ID}`, { waitUntil: "networkidle", timeout: 60_000 });
+await page.waitForTimeout(2500);
+await page.screenshot({ path: path.join(outDir, "storefront-product-detail.png"), fullPage: false });
+console.log("saved storefront-product-detail.png");
+await page.evaluate(() => {
+  const specs = [...document.querySelectorAll("h2")].find((el) =>
+    /specification/i.test(el.textContent || "")
+  );
+  if (specs) specs.scrollIntoView({ block: "start" });
+  else window.scrollBy(0, 720);
 });
+await page.waitForTimeout(800);
+await page.screenshot({ path: path.join(outDir, "storefront-product-detail-specs.png"), fullPage: false });
+console.log("saved storefront-product-detail-specs.png");
 await shot(page, "storefront-search.png", "http://localhost:3001/search?q=iphone", {
   waitMs: 2000,
 });
 await shot(page, "storefront-sign-in.png", "http://localhost:3001/login", { waitMs: 2000 });
-await shot(page, "storefront-order-confirm.png", "http://localhost:3001/order/confirm", {
-  waitMs: 2000,
-});
 
 // Admin (token + dynamic menu bootstrap via /home)
-  ["product-spu", "admin-products.png"],
+const adminRoutes = [
   ["order-order", "admin-orders.png"],
   ["order-payment", "admin-payments.png"],
   ["ware-wareinfo", "admin-warehouse.png"],
