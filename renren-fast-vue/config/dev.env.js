@@ -7,5 +7,5 @@ module.exports = merge(prodEnv, {
   OPEN_PROXY: false, // 是否开启代理, 重置后需重启vue-cli
   MALL_PUBLIC_ORIGIN: '"http://localhost:3001"',
   // kind 网关 NodePort；Docker Compose 本地网关一般为 88
-  GATEWAY_PROXY_TARGET: '"https://www.yangzhangtech.online"'
+  GATEWAY_PROXY_TARGET: '"http://localhost:3088"'
 })

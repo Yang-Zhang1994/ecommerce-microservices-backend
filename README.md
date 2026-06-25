@@ -8,6 +8,36 @@ Live HTTPS storefront, admin console, and Stripe checkout — Spring Cloud Gatew
 
 The full stack has been deployed on **AWS EKS** (ALB + HTTPS, three subdomains). **Live demo available on request** — environments are scaled down when idle to control cloud cost.
 
+Screenshots below are from a **local kind + Next.js / Vue dev** run against the same microservices and Oregon RDS schema.
+
+## Screenshots
+
+### Storefront (Next.js)
+
+| Home · Elasticsearch catalog | Product detail · SKU variants |
+| --- | --- |
+| ![Storefront home](docs/images/storefront-home.png) | ![Product detail](docs/images/storefront-product-detail.png) |
+
+| Search | Sign-in · Google OAuth |
+| --- | --- |
+| ![Search](docs/images/storefront-search.png) | ![Sign in](docs/images/storefront-sign-in.png) |
+
+### Admin console (Vue + renren-fast)
+
+| Product catalog | Orders |
+| --- | --- |
+| ![Admin products](docs/images/admin-products.png) | ![Admin orders](docs/images/admin-orders.png) |
+
+| Warehouse | Members |
+| --- | --- |
+| ![Admin warehouse](docs/images/admin-warehouse.png) | ![Admin members](docs/images/admin-members.png) |
+
+| Marketing · member price | Payments · Stripe |
+| --- | --- |
+| ![Admin marketing](docs/images/admin-marketing.png) | ![Admin payments](docs/images/admin-payments.png) |
+
+Re-capture after UI changes: start [local stack](#option-b--kind--helm), then `cd gulimall-mall && node scripts/capture-readme-screenshots.mjs`.
+
 ---
 
 ## Overview
