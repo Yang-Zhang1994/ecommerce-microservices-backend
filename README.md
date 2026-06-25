@@ -22,21 +22,29 @@ Screenshots below are from a **local kind + Next.js / Vue dev** run against the 
 | --- | --- |
 | ![Search](docs/images/storefront-search.png) | ![Sign in](docs/images/storefront-sign-in.png) |
 
+| Cart | Confirm order |
+| --- | --- |
+| ![Cart](docs/images/storefront-cart.png) | ![Confirm order](docs/images/storefront-order-confirm.png) |
+
+| Payment · Stripe cashier | |
+| --- | --- |
+| ![Payment](docs/images/storefront-payment.png) | |
+
 ### Admin console (Vue + renren-fast)
 
 | Product catalog | Orders |
 | --- | --- |
 | ![Admin products](docs/images/admin-products.png) | ![Admin orders](docs/images/admin-orders.png) |
 
-| Warehouse | Members |
+| Base attributes | Product manager |
 | --- | --- |
-| ![Admin warehouse](docs/images/admin-warehouse.png) | ![Admin members](docs/images/admin-members.png) |
+| ![Admin base attributes](docs/images/admin-base-attr-zy.png) | ![Admin product manager](docs/images/admin-product-manager-zy.png) |
 
-| Marketing · member price | Payments · Stripe |
+| Publish SPU | Purchase order |
 | --- | --- |
-| ![Admin marketing](docs/images/admin-marketing.png) | ![Admin payments](docs/images/admin-payments.png) |
+| ![Admin publish SPU](docs/images/admin-publish-spu-zy.png) | ![Admin purchase order](docs/images/admin-purchase-order-zy.png) |
 
-Re-capture after UI changes: start [local stack](#option-b--kind--helm), then `cd gulimall-mall && node scripts/capture-readme-screenshots.mjs`.
+Re-capture after UI changes: start [local stack](#option-b--kind--helm), then `cd gulimall-mall && node scripts/capture-readme-screenshots.mjs` (storefront + admin) or `node scripts/capture-checkout-screenshots.mjs` (cart → order → pay).
 
 ---
 
