@@ -30,15 +30,15 @@ Screenshots below are from a **local kind + Next.js / Vue dev** run against the 
 
 | Dashboard | Base attributes |
 | --- | --- |
-| ![Admin home](docs/images/admin-home.png) | ![Admin base attributes](docs/images/admin-base-attr-zy.png) |
+| <img src="docs/images/admin-home.png" width="560" alt="Admin home" /> | <img src="docs/images/admin-base-attr-zy.png" width="560" alt="Admin base attributes" /> |
 
 | Publish SPU | SPU Management |
 | --- | --- |
-| ![Admin publish SPU](docs/images/admin-publish-spu-zy.png) | ![Admin SPU management](docs/images/admin-products.png) |
+| <img src="docs/images/admin-publish-spu-zy.png" width="560" alt="Admin publish SPU" /> | <img src="docs/images/admin-products.png" width="560" alt="Admin SPU management" /> |
 
 | Product manager | Purchase order |
 | --- | --- |
-| ![Admin product manager](docs/images/admin-product-manager-zy.png) | ![Admin purchase order](docs/images/admin-purchase-order-zy.png) |
+| <img src="docs/images/admin-product-manager-zy.png" width="560" alt="Admin product manager" /> | <img src="docs/images/admin-purchase-order-zy.png" width="560" alt="Admin purchase order" /> |
 
 Re-capture after UI changes: start [local stack](#option-b--kind--helm), then `cd gulimall-mall && node scripts/capture-readme-screenshots.mjs` (storefront + admin) or `node scripts/capture-checkout-screenshots.mjs` (cart → order → pay).
 
