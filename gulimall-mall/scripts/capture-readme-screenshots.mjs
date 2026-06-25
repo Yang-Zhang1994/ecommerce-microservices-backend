@@ -32,22 +32,6 @@ async function shot(page, name, url, opts = {}) {
   console.log("saved", name);
 }
 
-async function adminPage(page, token, routePath, name) {
-  await page.goto("http://localhost:8001/");
-  await page.evaluate((t) => sessionStorage.setItem("token", t), token);
-  await page.goto("http://localhost:8001/#/home", { waitUntil: "networkidle" });
-  await page.waitForTimeout(4000);
-  await page.goto(`http://localhost:8001/#/${routePath}`, { waitUntil: "networkidle" });
-  await page.waitForTimeout(3500);
-  if (page.url().includes("login")) {
-    console.warn("skip", name, "- redirected to login");
-    return false;
-  }
-  await page.screenshot({ path: path.join(outDir, name), fullPage: false });
-  console.log("saved", name, page.url());
-  return true;
-}
-
 const token = await adminToken();
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
@@ -75,17 +59,12 @@ await shot(page, "storefront-search.png", "http://localhost:3001/search?q=iphone
   waitMs: 2000,
 });
 
-// Admin (token + dynamic menu bootstrap via /home)
-const adminRoutes = [
-  ["order-order", "admin-orders.png"],
-  ["order-payment", "admin-payments.png"],
-  ["ware-wareinfo", "admin-warehouse.png"],
-  ["member-member", "admin-members.png"],
-  ["coupon-memberprice", "admin-marketing.png"],
-];
-
-for (const [routePath, file] of adminRoutes) {
-  await adminPage(page, token, routePath, file);
-}
+// Admin home (token + dynamic menu bootstrap via /home)
+await page.goto("http://localhost:8001/");
+await page.evaluate((t) => sessionStorage.setItem("token", t), token);
+await page.goto("http://localhost:8001/#/home", { waitUntil: "networkidle" });
+await page.waitForTimeout(4000);
+await page.screenshot({ path: path.join(outDir, "admin-home.png"), fullPage: false });
+console.log("saved admin-home.png");
 
 await browser.close();

@@ -18,27 +18,27 @@ Screenshots below are from a **local kind + Next.js / Vue dev** run against the 
 | --- | --- |
 | ![Storefront home](docs/images/storefront-home.png) | <img src="docs/images/storefront-product-detail.png" width="420" alt="Product detail with live flash sale" /> <img src="docs/images/storefront-product-detail-specs.png" width="420" alt="Specifications and gallery" /> |
 
-| Search | Payment · Stripe cashier |
+| Search | Cart |
 | --- | --- |
-| <img src="docs/images/storefront-search.png" width="420" alt="Search" /> | <img src="docs/images/storefront-payment.png" width="420" alt="Payment · Stripe cashier" /> |
+| <img src="docs/images/storefront-search.png" width="420" alt="Search" /> | ![Cart](docs/images/storefront-cart.png) |
 
-| Cart | Confirm order |
+| Confirm order | Payment · Stripe cashier |
 | --- | --- |
-| ![Cart](docs/images/storefront-cart.png) | ![Confirm order](docs/images/storefront-order-confirm.png) |
+| ![Confirm order](docs/images/storefront-order-confirm.png) | <img src="docs/images/storefront-payment.png" width="420" alt="Payment · Stripe cashier" /> |
 
 ### Admin console (Vue + renren-fast)
 
-| SPU Management | Orders |
+| Dashboard | Base attributes |
 | --- | --- |
-| ![Admin SPU management](docs/images/admin-products.png) | ![Admin orders](docs/images/admin-orders.png) |
+| ![Admin home](docs/images/admin-home.png) | ![Admin base attributes](docs/images/admin-base-attr-zy.png) |
 
-| Base attributes | Product manager |
+| Publish SPU | SPU Management |
 | --- | --- |
-| ![Admin base attributes](docs/images/admin-base-attr-zy.png) | ![Admin product manager](docs/images/admin-product-manager-zy.png) |
+| ![Admin publish SPU](docs/images/admin-publish-spu-zy.png) | ![Admin SPU management](docs/images/admin-products.png) |
 
-| Publish SPU | Purchase order |
+| Product manager | Purchase order |
 | --- | --- |
-| ![Admin publish SPU](docs/images/admin-publish-spu-zy.png) | ![Admin purchase order](docs/images/admin-purchase-order-zy.png) |
+| ![Admin product manager](docs/images/admin-product-manager-zy.png) | ![Admin purchase order](docs/images/admin-purchase-order-zy.png) |
 
 Re-capture after UI changes: start [local stack](#option-b--kind--helm), then `cd gulimall-mall && node scripts/capture-readme-screenshots.mjs` (storefront + admin) or `node scripts/capture-checkout-screenshots.mjs` (cart → order → pay).
 
