@@ -74,7 +74,6 @@ console.log("saved storefront-product-detail-specs.png");
 await shot(page, "storefront-search.png", "http://localhost:3001/search?q=iphone", {
   waitMs: 2000,
 });
-await shot(page, "storefront-sign-in.png", "http://localhost:3001/login", { waitMs: 2000 });
 
 // Admin (token + dynamic menu bootstrap via /home)
 const adminRoutes = [

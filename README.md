@@ -18,9 +18,9 @@ Screenshots below are from a **local kind + Next.js / Vue dev** run against the 
 | --- | --- |
 | ![Storefront home](docs/images/storefront-home.png) | <img src="docs/images/storefront-product-detail.png" width="420" alt="Product detail with live flash sale" /> <img src="docs/images/storefront-product-detail-specs.png" width="420" alt="Specifications and gallery" /> |
 
-| Search | Sign-in · Google OAuth |
+| Search | |
 | --- | --- |
-| ![Search](docs/images/storefront-search.png) | ![Sign in](docs/images/storefront-sign-in.png) |
+| ![Search](docs/images/storefront-search.png) | |
 
 | Cart | Confirm order |
 | --- | --- |
