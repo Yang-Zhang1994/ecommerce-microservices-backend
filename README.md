@@ -18,17 +18,13 @@ Screenshots below are from a **local kind + Next.js / Vue dev** run against the 
 | --- | --- |
 | ![Storefront home](docs/images/storefront-home.png) | <img src="docs/images/storefront-product-detail.png" width="420" alt="Product detail with live flash sale" /> <img src="docs/images/storefront-product-detail-specs.png" width="420" alt="Specifications and gallery" /> |
 
-| Search | |
+| Search | Payment · Stripe cashier |
 | --- | --- |
-| <img src="docs/images/storefront-search.png" width="420" alt="Search" /> | |
+| <img src="docs/images/storefront-search.png" width="420" alt="Search" /> | <img src="docs/images/storefront-payment.png" width="420" alt="Payment · Stripe cashier" /> |
 
 | Cart | Confirm order |
 | --- | --- |
 | ![Cart](docs/images/storefront-cart.png) | ![Confirm order](docs/images/storefront-order-confirm.png) |
-
-| Payment · Stripe cashier | |
-| --- | --- |
-| <img src="docs/images/storefront-payment.png" width="420" alt="Payment · Stripe cashier" /> | |
 
 ### Admin console (Vue + renren-fast)
 
