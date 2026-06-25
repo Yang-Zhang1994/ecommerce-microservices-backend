@@ -6,18 +6,7 @@ Live HTTPS storefront, admin console, and Stripe checkout — Spring Cloud Gatew
 
 **Repository:** [github.com/Yang-Zhang1994/ecommerce-microservices-backend](https://github.com/Yang-Zhang1994/ecommerce-microservices-backend)
 
-**Live:** [mall.yangzhangtech.online](https://mall.yangzhangtech.online) · [admin.yangzhangtech.online](https://admin.yangzhangtech.online) · API gateway [www.yangzhangtech.online](https://www.yangzhangtech.online)
-
-Demo environments may be **scaled down when idle** to control AWS cost. Use the credentials below when the stack is up, or open an issue to request a demo window.
-
-### Live demo access
-
-| Surface | URL | Username | Password |
-|---------|-----|----------|----------|
-| Storefront | https://mall.yangzhangtech.online | Google OAuth or register | — |
-| Admin console | https://admin.yangzhangtech.online | `demo` | `Demo2025!` (read-only) |
-
-The `demo` account can browse product, order, member, coupon, and warehouse screens. It cannot change system settings, users, or roles.
+The full stack has been deployed on **AWS EKS** (ALB + HTTPS, three subdomains). **Live demo available on request** — environments are scaled down when idle to control cloud cost.
 
 ---
 
