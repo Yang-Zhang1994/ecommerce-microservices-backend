@@ -94,6 +94,13 @@ JSON exports: `k8s/scripts/load-test/results/<timestamp>-*-summary.json`.
 
 ## Recorded results
 
+**2026-06-25** — kind cluster, gateway NodePort `localhost:3088`, RDS available, ES indexed (14 iPhone hits). Single-node local gateway → search → Elasticsearch.
+
+| Date | Environment | Scenario | RPS (`http_reqs.rate`) | p95 (ms) | Error rate | Notes |
+|------|-------------|----------|------------------------|----------|------------|-------|
+| 2026-06-25 | kind + local gateway | `k6-search-sustained` (50 VU plateau) | **21.1** | **6330** | **0.00%** | 6,992 reqs / ~5m31s; median latency 705 ms; thresholds: errors ✓, p95 ✗ |
+| 2026-06-25 | kind + local gateway | `k6-smoke` (5 VU × 30s) | **7.5** | **1560** | **0.00%** | Preflight before sustained run |
+
 **2026-06-23** — EKS `gulimall-prod-eks`, 2× `t3.large` Spot, ALB → Gateway (2 replicas) → Search → Elasticsearch. RDS was stopped earlier in the day; restarted before the run. ES index empty (`degraded: true` on search responses — still exercises Gateway + Search + ES path).
 
 | Date | Environment | Scenario | RPS (`http_reqs.rate`) | p95 (ms) | Error rate | Gateway pods | Product pods | Notes |
@@ -105,15 +112,20 @@ Raw logs: `k8s/scripts/load-test/results/20260623-163906-search-summary.json` (g
 
 **Takeaways**
 
-- Sustained **~36 RPS** on the public search API is achievable on this stack before tail latency and errors rise at 50 VU.
-- Error rate exceeded the 2% k6 threshold — likely combination of cold ES index, node replacement during the session, and 2× `t3.large` CPU/RAM limits. Re-run after `./k8s/scripts/eks-up.sh` + full pod Ready + ES reindex for cleaner numbers.
+- **2026-06-25 (kind):** Clean run with **0% errors** at ~21 RPS — use for resume error-rate claims; tail latency higher on single-node local stack.
+- **2026-06-23 (EKS):** Higher **~36 RPS** but **12.2%** errors — cold ES / stressed cluster; re-run on healthy EKS for apples-to-apples public numbers.
+- Error rate exceeded the 2% k6 threshold on EKS — likely combination of cold ES index, node replacement during the session, and 2× `t3.large` CPU/RAM limits. Re-run after `./k8s/scripts/eks-up.sh` + full pod Ready + ES reindex for cleaner numbers.
 - **Do not** run 50 VU against a cold or recovering cluster; start with `k6-smoke.js`, then ramp.
 
-**Summary (search scenario):**
+**Summary (search scenario, 2026-06-25 kind):**
+
+> Load-tested public product search at **~21 RPS** with **0% errors** (k6 sustained, 50 VU; median **705 ms**, n=6,992).
+
+**Summary (search scenario, 2026-06-23 EKS):**
 
 > Load-tested public product search at **~36 RPS** on AWS EKS (2× t3.large, Gateway/Product HPA, k6).
 
-Peak-load latency on the same run: median **242 ms**, p95 **3.5 s** at 50 VU (portfolio-scale environment, not a production SLA).
+Peak-load latency on the EKS run: median **242 ms**, p95 **3.5 s** at 50 VU (portfolio-scale environment, not a production SLA).
 
 ## Cost note
 

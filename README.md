@@ -99,9 +99,18 @@ Re-capture after UI changes: start [local stack](#option-b--kind--helm), then `c
 ├── renren-fast-vue          # Admin frontend (Vue)
 ├── k8s/helm/gulimall        # Umbrella Helm chart (kind + EKS values)
 ├── infra/terraform          # VPC, EKS, ECR, ALB, OIDC for GitHub Actions
+├── scripts/                 # Ops, deploy, k6 load tests, resume generators (local)
 ├── docker-compose.app.yml   # Full local stack (Consul, Redis, RabbitMQ, Jaeger, all services)
+├── docker-compose.yml       # Minimal stack (Consul only; used by start-all.sh)
+├── start-all.sh             # Local backend bootstrap
 └── docs/                    # EKS, CD, load test, domain setup
 ```
+
+**Root layout notes**
+
+- **`gulimall-*` / `renren-*` modules must stay at repo root** — Maven `pom.xml` module paths depend on it.
+- **`job-materials/`** — local resumes/cover letters (gitignored); safe to keep outside GitHub.
+- **`docker-compose*.yml`** — kept at root so `docker compose -f docker-compose.app.yml` and EC2 deploy scripts keep working.
 
 ---
 

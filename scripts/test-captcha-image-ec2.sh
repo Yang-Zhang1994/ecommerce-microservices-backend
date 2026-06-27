@@ -1,6 +1,6 @@
 #!/bin/bash
-# Test 验证码 (captcha) and image/OSS on EC2. Usage: ./test-captcha-image-ec2.sh <BASE_URL>
-# Example: ./test-captcha-image-ec2.sh http://your-ec2-host:88
+# Test 验证码 (captcha) and image/OSS on EC2. Usage: ./scripts/test-captcha-image-ec2.sh <BASE_URL>
+# Example: ./scripts/test-captcha-image-ec2.sh http://your-ec2-host:88
 # Or with ALB: ./test-captcha-image-ec2.sh https://your-alb-domain
 
 BASE_URL="${1:-http://localhost:88}"

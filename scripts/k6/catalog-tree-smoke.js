@@ -1,6 +1,6 @@
-// k6 压测脚本 - gulimall API
-// 运行: k6 run script.js
-// 或指定并发/时长: k6 run --vus 20 --duration 30s script.js
+// k6 smoke test — category tree API
+// Run: k6 run scripts/k6/catalog-tree-smoke.js
+// Or:  k6 run --vus 20 --duration 30s scripts/k6/catalog-tree-smoke.js
 
 import http from 'k6/http';
 import { check, sleep } from 'k6';

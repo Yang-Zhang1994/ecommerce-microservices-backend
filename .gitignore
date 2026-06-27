@@ -52,7 +52,18 @@ deploy/ssh-config-snippet.txt
 # k6 JSON summaries (paste RPS into docs/load-test.md)
 k8s/scripts/load-test/results/
 ~$*.docx
+.seckill-test-cookies.txt
+tmp/
+/package-lock.json
 
-# Personal resume (keep local only)
-Yang_Zhang_Resume.docx
+# Personal job materials (resumes, cover letters, one-pagers — keep local only)
+job-materials/
+docs/sap-concur-cover-letter.md
+docs/grainmart-project-summary-one-pager.md
+scripts/generate_grainmart_one_pager.py
 scripts/generate_resume_docx.py
+scripts/generate_resume_sap.py
+scripts/generate_resume_archive_2p.py
+scripts/generate_resume_fha_data_analyst.py
+scripts/generate_cover_letter_sap.py
+scripts/generate_resume_rbc_tsa.py
