@@ -44,6 +44,136 @@ Re-capture after UI changes: start [local stack](#option-b--kind--helm), then `c
 
 ---
 
+## Architecture
+
+```mermaid
+flowchart TB
+    subgraph Clients["Clients"]
+        Mall["Next.js Storefront<br/>gulimall-mall"]
+        Admin["Vue Admin<br/>renren-fast-vue"]
+    end
+
+    subgraph Edge["AWS Edge"]
+        ALB["ALB + ACM HTTPS<br/>Route53"]
+    end
+
+    subgraph EKS["AWS EKS · us-west-2"]
+        GW["Spring Cloud Gateway<br/>rate limit · circuit breaker · routing"]
+
+        subgraph Services["12 Spring Boot Microservices"]
+            direction LR
+            S1["auth · product · member · cart"]
+            S2["order · ware · coupon · search"]
+            S3["seckill · third-party · renren-fast"]
+        end
+
+        Consul["Consul<br/>service discovery"]
+    end
+
+    subgraph Data["Data & Messaging"]
+        RDS["PostgreSQL RDS<br/>database-per-service · 6 DBs"]
+        Redis["Redis<br/>session · cart · cache · rate limit"]
+        ES["Elasticsearch<br/>catalog search"]
+        MQ["RabbitMQ<br/>order · inventory async"]
+    end
+
+    subgraph External["External Integrations"]
+        Stripe["Stripe Checkout<br/>webhooks · idempotency"]
+        S3["AWS S3<br/>presigned uploads"]
+    end
+
+    subgraph DevOps["DevOps & Observability"]
+        GHA["GitHub Actions<br/>JUnit gate → ECR → Helm"]
+        TF["Terraform<br/>EKS · ECR · ALB · OIDC"]
+        OTel["OpenTelemetry → Jaeger"]
+    end
+
+    Mall --> ALB
+    Admin --> ALB
+    ALB --> GW
+    GW --> Services
+    Services --> Consul
+    Services --> RDS
+    Services --> Redis
+    Services --> ES
+    Services --> MQ
+    Services --> Stripe
+    Services --> S3
+    GHA --> EKS
+    TF --> EKS
+    Services -.-> OTel
+```
+
+**Request flow (storefront):** Browser → ALB → Gateway (`/api/**`) → microservice (via Consul `lb://`) → PostgreSQL / Redis / ES / RabbitMQ.  
+**Payment flow:** Order service → Stripe Checkout → webhook → order marked paid (signature verified, event deduped).  
+**Inter-service calls:** Spring 6 `@HttpExchange` + load-balanced `RestClient` via Consul.
+
+### Order → Payment sequence
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User
+    participant Mall as Next.js Storefront
+    participant GW as Gateway
+    participant Auth as auth-server
+    participant Cart as cart
+    participant Order as order
+    participant Product as product
+    participant Ware as ware
+    participant Member as member
+    participant Stripe as Stripe
+    participant RDS as PostgreSQL OMS
+
+    User->>Mall: Login (Google OAuth2)
+    Mall->>GW: GET /api/auth/...
+    GW->>Auth: forward
+    Auth-->>Mall: SESSION cookie (Redis)
+
+    User->>Mall: Add items to cart
+    Mall->>GW: /api/cart/**
+    GW->>Cart: forward
+
+    User->>Mall: Confirm order
+    Mall->>GW: GET /api/order/confirm
+    GW->>Order: forward
+    Order->>Cart: checked cart items
+    Order->>Product: latest SKU prices
+    Order->>Ware: stock status
+    Order->>Member: shipping addresses
+    Order-->>Mall: confirm page + submit token (Redis)
+
+    User->>Mall: Submit order
+    Mall->>GW: POST /api/order/submit
+    GW->>Order: forward
+    Order->>Ware: lock stock
+    Order->>RDS: save order + order items
+    Order->>Cart: clear checked items
+    Order-->>Mall: orderSn, payAmount
+
+    User->>Mall: Pay now
+    Mall->>GW: POST /api/order/pay/stripe/checkout-session
+    GW->>Order: forward (Idempotency-Key optional)
+    Order->>Stripe: create Checkout Session
+    Stripe-->>Order: checkoutUrl
+    Order-->>Mall: redirect URL
+    Mall->>Stripe: hosted checkout (user pays)
+
+    Stripe->>GW: POST /api/order/pay/stripe/webhook
+    GW->>Order: forward
+    Order->>Order: verify signature + dedupe eventId
+    Order->>RDS: mark order paid + payment info
+    Order-->>Stripe: 200 OK
+
+    Note over Mall,Order: Fallback if webhook delayed
+    Mall->>GW: verify paid session on success page
+    GW->>Order: forward
+    Order->>Stripe: retrieve session
+    Order->>RDS: mark paid if not already
+```
+
+---
+
 ## Overview
 
 | Layer | Components |
