@@ -14,9 +14,13 @@ Screenshots below are from a **local kind + Next.js / Vue dev** run against the 
 
 ### Storefront (Next.js)
 
-| Home · Elasticsearch catalog | Product detail · live flash sale |
+**Home · Elasticsearch catalog**
+
+![Storefront home](docs/images/storefront-home-v2.png)
+
+| Product detail · live flash sale | Specifications & gallery |
 | --- | --- |
-| ![Storefront home](docs/images/storefront-home-v2.png) | <img src="docs/images/storefront-product-detail.png" width="420" alt="Product detail with live flash sale" /> <img src="docs/images/storefront-product-detail-specs.png" width="420" alt="Specifications and gallery" /> |
+| <img src="docs/images/storefront-product-detail.png" width="560" alt="Product detail with live flash sale" /> | <img src="docs/images/storefront-product-detail-specs.png" width="560" alt="Specifications and gallery" /> |
 
 | Search | Cart |
 | --- | --- |
