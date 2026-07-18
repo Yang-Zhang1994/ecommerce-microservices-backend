@@ -16,7 +16,7 @@ Screenshots below are from a **local kind + Next.js / Vue dev** run against the 
 
 | Home · Elasticsearch catalog | Product detail · live flash sale |
 | --- | --- |
-| ![Storefront home](docs/images/storefront-home.png) | <img src="docs/images/storefront-product-detail.png" width="420" alt="Product detail with live flash sale" /> <img src="docs/images/storefront-product-detail-specs.png" width="420" alt="Specifications and gallery" /> |
+| ![Storefront home](docs/images/storefront-home-v2.png) | <img src="docs/images/storefront-product-detail.png" width="420" alt="Product detail with live flash sale" /> <img src="docs/images/storefront-product-detail-specs.png" width="420" alt="Specifications and gallery" /> |
 
 | Search | Cart |
 | --- | --- |
@@ -239,7 +239,7 @@ sequenceDiagram
 **Root layout notes**
 
 - **`gulimall-*` / `renren-*` modules must stay at repo root** — Maven `pom.xml` module paths depend on it.
-- **`job-materials/`** — local resumes/cover letters (gitignored); safe to keep outside GitHub.
+- **`job-materials/`** — local resumes/cover letters (gitignored), organized by company subfolder (e.g. `clio/`, `paybyphone/`); `_general/` for base resumes, `_project/` for project summaries.
 - **`docker-compose*.yml`** — kept at root so `docker compose -f docker-compose.app.yml` and EC2 deploy scripts keep working.
 
 ---

@@ -37,7 +37,7 @@ const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 
 // Storefront
-await shot(page, "storefront-home.png", "http://localhost:3001/", {
+await shot(page, "storefront-home-v2.png", "http://localhost:3001/", {
   waitMs: 2500,
   fullPage: true,
 });
