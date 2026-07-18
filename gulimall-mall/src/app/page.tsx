@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import MallShell from '@/components/layout/MallShell';
 import HomeMainLayout from '@/components/home/HomeMainLayout';
+import ProductPromoCarousel from '@/components/home/ProductPromoCarousel';
+import { HOME_PROMO_BANNERS } from '@/components/home/promoBanners';
 import ProductCard from '@/components/ProductCard';
 import SeckillSection from '@/components/seckill/SeckillSection';
 import UpcomingSeckillSection from '@/components/seckill/UpcomingSeckillSection';
@@ -45,6 +47,7 @@ export default async function HomePage() {
   return (
     <MallShell>
       <section className={styles.heroStrip}>
+        <p className={styles.heroKicker}>Shop smarter</p>
         <h1>Welcome to {BRAND_NAME}</h1>
         <p>Search, add to cart, and checkout with Stripe.</p>
         <div className={styles.heroActions}>
@@ -67,6 +70,8 @@ export default async function HomePage() {
           </>
         }
       >
+        <ProductPromoCarousel slides={HOME_PROMO_BANNERS} />
+
         {productError && <p className={styles.error}>{productError}</p>}
 
         <div className={styles.sectionHead}>
