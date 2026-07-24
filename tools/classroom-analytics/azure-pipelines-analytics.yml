@@ -1,0 +1,53 @@
+# Deploy classroom-analytics to Azure Web App for Containers (Linux).
+# Requires: Azure subscription + az login (personal free tier is fine).
+#
+# NEU AAD tenant often has no subscription — use a personal Microsoft account:
+#   az login
+#   az account list -o table
+#   az account set --subscription "<name-or-id>"
+#
+# Then:
+#   bash tools/classroom-analytics/scripts/azure-deploy.sh [resource-group] [app-name] [location]
+
+trigger:
+  branches:
+    include: [main, master]
+  paths:
+    include:
+      - tools/classroom-analytics/**
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  imageName: classroom-analytics
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Docker
+        steps:
+          - task: Docker@2
+            inputs:
+              command: build
+              Dockerfile: tools/classroom-analytics/Dockerfile
+              buildContext: tools/classroom-analytics
+              arguments: -t $(imageName):$(Build.BuildId)
+            displayName: Build analytics image
+          - script: |
+              python3 -m pip install -r tools/classroom-analytics/requirements.txt
+              python3 tools/classroom-analytics/scripts/report_progress.py
+              python3 - <<'PY'
+              from fastapi.testclient import TestClient
+              import sys
+              sys.path.insert(0, "tools/classroom-analytics")
+              from api.main import app
+              c = TestClient(app)
+              assert c.get("/api/health").status_code == 200
+              assert c.get("/api/summary").status_code == 200
+              assert len(c.get("/api/by-module").json()) >= 1
+              print("API smoke OK")
+              PY
+            displayName: Pandas report + FastAPI smoke

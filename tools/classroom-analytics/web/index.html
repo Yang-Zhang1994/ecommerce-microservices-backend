@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Classroom Analytics Lab</title>
+    <style>
+      :root {
+        --bg: #f4f7fb;
+        --card: #fff;
+        --ink: #0f172a;
+        --muted: #64748b;
+        --accent: #1d4ed8;
+        --line: #e2e8f0;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: linear-gradient(180deg, #e8eef8, var(--bg));
+        color: var(--ink);
+      }
+      main { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+      h1 { margin: 0 0 0.25rem; font-size: 1.6rem; }
+      .sub { color: var(--muted); margin-bottom: 1.5rem; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+      }
+      .card .label { color: var(--muted); font-size: 0.8rem; }
+      .card .value { font-size: 1.4rem; font-weight: 700; margin-top: 0.25rem; }
+      h2 { margin: 1.75rem 0 0.75rem; font-size: 1.1rem; }
+      table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+      th, td { text-align: left; padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
+      th { background: #f8fafc; color: var(--muted); font-weight: 600; }
+      tr:last-child td { border-bottom: 0; }
+      .err { color: #b91c1c; }
+      .ok { color: #047857; font-size: 0.85rem; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Classroom progress analytics</h1>
+      <p class="sub">
+        FastAPI + SQLite/CSV demo for data-driven internal tools
+        (PhysEd-style progress → summary APIs → dashboard).
+      </p>
+      <p id="health" class="ok">Loading…</p>
+      <div class="grid" id="summary"></div>
+      <h2>By module</h2>
+      <div class="card" style="padding:0">
+        <table>
+          <thead>
+            <tr>
+              <th>Module</th>
+              <th>Students</th>
+              <th>Completion %</th>
+              <th>Avg score</th>
+              <th>Coins</th>
+            </tr>
+          </thead>
+          <tbody id="modules"></tbody>
+        </table>
+      </div>
+      <h2>Top students</h2>
+      <div class="card" style="padding:0">
+        <table>
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Completed</th>
+              <th>Avg score</th>
+              <th>Coins</th>
+              <th>Last activity</th>
+            </tr>
+          </thead>
+          <tbody id="students"></tbody>
+        </table>
+      </div>
+    </main>
+    <script>
+      async function load() {
+        const healthEl = document.getElementById("health");
+        try {
+          const health = await fetch("/api/health").then((r) => r.json());
+          healthEl.textContent = "API healthy · " + health.service;
+          const summary = await fetch("/api/summary").then((r) => r.json());
+          const cards = [
+            ["Students", summary.students],
+            ["Attempts", summary.module_attempts],
+            ["Completion %", summary.completion_rate_pct],
+            ["Avg score", summary.avg_quiz_score],
+            ["Coins", summary.total_coins],
+          ];
+          document.getElementById("summary").innerHTML = cards
+            .map(
+              ([label, value]) =>
+                `<div class="card"><div class="label">${label}</div><div class="value">${value}</div></div>`
+            )
+            .join("");
+
+          const modules = await fetch("/api/by-module").then((r) => r.json());
+          document.getElementById("modules").innerHTML = modules
+            .map(
+              (m) => `<tr>
+                <td>${m.module_name}</td>
+                <td>${m.students}</td>
+                <td>${m.completion_rate_pct}</td>
+                <td>${m.avg_score}</td>
+                <td>${m.coins}</td>
+              </tr>`
+            )
+            .join("");
+
+          const students = await fetch("/api/students").then((r) => r.json());
+          document.getElementById("students").innerHTML = students
+            .slice(0, 8)
+            .map(
+              (s) => `<tr>
+                <td>${s.student_name}</td>
+                <td>${s.modules_completed}/${s.modules_touched}</td>
+                <td>${s.avg_score}</td>
+                <td>${s.coins}</td>
+                <td>${s.last_activity}</td>
+              </tr>`
+            )
+            .join("");
+        } catch (e) {
+          healthEl.className = "err";
+          healthEl.textContent = "Failed to load API: " + e;
+        }
+      }
+      load();
+    </script>
+  </body>
+</html>
