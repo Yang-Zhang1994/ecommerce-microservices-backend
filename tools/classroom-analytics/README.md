@@ -1,42 +1,10 @@
-# Classroom analytics lab (data tooling demo)
+# Moved
 
-Python **pandas** reporting + **FastAPI** analytics APIs + a small dashboard UI.
-Sample CSV mirrors BC PhysEd–style classroom progress (modules, scores, coins).
+This lab now lives in its own repository:
 
-## Local
+**https://github.com/Yang-Zhang1994/classroom-analytics**
 
-```bash
-cd tools/classroom-analytics
-python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
+It is a standalone FastAPI + pandas portfolio project (PhysEd-style progress CSV),
+not part of the GrainMart / ecommerce platform in this monorepo.
 
-# 1) Pandas report → out/summary.json, by_module.csv, chart
-python3 scripts/report_progress.py
-
-# 2) API + UI
-uvicorn api.main:app --reload --port 8000
-# open http://127.0.0.1:8000
-```
-
-### API
-
-| Method | Path | Purpose |
-|--------|------|---------|
-| GET | `/api/health` | Liveness |
-| GET | `/api/summary` | Class-level KPIs |
-| GET | `/api/by-module` | Completion by module |
-| GET | `/api/students` | Per-student rollup |
-
-## Azure
-
-Needs a **subscription** (personal Azure free tier works). NEU tenant login alone is not enough.
-
-```bash
-az login
-az account list -o table
-az account set --subscription "<your-sub>"
-bash tools/classroom-analytics/scripts/azure-deploy.sh
-```
-
-Pipeline smoke (pandas + API): `tools/classroom-analytics/azure-pipelines-analytics.yml`  
-Repo also has GrainMart QA gates in root `azure-pipelines.yml`.
+Related student app: https://bc-physed.vercel.app
