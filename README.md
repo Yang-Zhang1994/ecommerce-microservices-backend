@@ -243,7 +243,6 @@ sequenceDiagram
 **Root layout notes**
 
 - **`gulimall-*` / `renren-*` modules must stay at repo root** — Maven `pom.xml` module paths depend on it.
-- **`job-materials/`** — local resumes/cover letters (gitignored), organized by company subfolder (e.g. `clio/`, `paybyphone/`); `_general/` for base resumes, `_project/` for project summaries.
 - **`docker-compose*.yml`** — kept at root so `docker compose -f docker-compose.app.yml` and EC2 deploy scripts keep working.
 
 ---
