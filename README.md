@@ -205,8 +205,8 @@ sequenceDiagram
 | Gateway & discovery | Spring Cloud Gateway, Consul |
 | Storefront | Next.js 14, React 18, TypeScript, Playwright E2E |
 | Admin UI | Vue 2, Element UI, Vuex |
-| Data | PostgreSQL (RDS), Redis, Elasticsearch, MongoDB (admin captcha fallback) |
-| Payments & auth | Stripe Checkout + webhooks, Google OAuth2, JWT |
+| Data | PostgreSQL (RDS), Redis, Elasticsearch |
+| Payments & auth | Stripe Checkout + webhooks, Google OAuth2, Spring Session (Redis) + `SESSION` cookie |
 | Infra | Docker, Kubernetes, Helm, Terraform, AWS (EKS, ECR, ALB, S3, RDS) |
 | CI/CD | GitHub Actions (JUnit gate → ECR → Helm deploy with OIDC) |
 | Load testing | k6 (Gateway / Product HPA scenarios) |
