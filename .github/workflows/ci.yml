@@ -38,5 +38,5 @@ jobs:
       - name: Run targeted unit tests
         run: |
           mvn -pl gulimall-common,gulimall-order,gulimall-ware -am test \
-            -Dtest=ProtectedCacheTest,IdempotencyServiceTest,OrderWorkflowServiceImplTest,StripePaymentServiceImplTest,WareSkuStockDeductTest \
+            -Dtest=ProtectedCacheTest,IdempotencyServiceTest,OrderWorkflowServiceImplTest,StripePaymentServiceImplTest,WareSkuStockDeductTest,WareSkuSearchIndexNotifyTest \
             -Dsurefire.failIfNoSpecifiedTests=false

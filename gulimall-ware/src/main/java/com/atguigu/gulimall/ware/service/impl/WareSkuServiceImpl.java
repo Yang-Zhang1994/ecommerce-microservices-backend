@@ -35,8 +35,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.StringUtils;
 
 import jakarta.persistence.criteria.Predicate;
@@ -44,9 +42,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @Service("wareSkuService")
 public class WareSkuServiceImpl implements WareSkuService {
@@ -232,15 +232,36 @@ public class WareSkuServiceImpl implements WareSkuService {
         if (skuId == null) {
             return;
         }
+        scheduleSearchIndexRefreshAfterCommit(List.of(skuId));
+    }
+
+    /**
+     * Batch refresh: available stock is {@code stock - stock_locked}, so lock/unlock must
+     * push hasStock into Elasticsearch the same way addStock does.
+     */
+    private void scheduleSearchIndexRefreshAfterCommit(Collection<Long> skuIds) {
+        if (skuIds == null || skuIds.isEmpty()) {
+            return;
+        }
+        Set<Long> distinct = new LinkedHashSet<>();
+        for (Long skuId : skuIds) {
+            if (skuId != null) {
+                distinct.add(skuId);
+            }
+        }
+        if (distinct.isEmpty()) {
+            return;
+        }
+        List<Long> toRefresh = List.copyOf(distinct);
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    searchIndexNotifyService.notifyStockChanged(skuId);
+                    searchIndexNotifyService.notifyStockChanged(toRefresh);
                 }
             });
         } else {
-            searchIndexNotifyService.notifyStockChanged(skuId);
+            searchIndexNotifyService.notifyStockChanged(toRefresh);
         }
     }
 
@@ -321,6 +342,12 @@ public class WareSkuServiceImpl implements WareSkuService {
 
         Long taskIdForMq = task.getId();
         String orderSnForMq = lockVo.getOrderSn().trim();
+        List<Long> lockedSkuIds = locked.stream()
+                .map(LockedStockVo::getSkuId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+        // Delay-release MQ + ES hasStock refresh share one afterCommit so both see committed locks.
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
@@ -336,6 +363,9 @@ public class WareSkuServiceImpl implements WareSkuService {
                     );
                 } catch (Exception ex) {
                     log.warn("stock-delay message send failed taskId={} orderSn={}", taskIdForMq, orderSnForMq, ex);
+                }
+                if (!lockedSkuIds.isEmpty()) {
+                    searchIndexNotifyService.notifyStockChanged(lockedSkuIds);
                 }
             }
         });
@@ -356,12 +386,15 @@ public class WareSkuServiceImpl implements WareSkuService {
         if (vo.getLocked() == null || vo.getLocked().isEmpty()) {
             return;
         }
+        List<Long> unlockedSkuIds = new ArrayList<>();
         for (LockedStockVo line : vo.getLocked()) {
             if (line == null || line.getSkuId() == null || line.getWareId() == null) continue;
             int num = line.getCount() == null ? 0 : line.getCount();
             if (num <= 0) continue;
             wareSkuRepository.unlockSkuStock(line.getSkuId(), line.getWareId(), num);
+            unlockedSkuIds.add(line.getSkuId());
         }
+        scheduleSearchIndexRefreshAfterCommit(unlockedSkuIds);
     }
 
     @Override
@@ -375,18 +408,21 @@ public class WareSkuServiceImpl implements WareSkuService {
         if (lines.isEmpty()) {
             return;
         }
+        List<Long> unlockedSkuIds = new ArrayList<>();
         for (WareOrderTaskDetailEntity d : lines) {
             if (d.getSkuId() == null || d.getWareId() == null || d.getSkuNum() == null || d.getSkuNum() <= 0) {
                 continue;
             }
             wareSkuRepository.unlockSkuStock(d.getSkuId(), d.getWareId(), d.getSkuNum());
             d.setLockStatus(StockDetailLockStatus.UNLOCKED.getCode());
+            unlockedSkuIds.add(d.getSkuId());
         }
         wareOrderTaskDetailRepository.saveAll(lines);
         wareOrderTaskRepository.findById(taskId).ifPresent(t -> {
             t.setTaskStatus(WareOrderTaskStatusEnum.STOCK_RELEASED.getCode());
             wareOrderTaskRepository.save(t);
         });
+        scheduleSearchIndexRefreshAfterCommit(unlockedSkuIds);
     }
 
     @Override
