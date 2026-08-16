@@ -53,6 +53,13 @@ public interface WareSkuService {
     void unlockByTaskId(Long taskId);
 
     /**
+     * Payment success: deduct real stock for lines still LOCKED on this task (idempotent).
+     *
+     * @return number of work-order lines moved to DEDUCTED by this call
+     */
+    int deductByTaskId(Long taskId);
+
+    /**
      * Refresh sku_name from product catalog and default null stock_locked to 0.
      */
     Map<String, Object> syncFromProduct();

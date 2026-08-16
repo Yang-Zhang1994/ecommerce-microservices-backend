@@ -23,6 +23,8 @@ import com.atguigu.gulimall.ware.vo.OrderWareLockVo;
 import com.atguigu.gulimall.ware.vo.StockDelayMessage;
 import com.atguigu.gulimall.ware.vo.WareStockUnlockVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -48,6 +50,8 @@ import java.util.Objects;
 
 @Service("wareSkuService")
 public class WareSkuServiceImpl implements WareSkuService {
+
+    private static final Logger log = LoggerFactory.getLogger(WareSkuServiceImpl.class);
 
     @Autowired
     private WareSkuRepository wareSkuRepository;
@@ -331,8 +335,7 @@ public class WareSkuServiceImpl implements WareSkuService {
                             json
                     );
                 } catch (Exception ex) {
-                    org.slf4j.LoggerFactory.getLogger(WareSkuServiceImpl.class)
-                            .warn("stock-delay message send failed taskId={} orderSn={}", taskIdForMq, orderSnForMq, ex);
+                    log.warn("stock-delay message send failed taskId={} orderSn={}", taskIdForMq, orderSnForMq, ex);
                 }
             }
         });
@@ -384,6 +387,51 @@ public class WareSkuServiceImpl implements WareSkuService {
             t.setTaskStatus(WareOrderTaskStatusEnum.STOCK_RELEASED.getCode());
             wareOrderTaskRepository.save(t);
         });
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int deductByTaskId(Long taskId) {
+        if (taskId == null) {
+            return 0;
+        }
+        List<WareOrderTaskDetailEntity> all = wareOrderTaskDetailRepository.findByTaskId(taskId);
+        if (all.isEmpty()) {
+            log.warn("stock-deduct: no work-order detail for taskId={}", taskId);
+            return 0;
+        }
+        List<WareOrderTaskDetailEntity> lockedLines = all.stream()
+                .filter(d -> Objects.equals(d.getLockStatus(), StockDetailLockStatus.LOCKED.getCode()))
+                .toList();
+        if (lockedLines.isEmpty()) {
+            // Redelivered payment message, or the delayed release already unlocked this task.
+            log.info("stock-deduct: nothing locked for taskId={} (already deducted or released)", taskId);
+            return 0;
+        }
+
+        int deducted = 0;
+        for (WareOrderTaskDetailEntity d : lockedLines) {
+            if (d.getSkuId() == null || d.getWareId() == null || d.getSkuNum() == null || d.getSkuNum() <= 0) {
+                continue;
+            }
+            int rows = wareSkuRepository.deductSkuStock(d.getSkuId(), d.getWareId(), d.getSkuNum());
+            if (rows == 0) {
+                log.warn(
+                        "stock-deduct: locked row not deductible taskId={} skuId={} wareId={} num={}",
+                        taskId, d.getSkuId(), d.getWareId(), d.getSkuNum());
+                continue;
+            }
+            d.setLockStatus(StockDetailLockStatus.DEDUCTED.getCode());
+            wareOrderTaskDetailRepository.save(d);
+            deducted++;
+        }
+        if (deducted == lockedLines.size()) {
+            wareOrderTaskRepository.findById(taskId).ifPresent(t -> {
+                t.setTaskStatus(WareOrderTaskStatusEnum.STOCK_DEDUCTED.getCode());
+                wareOrderTaskRepository.save(t);
+            });
+        }
+        return deducted;
     }
 
     @Override

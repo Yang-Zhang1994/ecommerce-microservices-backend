@@ -44,6 +44,22 @@ public interface WareSkuRepository extends JpaRepository<WareSkuEntity, Long>, J
             """, nativeQuery = true)
     int unlockSkuStock(@Param("skuId") Long skuId, @Param("wareId") Long wareId, @Param("num") Integer num);
 
+    /**
+     * Payment confirmed: turn locked stock into a real deduction. The {@code stock_locked >= :num}
+     * guard makes a redelivered payment message a no-op (0 rows updated) instead of double-deducting.
+     */
+    @Modifying
+    @Query(value = """
+            UPDATE wms_ware_sku
+            SET stock = COALESCE(stock, 0) - :num,
+                stock_locked = COALESCE(stock_locked, 0) - :num
+            WHERE sku_id = :skuId
+              AND ware_id = :wareId
+              AND COALESCE(stock_locked, 0) >= :num
+              AND COALESCE(stock, 0) >= :num
+            """, nativeQuery = true)
+    int deductSkuStock(@Param("skuId") Long skuId, @Param("wareId") Long wareId, @Param("num") Integer num);
+
     @Query(value = """
             SELECT DISTINCT sku_id FROM wms_ware_sku
             WHERE sku_id IN (:skuIds) AND COALESCE(stock_locked, 0) > 0

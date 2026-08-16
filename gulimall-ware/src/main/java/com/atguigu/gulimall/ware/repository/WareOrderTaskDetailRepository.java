@@ -10,4 +10,6 @@ import java.util.List;
 public interface WareOrderTaskDetailRepository extends JpaRepository<WareOrderTaskDetailEntity, Long> {
 
     List<WareOrderTaskDetailEntity> findByTaskIdAndLockStatus(Long taskId, Integer lockStatus);
+
+    List<WareOrderTaskDetailEntity> findByTaskId(Long taskId);
 }

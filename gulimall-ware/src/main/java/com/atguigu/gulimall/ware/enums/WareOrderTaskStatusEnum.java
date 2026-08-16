@@ -10,7 +10,7 @@ public enum WareOrderTaskStatusEnum {
     CREATED(1),
     /** Locked stock was released (timeout, cancel, or manual unlock). */
     STOCK_RELEASED(2),
-    /** Payment (or business) confirmed; stock deducted from real inventory (not implemented in ware yet). */
+    /** Payment confirmed; locked stock deducted from real inventory (see {@code order.finish.ware}). */
     STOCK_DEDUCTED(3);
 
     private final int code;
