@@ -98,7 +98,7 @@ kubectl get nodes
 1. A pull request (no direct push / force-push).
 2. Status check **`unit-tests`** (workflow **CI — unit tests**) to succeed.
 
-Repo admins can bypass in an emergency; prefer fixing CI instead.
+Repo owners cannot bypass this ruleset; if CI is broken, fix it on a branch and merge via PR. To temporarily relax the gate, edit the ruleset in GitHub Settings → Rules.
 
 ## Rollback (interview talking points)
 
