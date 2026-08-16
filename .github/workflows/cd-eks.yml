@@ -58,8 +58,8 @@ jobs:
 
       - name: Unit tests
         run: |
-          mvn -pl gulimall-common,gulimall-order -am test \
-            -Dtest=ProtectedCacheTest,IdempotencyServiceTest,OrderWorkflowServiceImplTest,StripePaymentServiceImplTest \
+          mvn -pl gulimall-common,gulimall-order,gulimall-ware -am test \
+            -Dtest=ProtectedCacheTest,IdempotencyServiceTest,OrderWorkflowServiceImplTest,StripePaymentServiceImplTest,WareSkuStockDeductTest,WareSkuSearchIndexNotifyTest \
             -Dsurefire.failIfNoSpecifiedTests=false
 
   build-push:

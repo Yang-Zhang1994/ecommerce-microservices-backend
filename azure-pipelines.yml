@@ -1,0 +1,85 @@
+# Azure Pipelines — GrainMart QA quality gates
+# Mirror of GitHub Actions JUnit gates + Playwright/Selenium checkout-path smoke.
+# Setup: Azure DevOps → New pipeline → GitHub → this repo → existing YAML.
+# Test Cases: docs/qa/ado-test-cases.md
+
+trigger:
+  branches:
+    include:
+      - main
+      - master
+  paths:
+    include:
+      - gulimall-*/**
+      - gulimall-common/**
+      - gulimall-mall/e2e/**
+      - tools/selenium-smoke/**
+      - azure-pipelines.yml
+      - scripts/qa/**
+
+pr:
+  branches:
+    include:
+      - main
+      - master
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  FIXTURE_PORT: '4173'
+  E2E_BASE_URL: 'http://127.0.0.1:4173'
+
+stages:
+  - stage: QualityGates
+    displayName: QA quality gates
+    jobs:
+      - job: JUnit
+        displayName: JUnit purchase-integrity suite
+        steps:
+          - checkout: self
+            submodules: recursive
+          - task: JavaToolInstaller@0
+            inputs:
+              versionSpec: '17'
+              jdkArchitectureOption: x64
+              jdkSourceOption: PreInstalled
+          - script: |
+              mvn -pl gulimall-common,gulimall-order,gulimall-ware -am test \
+                -Dtest=ProtectedCacheTest,IdempotencyServiceTest,OrderWorkflowServiceImplTest,StripePaymentServiceImplTest,WareSkuStockDeductTest,WareSkuSearchIndexNotifyTest \
+                -Dsurefire.failIfNoSpecifiedTests=false
+            displayName: Run targeted JUnit gates
+
+      - job: UiSmoke
+        displayName: Playwright + Selenium checkout-path smoke
+        steps:
+          - checkout: self
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '20.x'
+          - task: JavaToolInstaller@0
+            inputs:
+              versionSpec: '17'
+              jdkArchitectureOption: x64
+              jdkSourceOption: PreInstalled
+          - script: |
+              set -euo pipefail
+              python3 -m http.server $(FIXTURE_PORT) --bind 127.0.0.1 \
+                --directory gulimall-mall/e2e/fixtures/checkout-path &
+              for i in $(seq 1 40); do
+                curl -sf "$(E2E_BASE_URL)/index.html" && break
+                sleep 0.25
+              done
+              curl -sf "$(E2E_BASE_URL)/index.html"
+            displayName: Start UI-contract fixture
+          - script: |
+              set -euo pipefail
+              cd gulimall-mall
+              npm ci --ignore-scripts || npm install --ignore-scripts
+              npx playwright install --with-deps chromium
+              PLAYWRIGHT_BASE_URL="$(E2E_BASE_URL)" npx playwright test e2e/checkout-path.smoke.spec.ts --reporter=line
+            displayName: Playwright checkout-path smoke
+          - script: |
+              set -euo pipefail
+              E2E_BASE_URL="$(E2E_BASE_URL)" mvn -f tools/selenium-smoke/pom.xml test
+            displayName: Selenium checkout-path smoke

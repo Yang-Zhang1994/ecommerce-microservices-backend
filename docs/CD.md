@@ -3,16 +3,18 @@
 Push to `main` runs:
 
 ```text
-unit tests (9 JUnit) → Maven package → Docker build (12 images) → ECR push (git SHA + latest)
+unit tests (same suite as CI) → Maven package → Docker build (12 images) → ECR push (git SHA + latest)
   → helm upgrade --atomic (global.imageTag = SHA)
 ```
+
+**Policy:** failing CI blocks PR merges into `main`; failing CD unit tests or Helm blocks / rolls back the cloud release.
 
 Workflows:
 
 | File | Trigger | Purpose |
 |------|---------|---------|
-| `.github/workflows/ci.yml` | PR / push (Java paths) | 9 unit tests gate |
-| `.github/workflows/cd-eks.yml` | push `main` / manual | Full CD to EKS |
+| `.github/workflows/ci.yml` | PR / push (Java paths on push) | Unit-test gate; **required** on `main` via ruleset |
+| `.github/workflows/cd-eks.yml` | push `main` / manual | Full CD to EKS (same JUnit suite as CI, then ECR → Helm) |
 
 Scripts (called by Actions):
 
@@ -84,9 +86,19 @@ kubectl get nodes
 
 ## Day-to-day
 
-- **Merge to `main`** → CD runs automatically (~45–90 min first time; mostly Docker builds).
+- **Open a PR into `main`** → CI (`unit-tests`) must pass before merge. Direct pushes to `main` are blocked by a repository ruleset.
+- **Merge to `main`** → CD runs automatically (~45–90 min first time; mostly Docker builds). CD re-runs the same JUnit suite; failure skips deploy.
 - **Manual redeploy** (same images): Actions → CD — EKS → `skip_build: true` → optional `image_tag`.
 - **Rotate RDS/Stripe**: Run workflow with `sync_secrets: true` (does not rebuild images).
+
+### Merge gate (ruleset)
+
+`main` requires:
+
+1. A pull request (no direct push / force-push).
+2. Status check **`unit-tests`** (workflow **CI — unit tests**) to succeed.
+
+Repo admins can bypass in an emergency; prefer fixing CI instead.
 
 ## Rollback (interview talking points)
 

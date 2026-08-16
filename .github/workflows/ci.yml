@@ -1,14 +1,10 @@
 name: CI — unit tests
 
+# PR to main always runs (required status check). Path filters only on push
+# so docs-only commits on main do not re-run the gate.
 on:
   pull_request:
     branches: [main, master]
-    paths:
-      - 'gulimall-*/**'
-      - 'gulimall-common/**'
-      - 'renren-fast/**'
-      - 'pom.xml'
-      - '.github/workflows/ci.yml'
   push:
     branches: [main, master]
     paths:
@@ -17,9 +13,11 @@ on:
       - 'renren-fast/**'
       - 'pom.xml'
       - '.github/workflows/ci.yml'
+      - '.github/workflows/cd-eks.yml'
 
 jobs:
   unit-tests:
+    name: unit-tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
