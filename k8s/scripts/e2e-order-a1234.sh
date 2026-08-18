@@ -20,8 +20,37 @@ api_curl() {
   curl "${CURL_EXTRA[@]}" "$@"
 }
 
+# Unique per run — avoid second-level timestamp collisions in CI loops.
+new_idempotency_key() {
+  local prefix="${1:-e2e}"
+  if command -v uuidgen >/dev/null 2>&1; then
+    echo "${prefix}-$(uuidgen | tr '[:upper:]' '[:lower:]')"
+  elif [[ -r /proc/sys/kernel/random/uuid ]]; then
+    echo "${prefix}-$(cat /proc/sys/kernel/random/uuid)"
+  else
+    python3 -c "import uuid; print('${prefix}-' + str(uuid.uuid4()))"
+  fi
+}
+
 json_field() {
   python3 -c "import sys,json; d=json.load(sys.stdin); print($1)" 2>/dev/null || true
+}
+
+# HTTP errors exit via curl -f; business failures (code != 0) exit here with the body printed.
+assert_api_ok() {
+  local label="$1"
+  local body="$2"
+  if [[ -z "$body" ]]; then
+    echo "error: $label returned empty body" >&2
+    exit 1
+  fi
+  local code
+  code=$(echo "$body" | json_field "d['code']")
+  if [[ "$code" != "0" ]]; then
+    echo "error: $label failed (code=$code)" >&2
+    echo "$body" | python3 -m json.tool >&2 || echo "$body" >&2
+    exit 1
+  fi
 }
 
 echo "==> Login a1234"
@@ -29,24 +58,34 @@ LOGIN=$(api_curl -sf -c "$COOKIE_JAR" -b "$COOKIE_JAR" -X POST "$API/api/auth/lo
   -H 'Content-Type: application/json' \
   -d '{"username":"a1234","password":"123456"}')
 echo "$LOGIN" | python3 -m json.tool | head -8
-CODE=$(echo "$LOGIN" | json_field "d['code']")
-if [[ "$CODE" != "0" ]]; then echo "login failed"; exit 1; fi
+assert_api_ok "login" "$LOGIN"
 
 echo "==> Add SKU 1 to cart"
 api_curl -sf -c "$COOKIE_JAR" -b "$COOKIE_JAR" "$API/api/cart/add?skuId=1&num=1" -o /dev/null -w "cart add: %{http_code}\n"
 
 echo "==> Order confirm"
 CONFIRM=$(api_curl -sf -c "$COOKIE_JAR" -b "$COOKIE_JAR" "$API/api/order/confirm")
+assert_api_ok "order confirm" "$CONFIRM"
 TOKEN=$(echo "$CONFIRM" | json_field "d['data']['orderToken']")
 ADDR=$(echo "$CONFIRM" | json_field "d['data']['addresses'][0]['id']")
+if [[ -z "$TOKEN" || -z "$ADDR" ]]; then
+  echo "error: order confirm missing orderToken or addressId" >&2
+  exit 1
+fi
 echo "orderToken=$TOKEN addressId=$ADDR"
 
 echo "==> Submit order"
+# orderToken: Redis anti-replay token from confirm page; payType=1 → online pay (Stripe path).
 SUBMIT=$(api_curl -sf -c "$COOKIE_JAR" -b "$COOKIE_JAR" -X POST "$API/api/order/submit" \
   -H 'Content-Type: application/json' \
-  -H "Idempotency-Key: e2e-$(date +%s)" \
+  -H "Idempotency-Key: $(new_idempotency_key submit)" \
   -d "{\"orderToken\":\"$TOKEN\",\"addressId\":$ADDR,\"payType\":1,\"note\":\"e2e\"}")
+assert_api_ok "order submit" "$SUBMIT"
 ORDER_SN=$(echo "$SUBMIT" | json_field "d['data']['orderSn']")
+if [[ -z "$ORDER_SN" ]]; then
+  echo "error: order submit missing orderSn" >&2
+  exit 1
+fi
 echo "$SUBMIT" | python3 -m json.tool | head -12
 echo "orderSn=$ORDER_SN"
 
@@ -57,9 +96,14 @@ echo "$CART" | python3 -c "import sys,json; d=json.load(sys.stdin).get('data') o
 echo "==> Stripe checkout session"
 CHECKOUT=$(api_curl -sf -c "$COOKIE_JAR" -b "$COOKIE_JAR" -X POST "$API/api/order/pay/stripe/checkout-session" \
   -H 'Content-Type: application/json' \
-  -H "Idempotency-Key: stripe-$(date +%s)" \
+  -H "Idempotency-Key: $(new_idempotency_key stripe)" \
   -d "{\"orderSn\":\"$ORDER_SN\"}")
+assert_api_ok "stripe checkout session" "$CHECKOUT"
 CHECKOUT_URL=$(echo "$CHECKOUT" | json_field "d['data']['checkoutUrl']")
+if [[ -z "$CHECKOUT_URL" ]]; then
+  echo "error: stripe checkout session missing checkoutUrl" >&2
+  exit 1
+fi
 echo "checkoutUrl=$CHECKOUT_URL"
 
 if [[ -n "${SKIP_STRIPE_UI:-}" ]]; then
