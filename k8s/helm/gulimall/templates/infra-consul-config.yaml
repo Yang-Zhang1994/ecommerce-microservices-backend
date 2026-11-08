@@ -1,0 +1,49 @@
+{{- if and .Values.infra.consul.enabled .Values.infra.consul.seedConfig }}
+# Seeds Consul KV from consul-config/*.yml on every install/upgrade, so config in
+# Git is the source of truth and services pick changes up through their Consul watch.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: consul-config-seed
+  labels:
+    {{- include "gulimall.labels" . | nindent 4 }}
+data:
+{{ (.Files.Glob "consul-config/*.yml").AsConfig | indent 2 }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: consul-config-seed
+  labels:
+    {{- include "gulimall.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: seed
+          image: {{ .Values.infra.consul.seedImage }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              set -eu
+              until curl -fsS http://consul:8500/v1/status/leader | grep -q ':'; do
+                echo "waiting for consul leader"; sleep 3
+              done
+              for f in /seed/*.yml; do
+                name=$(basename "$f" .yml)
+                curl -fsS -X PUT --data-binary @"$f" "http://consul:8500/v1/kv/config/$name/data" >/dev/null
+                echo "seeded config/$name/data"
+              done
+          volumeMounts:
+            - name: seed
+              mountPath: /seed
+      volumes:
+        - name: seed
+          configMap:
+            name: consul-config-seed
+{{- end }}

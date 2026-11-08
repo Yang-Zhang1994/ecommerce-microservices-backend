@@ -16,7 +16,16 @@
     <name>gulimall-product</name>
     <description>谷粒商城 - 商品服务</description>
 
+    <properties>
+        <product.skipTests>true</product.skipTests>
+    </properties>
+
     <dependencies>
+        <!-- Consul KV distributed configuration (config/application, config/<service>); see docs/consul-config.md -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-consul-config</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.atguigu.gulimall</groupId>
             <artifactId>gulimall-common</artifactId>
@@ -56,8 +65,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <!-- 单元测试依赖 PostgreSQL，本地无库时跳过；需跑测试时去掉此配置或传 -DskipTests=false -->
-                    <skipTests>true</skipTests>
+                    <!-- 单元测试依赖 PostgreSQL，本地无库时跳过；需跑测试时传 -Dproduct.skipTests=false -->
+                    <skipTests>${product.skipTests}</skipTests>
                 </configuration>
             </plugin>
             <plugin>
