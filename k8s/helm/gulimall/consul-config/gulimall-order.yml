@@ -1,0 +1,8 @@
+# Consul key: config/gulimall-order/data — order-service only.
+# These are @Value fields read at startup; restart the pods after changing them.
+# pay-timeout-minutes must match the delay-queue TTL, which RabbitMQ fixes when the queue is declared.
+order:
+  pay-timeout-minutes: 30
+  flash-pay-timeout-minutes: 15
+  mq-outbox:
+    batch-size: 100

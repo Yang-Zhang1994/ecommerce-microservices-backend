@@ -6,6 +6,8 @@ spring:
     import:
       - optional:classpath:application-resilience.yml
       - optional:classpath:application-persistence.yml
+      # Consul KV overrides the defaults below; optional so the service still starts without Consul.
+      - optional:consul:
   application:
     name: gulimall-product
   profiles:
@@ -14,6 +16,16 @@ spring:
     consul:
       host: localhost
       port: 8500
+      config:
+        # Shared keys: config/application/data; per-service: config/<spring.application.name>/data
+        prefixes: config
+        default-context: application
+        format: YAML
+        data-key: data
+        watch:
+          # Long-polls Consul and rebinds @ConfigurationProperties beans when a key changes.
+          enabled: true
+          delay: 1000
       discovery:
         enabled: true
         hostname: host.docker.internal
