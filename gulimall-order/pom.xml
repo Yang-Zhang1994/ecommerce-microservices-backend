@@ -17,6 +17,11 @@
     <description>Gulimall - Order Service</description>
 
     <dependencies>
+        <!-- Consul KV distributed configuration (config/application, config/<service>); see docs/consul-config.md -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-consul-config</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.atguigu.gulimall</groupId>
             <artifactId>gulimall-common</artifactId>

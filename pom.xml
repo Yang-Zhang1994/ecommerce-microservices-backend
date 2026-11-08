@@ -39,6 +39,11 @@
                 <artifactId>spring-cloud-starter-consul-discovery</artifactId>
                 <version>${spring-cloud-consul.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-consul-config</artifactId>
+                <version>${spring-cloud-consul.version}</version>
+            </dependency>
             <!-- Spring Cloud AWS BOM (Secrets Manager, Parameter Store, etc.) -->
             <dependency>
                 <groupId>io.awspring.cloud</groupId>

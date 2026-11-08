@@ -31,6 +31,9 @@ infra:
   consul:
     enabled: true
     image: hashicorp/consul:1.17
+    # Load consul-config/*.yml into Consul KV (config/<name>/data) after each install/upgrade.
+    seedConfig: true
+    seedImage: curlimages/curl:8.10.1
   redis:
     enabled: true
     image: redis:7-alpine
@@ -93,6 +96,7 @@ apps:
     imageKey: gateway
     replicas: 1
     port: 88
+    otel: true
     consul: true
     redis: true
     probeDelay: 30
@@ -169,6 +173,7 @@ apps:
     imageKey: order
     replicas: 1
     port: 9000
+    otel: true
     consul: true
     redis: true
     rabbit: true
@@ -184,6 +189,7 @@ apps:
     imageKey: ware
     replicas: 1
     port: 11000
+    otel: true
     consul: true
     rabbit: true
     rdsDb: ecommerce_wms
@@ -258,6 +264,7 @@ secrets:
   rdsEndpoint: ""
   rdsUsername: postgres
   rdsPassword: ""
+  rdsSslMode: require
   orderStripeSecretKey: ""
   orderStripeWebhookSecret: ""
   gulimallMallPublicOrigin: http://localhost:3001

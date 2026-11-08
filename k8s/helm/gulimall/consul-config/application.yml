@@ -1,0 +1,11 @@
+# Consul key: config/application/data — shared by every service that imports consul:.
+# Changes reload live (Consul watch → @ConfigurationProperties rebind); no restart needed.
+gulimall:
+  cache:
+    protected:
+      base-ttl: 30m
+      ttl-jitter: 5m
+      null-ttl: 60s
+      lock-ttl: 5s
+      lock-wait-timeout: 500ms
+      lock-wait-interval: 50ms
