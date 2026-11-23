@@ -4,7 +4,7 @@ import json
 import pytest
 from mcp import Client
 
-from platform_mcp import Cluster, Refused, build, redact, redact_json
+from platform_mcp import Cluster, CommandFailed, Refused, build, redact, redact_json, run_command
 
 PODS = {"items": [{
     "metadata": {"name": "gulimall-review-abc", "labels": {"app": "gulimall-review"}},
@@ -158,3 +158,28 @@ def test_release_drift_reports_changes_made_outside_helm(cluster):
 def test_list_services_gives_dns_names_and_ports(cluster):
     assert call(cluster, "list_services").structured_content["result"] == [
         {"service": "consul", "type": "ClusterIP", "ports": [8500], "selector": {"app": "consul"}}]
+
+
+def test_cluster_errors_reach_the_agent_instead_of_looking_like_an_empty_namespace(tmp_path):
+    # Regression: in the first plugin eval kubectl could not find its kubeconfig, the server returned
+    # empty output, and the agent reported "the namespace is empty".
+    def broken(cmd):
+        raise CommandFailed('kubectl exited 1: error: context "kind-gulimall" does not exist')
+    result = call(Cluster(namespace="gm-sandbox", runner=broken), "list_pods")
+    assert result.is_error and 'context "kind-gulimall" does not exist' in result.content[0].text
+
+
+def test_run_command_raises_with_stderr():
+    with pytest.raises(CommandFailed, match="exited 3: boom"):
+        run_command(["sh", "-c", "echo boom >&2; exit 3"])
+    assert run_command(["sh", "-c", "echo ok"]) == "ok\n"
+
+
+def test_refusals_reach_the_agent_with_their_reason(cluster):
+    result = call(cluster, "describe_pod", {"pod": "x -n kube-system"})
+    assert not result.is_error  # a pod name with spaces is passed as one argument, so nothing is refused
+    def deny(cmd):
+        raise AssertionError("must not run")
+    # A secret read through the generic path is refused, and the agent is told why.
+    with pytest.raises(Refused, match="Secrets is not allowed"):
+        Cluster(namespace="gm-sandbox", runner=deny).run("kubectl", ["get", "secret", "db"])

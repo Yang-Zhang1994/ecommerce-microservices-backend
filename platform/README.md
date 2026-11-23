@@ -3,10 +3,35 @@
 Tools that make the 12-service GrainMart stack easier and safer to change: a golden path for new
 services, guardrails every workload must pass, and a read-only way for an AI agent to triage incidents.
 
+```mermaid
+flowchart LR
+    dev([Developer]) -->|gm new service| gen[Module + chart entry + build lists]
+    gen -->|gm policy| opa{OPA guardrails}
+    opa -->|pass| sbx[gm sandbox deploy<br/>kind, gm-sandbox namespace]
+    opa -->|violations| dev
+    sbx --> k8s[(Kubernetes)]
+    agent([Claude Code]) -->|MCP| mcp[platform MCP server<br/>read-only, audited]
+    mcp -->|get / describe / logs<br/>helm history, get manifest| k8s
+    mcp --> rb[[runbooks]]
 ```
-gm new service ──► module + chart entry + build lists ──► gm policy (OPA guardrails) ──► gm sandbox deploy (kind)
-                                                                                              │
-                     Claude Code ◄── platform MCP server (read-only kubectl/helm, audited) ◄──┘
+
+How a triage call is kept safe:
+
+```mermaid
+sequenceDiagram
+    participant A as Agent
+    participant S as platform MCP server
+    participant K as kubectl / helm
+    A->>S: pod_logs(pod, previous=true)
+    S->>S: verb in {get, describe, logs}? namespace and context pinned?
+    alt refused (delete, exec, other namespace, Secrets)
+        S-->>A: Refused: this server is read-only
+    else allowed
+        S->>S: append command to audit.log
+        S->>K: kubectl --context kind-gulimall -n gm-sandbox logs ...
+        K-->>S: output
+        S-->>A: output with credentials masked
+    end
 ```
 
 ## 1. Golden path: `gm new service` (Go CLI, `platform/gm`)
@@ -63,9 +88,10 @@ RabbitMQ, Redis and Jaeger; Elasticsearch, Jaeger and the config-seed Job run as
 non-root users; Consul, Redis and RabbitMQ are annotated because their official images start as root
 and drop privileges themselves.
 
-## 3. Agent triage: read-only MCP server (`platform/mcp`)
+## 3. Agent triage: read-only MCP server, packaged as a Claude Code plugin
 
-`platform_mcp.py` gives an agent nine tools over one namespace: pods with waiting reasons, events,
+[`claude-plugin/grainmart-triage`](claude-plugin/grainmart-triage) bundles the MCP server, a `/triage` skill and the runbooks, so any
+engineer can install it (`claude plugin install grainmart-triage@grainmart`). Its server gives an agent nine tools over one namespace: pods with waiting reasons, events,
 describe, previous-run logs, workload config, Services, Helm history, **release drift** (live vs what
 Helm deployed) and runbook search.
 
@@ -73,7 +99,7 @@ Helm deployed) and runbook search.
   Secrets can't be read. Namespace and context are fixed by the server.
 - **Audited and masked:** every call is appended to an audit log, and credential-looking values are
   masked, inside parsed JSON so the JSON stays valid.
-- **Tests:** 23 tests, using a real MCP client in-process.
+- **Tests:** 26 tests, using a real MCP client in-process. `claude plugin eval` against a live fault: 3/3 with the plugin, 0/3 without ([results](claude-plugin/grainmart-triage/evals/RESULTS.md)).
 
 **Evaluation:** three realistic faults injected into the sandboxed service, each diagnosed by Claude Code
 using only these tools ([sessions](agent-sessions/README.md), $0.87 in total):
@@ -86,13 +112,15 @@ using only these tools ([sessions](agent-sessions/README.md), $0.87 in total):
 
 Across all sessions the audit log has 44 calls and no writes.
 
-Try it: `platform/faults/inject.sh wrong-config`, then run `claude` in the repo root with
-`--mcp-config platform/mcp/mcp.json`, or use `platform/agent-sessions/run.sh`.
+Try it: `platform/faults/inject.sh wrong-config`, install the plugin (or run `claude --plugin-dir
+platform/claude-plugin/grainmart-triage`), then `/grainmart-triage:triage`. `platform/agent-sessions/run.sh`
+reruns the recorded sessions headless.
 
 ## CI
 
 `.github/workflows/platform.yml`: Rego unit tests, `go vet` and `go test` (including a generated service
-passing the guardrails), `gm policy` on the real chart, and the MCP server tests.
+passing the guardrails), `gm policy` on the real chart, the MCP server tests, and `claude plugin validate --strict`
+on the plugin and marketplace.
 
 ## Not done
 

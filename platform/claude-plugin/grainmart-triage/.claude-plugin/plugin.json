@@ -1,0 +1,9 @@
+{
+  "name": "grainmart-triage",
+  "version": "0.1.0",
+  "description": "Read-only Kubernetes incident triage for GrainMart: an audited MCP server (pods, events, previous logs, config, Helm drift, runbooks) and a /triage skill that finds the root cause and proposes a fix for a human to apply.",
+  "author": {"name": "Yang Zhang", "url": "https://github.com/Yang-Zhang1994"},
+  "homepage": "https://github.com/Yang-Zhang1994/ecommerce-microservices-backend/tree/main/platform/claude-plugin/grainmart-triage",
+  "license": "MIT",
+  "keywords": ["kubernetes", "helm", "triage", "sre", "mcp", "read-only"]
+}

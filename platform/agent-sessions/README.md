@@ -14,7 +14,7 @@ platform MCP tools and this prompt:
 | [wrong-config-before-drift-tool](#wrong-config-before-drift-tool) | Consul host typo, set by hand outside Helm (first run) | `kubectl set env SPRING_CLOUD_CONSUL_HOST=consul-server` | Correct cause (UnknownHostException), but wrongly said the value came with the install, and couldn't list Services. Added release_drift and list_services | 10 | $0.18 |
 | [wrong-config](#wrong-config) | Same fault, with the new tools | `same` | Correct: release_drift showed consul (Helm) vs consul-server (live); re-sync from Helm | 9 | $0.23 |
 
-Total cost of all five sessions: $0.87. The audit log (`platform/mcp/audit.log`, not committed) recorded every kubectl and helm call; none was a write.
+Total cost of all five sessions: $0.87. The audit log (not committed) recorded every kubectl and helm call; none was a write.
 
 ## bad-image
 
