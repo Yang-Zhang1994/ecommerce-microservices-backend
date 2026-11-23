@@ -69,6 +69,7 @@
         <module>gulimall-third-party</module>
         <module>gulimall-search</module>
         <module>gulimall-auth-server</module>
+        <module>gulimall-review</module>
     </modules>
 </project>
 

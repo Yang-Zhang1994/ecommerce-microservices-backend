@@ -28,6 +28,8 @@ spec:
       labels:
         app: {{ $app.name }}
     spec:
+      securityContext:
+        {{- toYaml $.Values.global.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ $key }}
           image: {{ include "gulimall.image" (dict "Values" $.Values "repository" $img.repository "tag" $img.tag) }}
@@ -119,10 +121,8 @@ spec:
             - name: {{ $ek }}
               value: {{ $ev | quote }}
             {{- end }}
-          {{- if $app.resources }}
           resources:
-            {{- toYaml $app.resources | nindent 12 }}
-          {{- end }}
+            {{- toYaml (default $.Values.global.defaultResources $app.resources) | nindent 12 }}
           readinessProbe:
             httpGet:
               path: {{ $probePath }}

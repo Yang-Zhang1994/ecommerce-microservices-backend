@@ -21,6 +21,7 @@ JAVA_MODULES=(
   gulimall-seckill
   gulimall-third-party
   renren-fast
+  gulimall-review
 )
 
 DOCKER_IMAGES=(
@@ -36,6 +37,7 @@ DOCKER_IMAGES=(
   gulimall-seckill
   gulimall-third-party
   renren-fast
+  gulimall-review
 )
 
 require_cmd() {
