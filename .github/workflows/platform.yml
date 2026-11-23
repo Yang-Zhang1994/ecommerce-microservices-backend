@@ -39,17 +39,23 @@ jobs:
         working-directory: platform/gm
         run: go run . policy
 
-  triage-mcp:
-    name: triage MCP server
+  triage-plugin:
+    name: triage plugin (MCP server + manifest)
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    defaults:
-      run:
-        working-directory: platform/mcp
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
-      - run: pip install -r requirements.txt
-      - run: pytest -q
+      - name: MCP server tests (read-only enforcement, masking, every tool)
+        working-directory: platform/claude-plugin/grainmart-triage/server
+        run: pip install -r requirements.txt && pytest -q
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Validate plugin and marketplace manifests
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude plugin validate platform/claude-plugin/grainmart-triage --strict
+          claude plugin validate . --strict

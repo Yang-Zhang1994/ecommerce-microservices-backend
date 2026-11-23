@@ -73,6 +73,8 @@ backups/
 # Platform kit (local only)
 platform/mcp/.venv/
 platform/mcp/audit.log
+platform/claude-plugin/grainmart-triage/server/audit.log
+platform/claude-plugin/grainmart-triage/evals/results/
 platform/gm/gm
 platform/**/__pycache__/
 platform/**/.pytest_cache/

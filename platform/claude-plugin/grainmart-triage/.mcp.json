@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "platform": {
+      "command": "${CLAUDE_PLUGIN_ROOT}/bin/serve.sh",
+      "env": {
+        "PLATFORM_NAMESPACE": "${PLATFORM_NAMESPACE:-gm-sandbox}",
+        "PLATFORM_KUBE_CONTEXT": "${PLATFORM_KUBE_CONTEXT:-kind-gulimall}",
+        "PLATFORM_AUDIT_LOG": "${CLAUDE_PLUGIN_DATA}/audit.log"
+      }
+    }
+  }
+}

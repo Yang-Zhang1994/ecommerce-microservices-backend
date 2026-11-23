@@ -1,8 +1,7 @@
 {
   "mcpServers": {
     "platform": {
-      "command": "platform/mcp/.venv/bin/python",
-      "args": ["platform/mcp/platform_mcp.py"],
+      "command": "platform/claude-plugin/grainmart-triage/bin/serve.sh",
       "env": {"PLATFORM_NAMESPACE": "gm-sandbox"}
     }
   }

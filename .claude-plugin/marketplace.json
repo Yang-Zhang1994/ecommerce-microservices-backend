@@ -1,0 +1,13 @@
+{
+  "name": "grainmart",
+  "owner": {"name": "Yang Zhang", "url": "https://github.com/Yang-Zhang1994"},
+  "description": "Internal Claude Code plugins for the GrainMart platform",
+  "plugins": [
+    {
+      "name": "grainmart-triage",
+      "source": "./platform/claude-plugin/grainmart-triage",
+      "description": "Read-only Kubernetes incident triage: audited MCP tools, a /triage skill and runbooks",
+      "version": "0.1.0"
+    }
+  ]
+}

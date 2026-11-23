@@ -4,7 +4,7 @@ An agent (Claude Code, or any MCP client) can look at pods, events, logs, worklo
 and the runbooks in one namespace. It cannot change anything: every kubectl/helm call goes through
 `Cluster.run`, which only allows read verbs, pins the context and namespace, and writes an audit line.
 
-Run:  PLATFORM_NAMESPACE=gm-sandbox python platform_mcp.py
+Run:  PLATFORM_NAMESPACE=gm-sandbox python platform_mcp.py   (or install the grainmart-triage plugin)
 """
 
 from __future__ import annotations
@@ -20,9 +20,10 @@ from typing import Any, Callable
 
 import yaml
 from mcp.server.mcpserver import MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
 
-ROOT = Path(__file__).resolve().parents[2]
-RUNBOOKS = ROOT / "platform" / "runbooks"
+# Runbooks ship with the plugin; PLATFORM_RUNBOOKS can point at a team's own folder instead.
+RUNBOOKS = Path(os.environ.get("PLATFORM_RUNBOOKS", Path(__file__).resolve().parents[1] / "runbooks"))
 
 READ_VERBS = {"get", "describe", "logs"}
 HELM_READ = {"history", "status", "get"}
@@ -31,8 +32,22 @@ SECRET_PATTERN = re.compile(r"(?i)((?:password|passwd|secret|token|api[_-]?key)\
 MAX_LOG_LINES = 300
 
 
-class Refused(ValueError):
+# Both subclass ToolError: the MCP SDK passes a ToolError's message to the agent, but replaces any other
+# exception's text with a bare "Error executing tool", which would hide the reason.
+class Refused(ToolError):
     """The agent asked for something outside the read-only allowlist."""
+
+
+class CommandFailed(ToolError):
+    """kubectl or helm exited non-zero. Raised (not returned as empty output) so the agent sees
+    "can't reach the cluster" instead of a believable "there are no pods"."""
+
+
+def run_command(cmd: list[str]) -> str:
+    done = subprocess.run(cmd, capture_output=True, text=True, timeout=30, check=False)
+    if done.returncode != 0:
+        raise CommandFailed(f"{cmd[0]} exited {done.returncode}: {redact(done.stderr.strip() or done.stdout.strip())[:800]}")
+    return done.stdout
 
 
 SECRET_NAME = re.compile(r"(?i)(^|_)(PASS|PASSWD|PASSWORD|SECRET|TOKEN|API_?KEY|PRIVATE_KEY)($|_)")
@@ -60,8 +75,7 @@ class Cluster:
     namespace: str
     context: str = "kind-gulimall"
     audit_path: Path | None = None
-    runner: Callable[[list[str]], str] = field(default=lambda cmd: subprocess.run(
-        cmd, capture_output=True, text=True, timeout=30, check=False).stdout)
+    runner: Callable[[list[str]], str] = field(default=run_command)
 
     def run_json(self, args: list[str]) -> dict[str, Any]:
         """A read whose output is parsed, then masked (masking the raw text would break the JSON)."""
@@ -196,7 +210,7 @@ def build(cluster: Cluster) -> MCPServer:
 
     @server.tool()
     def search_runbooks(query: str) -> list[dict[str, str]]:
-        """Search the team's runbooks (platform/runbooks) for a symptom or error string."""
+        """Search the team's runbooks for a symptom or error string."""
         words = [w.lower() for w in re.findall(r"\w+", query) if len(w) > 2]
         hits = []
         for path in sorted(RUNBOOKS.glob("*.md")):
@@ -210,9 +224,10 @@ def build(cluster: Cluster) -> MCPServer:
 
 
 def main() -> None:
-    ns = os.environ.get("PLATFORM_NAMESPACE", "gm-sandbox")
-    audit = Path(os.environ.get("PLATFORM_AUDIT_LOG", Path(__file__).with_name("audit.log")))
-    build(Cluster(namespace=ns, audit_path=audit)).run()
+    ns = os.environ.get("PLATFORM_NAMESPACE") or "gm-sandbox"
+    context = os.environ.get("PLATFORM_KUBE_CONTEXT") or "kind-gulimall"
+    audit = Path(os.environ.get("PLATFORM_AUDIT_LOG") or Path(__file__).with_name("audit.log"))
+    build(Cluster(namespace=ns, context=context, audit_path=audit)).run()
 
 
 if __name__ == "__main__":
