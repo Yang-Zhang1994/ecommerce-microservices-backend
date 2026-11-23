@@ -50,6 +50,7 @@ aws-backup/
 deploy/ssh-config-snippet.txt
 
 # k6 JSON summaries (paste RPS into docs/load-test.md)
+# Committed baselines: k8s/scripts/load-test/recorded/
 k8s/scripts/load-test/results/
 ~$*.docx
 .seckill-test-cookies.txt
@@ -67,3 +68,11 @@ scripts/generate_resume_archive_2p.py
 scripts/generate_resume_fha_data_analyst.py
 scripts/generate_cover_letter_sap.py
 scripts/generate_resume_rbc_tsa.py
+backups/
+
+# Platform kit (local only)
+platform/mcp/.venv/
+platform/mcp/audit.log
+platform/gm/gm
+platform/**/__pycache__/
+platform/**/.pytest_cache/

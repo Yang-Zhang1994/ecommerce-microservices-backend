@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "platform": {
+      "command": "platform/mcp/.venv/bin/python",
+      "args": ["platform/mcp/platform_mcp.py"],
+      "env": {"PLATFORM_NAMESPACE": "gm-sandbox"}
+    }
+  }
+}

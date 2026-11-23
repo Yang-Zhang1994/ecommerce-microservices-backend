@@ -353,6 +353,7 @@ Optional AWS config sources: Secrets Manager and SSM Parameter Store (`optional:
 | [docs/load-test.md](docs/load-test.md) | k6 scenarios, HPA, baseline results |
 | [docs/DOMAIN_ACCESS_SETUP.md](docs/DOMAIN_ACCESS_SETUP.md) | Multi-domain routing |
 | [docs/MALL_HOMEPAGE_NEXTJS.md](docs/MALL_HOMEPAGE_NEXTJS.md) | Storefront setup |
+| [platform/README.md](platform/README.md) | Platform kit: `gm` golden-path CLI (Go), OPA guardrails, read-only triage MCP server with agent sessions |
 
 ---
 

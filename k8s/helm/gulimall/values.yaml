@@ -12,6 +12,19 @@ global:
   # Tight heap for single-node kind (raise on EKS).
   jvmOpts: "-Xms128m -Xmx384m"
   deploymentStrategy: RollingUpdate
+  # Used by any app without its own `resources` (platform/policy requires requests and a memory limit).
+  # Sized for -Xmx256m on kind; values-eks.yaml raises it for -Xmx512m.
+  defaultResources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 640Mi
+  # App images run fine as an unprivileged user (checked: they only read /app/app.jar and write /tmp).
+  podSecurityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
 
 kind:
   enabled: true
@@ -34,21 +47,39 @@ infra:
     # Load consul-config/*.yml into Consul KV (config/<name>/data) after each install/upgrade.
     seedConfig: true
     seedImage: curlimages/curl:8.10.1
+    resources:
+      requests: {cpu: 50m, memory: 96Mi}
+      limits: {memory: 256Mi}
+    seedResources:
+      requests: {cpu: 10m, memory: 16Mi}
+      limits: {memory: 64Mi}
   redis:
     enabled: true
     image: redis:7-alpine
+    resources:
+      requests: {cpu: 50m, memory: 64Mi}
+      limits: {memory: 256Mi}
   rabbitmq:
     enabled: true
     image: rabbitmq:3-management
     username: guest
     password: guest
+    resources:
+      requests: {cpu: 100m, memory: 256Mi}
+      limits: {memory: 512Mi}
   elasticsearch:
     enabled: true
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     javaOpts: "-Xms256m -Xmx256m"
+    resources:
+      requests: {cpu: 100m, memory: 512Mi}
+      limits: {memory: 1Gi}
   jaeger:
     enabled: false
     image: jaegertracing/all-in-one:1.57
+    resources:
+      requests: {cpu: 50m, memory: 128Mi}
+      limits: {memory: 512Mi}
 
 images:
   gateway:
@@ -89,6 +120,9 @@ images:
     tag: local
 
 # apps.* keys are logical names; name = K8s Service/Deployment name.
+  review:
+    repository: gulimall-review
+    tag: local
 apps:
   gateway:
     enabled: true
@@ -250,6 +284,14 @@ apps:
       SPRING_AUTOCONFIGURE_EXCLUDE: org.apache.shiro.spring.config.web.autoconfigure.ShiroWebAutoConfiguration,org.apache.shiro.spring.boot.autoconfigure.ShiroAutoConfiguration,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration
       SPRING_DATASOURCE_DRUID_INITIAL_SIZE: "0"
       SPRING_DATASOURCE_DRUID_FILTERS: stat
+  review:
+    enabled: true
+    name: gulimall-review
+    imageKey: review
+    replicas: 1
+    port: 15000
+    consul: true
+    probeDelay: 45
 
 otel:
   enabled: false

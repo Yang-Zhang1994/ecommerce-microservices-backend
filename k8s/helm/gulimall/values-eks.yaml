@@ -7,6 +7,13 @@ global:
   imageRegistry: "466297333400.dkr.ecr.us-west-2.amazonaws.com"
   springProfilesActive: prod
   jvmOpts: "-Xms256m -Xmx512m"
+  # Room for -Xmx512m plus metaspace and threads; apps with their own `resources` keep them.
+  defaultResources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      memory: 1Gi
   deploymentStrategy: RollingUpdate
 
 kind:
