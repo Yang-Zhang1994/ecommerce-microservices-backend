@@ -24,9 +24,14 @@ spec:
   template:
     spec:
       restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 100  # curl_user in the curlimages/curl image
       containers:
         - name: seed
           image: {{ .Values.infra.consul.seedImage }}
+          resources:
+            {{- toYaml .Values.infra.consul.seedResources | nindent 12 }}
           command: ["/bin/sh", "-c"]
           args:
             - |

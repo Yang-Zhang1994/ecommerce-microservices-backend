@@ -1,0 +1,55 @@
+name: Platform — guardrails, gm CLI, triage MCP server
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+    paths:
+      - 'k8s/helm/**'
+      - 'platform/**'
+      - 'pom.xml'
+      - 'k8s/scripts/common.sh'
+      - '.github/workflows/platform.yml'
+
+jobs:
+  guardrails:
+    name: guardrails + gm
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+        with:
+          version: v4.2.2
+      - name: Install conftest
+        run: |
+          curl -sSL https://github.com/open-policy-agent/conftest/releases/download/v0.71.1/conftest_0.71.1_Linux_x86_64.tar.gz | tar xz conftest
+          sudo mv conftest /usr/local/bin/
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.27"
+          cache-dependency-path: platform/gm/go.sum
+      - name: Policy unit tests (Rego)
+        run: conftest verify --policy platform/policy
+      - name: gm tests (scaffolding, registry edits, guardrails on a generated service)
+        working-directory: platform/gm
+        run: go vet ./... && go test ./...
+      - name: Guardrails on the chart as kind and EKS render it
+        working-directory: platform/gm
+        run: go run . policy
+
+  triage-mcp:
+    name: triage MCP server
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: platform/mcp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r requirements.txt
+      - run: pytest -q
